@@ -1,0 +1,918 @@
+From 10cc5f6ca4df2d870a4260cece80e785dd61072c Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Mon, 10 Feb 2025 18:12:07 +0100
+Subject: [PATCH 2/5] Replace Scheduler
+
+---
+ .../main/java/net/citizensnpcs/Citizens.java  |  8 ++---
+ .../java/net/citizensnpcs/EventListen.java    | 36 +++++++++----------
+ .../main/java/net/citizensnpcs/Metrics.java   |  2 +-
+ .../citizensnpcs/commands/NPCCommands.java    | 16 ++++-----
+ .../net/citizensnpcs/npc/CitizensNPC.java     |  4 +--
+ .../npc/ai/CitizensNavigator.java             |  4 +--
+ .../java/net/citizensnpcs/npc/skin/Skin.java  | 12 +++----
+ .../npc/skin/SkinPacketTracker.java           | 10 +++---
+ .../npc/skin/SkinUpdateTracker.java           | 18 ++++++----
+ .../citizensnpcs/npc/skin/TabListRemover.java |  2 +-
+ .../npc/skin/profile/ProfileFetchThread.java  |  4 +--
+ .../npc/skin/profile/ProfileFetcher.java      |  4 +--
+ .../npc/skin/profile/ProfileRequest.java      |  2 +-
+ .../net/citizensnpcs/trait/CommandTrait.java  | 10 +++---
+ .../net/citizensnpcs/trait/PacketNPC.java     |  3 +-
+ .../trait/PausePathfindingTrait.java          | 12 +++----
+ .../citizensnpcs/trait/ScoreboardTrait.java   |  5 ++-
+ .../net/citizensnpcs/trait/ShopTrait.java     |  4 +--
+ .../trait/shop/OpenShopAction.java            |  2 +-
+ .../waypoint/GuidedWaypointProvider.java      |  6 ++--
+ .../waypoint/LinearWaypointProvider.java      | 12 +++----
+ .../waypoint/WanderWaypointProvider.java      | 14 ++++----
+ .../citizensnpcs/trait/waypoint/Waypoint.java |  2 +-
+ .../trait/waypoint/triggers/DelayTrigger.java |  2 +-
+ .../citizensnpcs/util/PlayerAnimation.java    | 15 ++++----
+ .../citizensnpcs/util/PlayerUpdateTask.java   |  6 +++-
+ .../main/java/net/citizensnpcs/util/Util.java |  3 ++
+ 27 files changed, 119 insertions(+), 99 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/Citizens.java b/main/src/main/java/net/citizensnpcs/Citizens.java
+index e51912905..a49688b51 100644
+--- a/main/src/main/java/net/citizensnpcs/Citizens.java
++++ b/main/src/main/java/net/citizensnpcs/Citizens.java
+@@ -344,7 +344,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
+         npcRegistry = new CitizensNPCRegistry(saves, "citizens");
+         temporaryRegistry = new CitizensNPCRegistry(new MemoryNPCDataStore(), "citizens-temporary");
+         locationLookup = new LocationLookup(npcRegistry);
+-        locationLookup.runTaskTimer(CitizensAPI.getPlugin(), 0, 5);
++        locationLookup.runAtFixedRate(CitizensAPI.getPlugin(), 0, 5);
+ 
+         traitFactory = new CitizensTraitFactory(this);
+         selector = new NPCSelector(this);
+@@ -370,7 +370,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
+ 
+         // Setup NPCs after all plugins have been enabled (allows for multiworld
+         // support and for NPCs to properly register external settings)
+-        if (getServer().getScheduler().scheduleSyncDelayedTask(this, new CitizensLoadTask(), 1) == -1) {
++        if (getServer().getGlobalRegionScheduler().runDelayed(this, task -> new CitizensLoadTask(), 1) == null) {
+             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
+             Bukkit.getPluginManager().disablePlugin(this);
+         }
+@@ -428,7 +428,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
+     }
+ 
+     private void scheduleSaveTask(int delay) {
+-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CitizensSaveTask(), delay, delay);
++        Bukkit.getGlobalRegionScheduler().runAtFixedRate(this, task -> new CitizensSaveTask(), Math.max(1, delay), Math.max(1, delay));
+     }
+ 
+     @Override
+@@ -545,7 +545,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
+             startMetrics();
+             scheduleSaveTask(Setting.SAVE_TASK_FREQUENCY.asTicks());
+             Bukkit.getPluginManager().callEvent(new CitizensEnableEvent());
+-            new PlayerUpdateTask().runTaskTimer(Citizens.this, 0, 1);
++            new PlayerUpdateTask().runAtFixedRate(Citizens.this, 0, 1);
+             enabled = true;
+         }
+     }
+diff --git a/main/src/main/java/net/citizensnpcs/EventListen.java b/main/src/main/java/net/citizensnpcs/EventListen.java
+index 5ed08ba2d..22edc7bef 100644
+--- a/main/src/main/java/net/citizensnpcs/EventListen.java
++++ b/main/src/main/java/net/citizensnpcs/EventListen.java
+@@ -266,7 +266,7 @@ public class EventListen implements Listener {
+         if (event instanceof Cancellable) {
+             runnable.run();
+         } else {
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, runnable);
++            Bukkit.getRegionScheduler().run(plugin, event.getWorld(), coord.x, coord.z, task -> runnable.run());
+         }
+     }
+ 
+@@ -419,7 +419,7 @@ public class EventListen implements Listener {
+             return;
+ 
+         int deathAnimationTicks = event.getEntity() instanceof LivingEntity ? 20 : 2;
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
++        Bukkit.getRegionScheduler().runDelayed(plugin, location, (task) -> {
+             if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
+                 npc.spawn(location, SpawnReason.TIMED_RESPAWN);
+             }
+@@ -541,7 +541,7 @@ public class EventListen implements Listener {
+         }
+         if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
+             HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> hr.onSeenByPlayer(npc, event.getPlayer()), 2);
++            npc.getEntity().getScheduler().runDelayed(plugin, (task) -> hr.onSeenByPlayer(npc, event.getPlayer()), null,  2);
+         }
+     }
+ 
+@@ -554,12 +554,12 @@ public class EventListen implements Listener {
+             NMS.sendPositionUpdate(tracker, ImmutableList.of(event.getPlayer()), false, null, null,
+                     NMS.getHeadYaw(tracker));
+             if (resetYaw) {
+-                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
+-                        () -> PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer()));
++                tracker.getScheduler().run(plugin,
++                        (task) -> PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer()), null);
+             }
+             return;
+         }
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
++        Bukkit.getRegionScheduler().runDelayed(plugin, tracker.getLocation(), (task) -> {
+             if (!tracker.isValid() || !event.getPlayer().isValid())
+                 return;
+ 
+@@ -569,7 +569,7 @@ public class EventListen implements Listener {
+             if (resetYaw) {
+                 PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer());
+             }
+-        }, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
++        }, Math.max(1, Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks()));
+     }
+ 
+     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+@@ -609,10 +609,10 @@ public class EventListen implements Listener {
+         if (plugin.getNPCRegistry().getNPC(event.getPlayer()) == null)
+             return;
+ 
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
++        event.getPlayer().getScheduler().runDelayed(plugin, (task) -> {
+             NMS.replaceTracker(event.getPlayer());
+             NMS.removeFromServerPlayerList(event.getPlayer());
+-        }, 1);
++        }, null, 1);
+         // on teleport, player NPCs are added to the server player list. this is
+         // undesirable as player NPCs are not real players and confuse plugins.
+     }
+@@ -672,8 +672,8 @@ public class EventListen implements Listener {
+             if (SUPPORT_STOP_USE_ITEM) {
+                 try {
+                     PlayerAnimation.STOP_USE_ITEM.play(player);
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
+-                            () -> PlayerAnimation.STOP_USE_ITEM.play(player));
++                    player.getScheduler().run(plugin,
++                            (task) -> PlayerAnimation.STOP_USE_ITEM.play(player), null);
+                 } catch (UnsupportedOperationException e) {
+                     SUPPORT_STOP_USE_ITEM = false;
+                 }
+@@ -741,11 +741,11 @@ public class EventListen implements Listener {
+         if (event.getCause() == TeleportCause.PLUGIN && npc != null && !npc.data().has("citizens-force-teleporting")
+                 && Setting.PLAYER_TELEPORT_DELAY.asTicks() > 0) {
+             event.setCancelled(true);
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
++            event.getPlayer().getScheduler().runDelayed(plugin, (task) -> {
+                 npc.data().set("citizens-force-teleporting", true);
+                 event.getPlayer().teleport(event.getTo());
+                 npc.data().remove("citizens-force-teleporting");
+-            }, Setting.PLAYER_TELEPORT_DELAY.asTicks());
++            }, null, Math.max(1, Setting.PLAYER_TELEPORT_DELAY.asTicks()));
+         }
+         skinUpdateTracker.updatePlayer(event.getPlayer(), 15, true);
+     }
+@@ -781,7 +781,7 @@ public class EventListen implements Listener {
+         if (!(event.getEntity() instanceof FishHook))
+             return;
+         NMS.removeHookIfNecessary((FishHook) event.getEntity());
+-        new BukkitRunnable() {
++        new fr.euphyllia.utils.FoliaRunnable(event.getEntity().getScheduler(), null) {
+             int n = 0;
+ 
+             @Override
+@@ -792,7 +792,7 @@ public class EventListen implements Listener {
+                 }
+                 NMS.removeHookIfNecessary((FishHook) event.getEntity());
+             }
+-        }.runTaskTimer(plugin, 0, 1);
++        }.runAtFixedRate(plugin, 0, 1);
+     }
+ 
+     @EventHandler
+@@ -935,11 +935,11 @@ public class EventListen implements Listener {
+                     if (!npcMoveEvent.isCancelled()) {
+                         final Location eventTo = npcMoveEvent.getTo();
+                         if (!to.equals(eventTo)) {
+-                            Bukkit.getScheduler().runTaskLater(plugin, () -> entity.teleport(eventTo), 1L);
++                            entity.getScheduler().runDelayed(plugin, (task) -> entity.teleport(eventTo), null, 1L);
+                         }
+                     } else {
+                         final Location eventFrom = npcMoveEvent.getFrom();
+-                        Bukkit.getScheduler().runTaskLater(plugin, () -> entity.teleport(eventFrom), 1L);
++                        entity.getScheduler().runDelayed(plugin, (task) -> entity.teleport(eventFrom), null, 1L);
+                     }
+                 } catch (Throwable ex) {
+                     ex.printStackTrace();
+@@ -1047,7 +1047,7 @@ public class EventListen implements Listener {
+         }
+         if (loadChunk) {
+             Messaging.idebug(() -> Joiner.on(' ').join("Loading chunk in 10 ticks due to forced chunk load at", coord));
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
++            Bukkit.getRegionScheduler().runDelayed(plugin, event.getWorld(), event.getChunk().getX(), event.getChunk().getX(), (task) -> {
+                 if (!event.getChunk().isLoaded()) {
+                     event.getChunk().load();
+                 }
+diff --git a/main/src/main/java/net/citizensnpcs/Metrics.java b/main/src/main/java/net/citizensnpcs/Metrics.java
+index cb5091f08..aec4b75bc 100644
+--- a/main/src/main/java/net/citizensnpcs/Metrics.java
++++ b/main/src/main/java/net/citizensnpcs/Metrics.java
+@@ -88,7 +88,7 @@ public class Metrics {
+         boolean logSentData = config.getBoolean("logSentData", false);
+         boolean logResponseStatusText = config.getBoolean("logResponseStatusText", false);
+         metricsBase = new MetricsBase("bukkit", serverUUID, serviceId, enabled, this::appendPlatformData,
+-                this::appendServiceData, submitDataTask -> Bukkit.getScheduler().runTask(plugin, submitDataTask),
++                this::appendServiceData, submitDataTask -> Bukkit.getGlobalRegionScheduler().execute(plugin, submitDataTask),
+                 plugin::isEnabled, (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
+                 message -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData,
+                 logResponseStatusText);
+diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
+index 881fd18f3..afcfa7cbc 100644
+--- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
++++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
+@@ -871,11 +871,11 @@ public class NPCCommands {
+         }
+         if (temporaryDuration != null) {
+             NPC temp = npc;
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++            temp.getEntity().getScheduler().runDelayed(CitizensAPI.getPlugin(), (task) -> {
+                 if (temporaryRegistry.getByUniqueId(temp.getUniqueId()) == temp) {
+                     temp.destroy();
+                 }
+-            }, Util.toTicks(temporaryDuration));
++            }, null, Util.toTicks(temporaryDuration));
+         }
+         npc.getOrAddTrait(MobType.class).setType(type);
+ 
+@@ -3078,15 +3078,15 @@ public class NPCCommands {
+             return;
+         } else if (url != null || file != null) {
+             Messaging.sendTr(sender, Messages.FETCHING_SKIN, url == null ? file : url);
+-            Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(), () -> {
++            Bukkit.getAsyncScheduler().runNow(CitizensAPI.getPlugin(), (task) -> {
+                 try {
+                     JSONObject data = null;
+                     if (file != null) {
+                         File skinsFolder = new File(CitizensAPI.getDataFolder(), "skins");
+                         File skin = new File(skinsFolder, Placeholders.replace(file, sender, npc));
+                         if (!skin.exists() || !skin.isFile() || skin.isHidden() || !isInDirectory(skin, skinsFolder)) {
+-                            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
+-                                    () -> Messaging.sendErrorTr(sender, Messages.INVALID_SKIN_FILE, file));
++                            Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(),
++                                    (task1) -> Messaging.sendErrorTr(sender, Messages.INVALID_SKIN_FILE, file));
+                             return;
+                         }
+                         data = MojangSkinGenerator.generateFromPNG(Files.readAllBytes(skin.toPath()),
+@@ -3100,19 +3100,19 @@ public class NPCCommands {
+                     String textureEncoded = (String) texture.get("value");
+                     String signature = (String) texture.get("signature");
+ 
+-                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> {
++                    npc.getEntity().getScheduler().run(CitizensAPI.getPlugin(), (task1) -> {
+                         try {
+                             trait.setSkinPersistent(uuid, signature, textureEncoded);
+                             Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url == null ? file : url);
+                         } catch (IllegalArgumentException e) {
+                             Messaging.sendErrorTr(sender, Messages.ERROR_SETTING_SKIN_URL, url == null ? file : url);
+                         }
+-                    });
++                    }, null);
+                 } catch (Throwable t) {
+                     if (Messaging.isDebugging()) {
+                         t.printStackTrace();
+                     }
+-                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> Messaging.sendErrorTr(sender,
++                    Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(), (task1) -> Messaging.sendErrorTr(sender,
+                             Messages.ERROR_SETTING_SKIN_URL, url == null ? file : url));
+                 }
+             });
+diff --git a/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java b/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
+index de46c7c0d..4c2821b75 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
++++ b/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
+@@ -430,12 +430,12 @@ public class CitizensNPC extends AbstractNPC {
+             postSpawn.accept(() -> {
+             });
+         } else {
+-            new BukkitRunnable() {
++            new fr.euphyllia.utils.FoliaRunnable(getEntity().getScheduler(), null) {
+                 @Override
+                 public void run() {
+                     postSpawn.accept(this::cancel);
+                 }
+-            }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
++            }.runAtFixedRate(CitizensAPI.getPlugin(), 0, 1);
+         }
+         return true;
+     }
+diff --git a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
+index 673ae754f..9650fc88a 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
++++ b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
+@@ -420,8 +420,8 @@ public class CitizensNavigator implements Navigator, Runnable {
+         if (!SUPPORT_CHUNK_TICKETS || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
+             return;
+ 
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+-                () -> updateTicket(isNavigating() ? executing.getTargetAsLocation() : null), 10);
++        Bukkit.getRegionScheduler().runDelayed(CitizensAPI.getPlugin(), executing.getTargetAsLocation(),
++                (task) -> updateTicket(isNavigating() ? executing.getTargetAsLocation() : null), 10);
+ 
+         // Location loc = npc.getEntity().getLocation(STATIONARY_LOCATION);
+         // NMS.look(npc.getEntity(), loc.getYaw(), 0);
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/Skin.java b/main/src/main/java/net/citizensnpcs/npc/skin/Skin.java
+index a4c78a9ec..f94b47b3b 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/Skin.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/Skin.java
+@@ -36,7 +36,7 @@ public class Skin {
+     private boolean hasFetched;
+     private volatile boolean isValid = true;
+     private final Map<SkinnableEntity, Void> pending = new WeakHashMap<>(15);
+-    private BukkitTask retryTask;
++    private io.papermc.paper.threadedregions.scheduler.ScheduledTask retryTask;
+     private volatile SkinProperty skinData;
+     private volatile UUID skinId;
+     private final String skinName;
+@@ -125,10 +125,10 @@ public class Skin {
+         if (!npc.isSpawned())
+             return;
+ 
+-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++        npc.getEntity().getScheduler().run(CitizensAPI.getPlugin(), (task) -> {
+             npc.despawn(DespawnReason.PENDING_RESPAWN);
+             npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
+-        });
++        }, null);
+     }
+ 
+     private void fetch() {
+@@ -163,7 +163,7 @@ public class Skin {
+ 
+                     fetchRetries++;
+                     long delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
+-                    retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), (Runnable) this::fetch,
++                    retryTask = Bukkit.getGlobalRegionScheduler().runDelayed(CitizensAPI.getPlugin(), task -> fetch(),
+                             delay);
+ 
+                     Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
+@@ -206,8 +206,8 @@ public class Skin {
+                     }
+                     fetchRetries++;
+                     int delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
+-                    retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
+-                            (Runnable) this::fetchForced, delay);
++                    retryTask = Bukkit.getGlobalRegionScheduler().runDelayed(CitizensAPI.getPlugin(),
++                            task -> fetchForced(), delay);
+ 
+                     Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
+                     break;
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/SkinPacketTracker.java b/main/src/main/java/net/citizensnpcs/npc/skin/SkinPacketTracker.java
+index 4cc969180..556737070 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/SkinPacketTracker.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/SkinPacketTracker.java
+@@ -122,7 +122,7 @@ public class SkinPacketTracker {
+      */
+     public void onSpawnNPC() {
+         isRemoved = false;
+-        new BukkitRunnable() {
++        new fr.euphyllia.utils.FoliaRunnable(entity.getNPC().getEntity().getScheduler(), null) {
+             @Override
+             public void run() {
+                 if (!entity.getNPC().isSpawned())
+@@ -131,7 +131,7 @@ public class SkinPacketTracker {
+                 updateNearbyViewers(entity.getNPC().data().get(NPC.Metadata.TRACKING_RANGE,
+                         Setting.NPC_SKIN_VIEW_DISTANCE.asInt()));
+             }
+-        }.runTaskLater(CitizensAPI.getPlugin(), 15);
++        }.runDelayed(CitizensAPI.getPlugin(), 15);
+     }
+ 
+     private void scheduleRemovePacket(PlayerEntry entry) {
+@@ -139,8 +139,8 @@ public class SkinPacketTracker {
+                 || !entity.getNPC().shouldRemoveFromTabList())
+             return;
+ 
+-        entry.removeTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
+-                () -> TAB_LIST_REMOVER.sendPacket(entry.player, entity), PACKET_DELAY_REMOVE);
++        entry.removeTask = entry.player.getScheduler().runDelayed(CitizensAPI.getPlugin(),
++                (task) -> TAB_LIST_REMOVER.sendPacket(entry.player, entity), null, Math.max(1, PACKET_DELAY_REMOVE));
+     }
+ 
+     private void scheduleRemovePacket(PlayerEntry entry, int count) {
+@@ -194,7 +194,7 @@ public class SkinPacketTracker {
+     private static class PlayerEntry {
+         Player player;
+         int removeCount;
+-        BukkitTask removeTask;
++        io.papermc.paper.threadedregions.scheduler.ScheduledTask removeTask;
+ 
+         PlayerEntry(Player player) {
+             this.player = player;
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java b/main/src/main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java
+index 8e46ce6d8..d0bfafcc9 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java
+@@ -48,8 +48,8 @@ public class SkinUpdateTracker {
+      *            Map of other registries.
+      */
+     public SkinUpdateTracker() {
+-        updater.runTaskTimer(CitizensAPI.getPlugin(), 1, 1);
+-        new NPCNavigationTracker().runTaskTimer(CitizensAPI.getPlugin(), 3, 7);
++        updater.runAtFixedRate(CitizensAPI.getPlugin(), 1, 1);
++        new NPCNavigationTracker().runAtFixedRate(CitizensAPI.getPlugin(), 3, 7);
+     }
+ 
+     // determines if a player is near a skinnable entity and, if checkFov set, if the
+@@ -293,7 +293,7 @@ public class SkinUpdateTracker {
+         if (player.hasMetadata("NPC"))
+             return;
+ 
+-        new BukkitRunnable() {
++        new fr.euphyllia.utils.FoliaRunnable(player.getScheduler(), null) {
+             @Override
+             public void run() {
+                 List<SkinnableEntity> visible = getNearbyNPCs(player, reset, false);
+@@ -305,11 +305,14 @@ public class SkinUpdateTracker {
+                     skinnable.getSkinTracker().updateViewer(player);
+                 }
+             }
+-        }.runTaskLater(CitizensAPI.getPlugin(), delay);
++        }.runDelayed(CitizensAPI.getPlugin(), delay);
+     }
+ 
+     // update players when the NPC navigates into their field of view
+-    private class NPCNavigationTracker extends BukkitRunnable {
++    private class NPCNavigationTracker extends fr.euphyllia.utils.FoliaRunnable {
++        public NPCNavigationTracker() {
++            super(org.bukkit.Bukkit.getGlobalRegionScheduler());
++        }
+         @Override
+         public void run() {
+             if (navigating.isEmpty() || playerTrackers.isEmpty())
+@@ -337,7 +340,10 @@ public class SkinUpdateTracker {
+ 
+     // Updates players. Repeating task used to schedule updates without
+     // causing excessive scheduling.
+-    private static class NPCNavigationUpdater extends BukkitRunnable {
++    private static class NPCNavigationUpdater extends fr.euphyllia.utils.FoliaRunnable {
++        public NPCNavigationUpdater() {
++            super(org.bukkit.Bukkit.getGlobalRegionScheduler());
++        }
+         Queue<UpdateInfo> queue = new ArrayDeque<>(20);
+ 
+         @Override
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/TabListRemover.java b/main/src/main/java/net/citizensnpcs/npc/skin/TabListRemover.java
+index c85c2d6d4..9f1ba6ecd 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/TabListRemover.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/TabListRemover.java
+@@ -28,7 +28,7 @@ public class TabListRemover {
+             Math.max(128, Math.min(1024, Bukkit.getMaxPlayers() / 2)));
+ 
+     TabListRemover() {
+-        Bukkit.getScheduler().runTaskTimer(CitizensAPI.getPlugin(), new Sender(), 2, 2);
++        Bukkit.getGlobalRegionScheduler().runAtFixedRate(CitizensAPI.getPlugin(), task -> new Sender().run() , 2, 2);
+     }
+ 
+     /**
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetchThread.java b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetchThread.java
+index 9d11e8a5c..38debe4b4 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetchThread.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetchThread.java
+@@ -219,7 +219,7 @@ class ProfileFetchThread implements Runnable {
+     }
+ 
+     private static void addHandler(ProfileRequest request, ProfileFetchHandler handler) {
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> request.addHandler(handler), 1);
++        Bukkit.getGlobalRegionScheduler().runDelayed(CitizensAPI.getPlugin(), (task) -> request.addHandler(handler), 1);
+     }
+ 
+     @Nullable
+@@ -253,6 +253,6 @@ class ProfileFetchThread implements Runnable {
+     }
+ 
+     private static void sendResult(ProfileFetchHandler handler, ProfileRequest request) {
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> handler.onResult(request), 1);
++        Bukkit.getGlobalRegionScheduler().runDelayed(CitizensAPI.getPlugin(), (task) -> handler.onResult(request), 1);
+     }
+ }
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetcher.java b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetcher.java
+index 62f2260f7..350986350 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetcher.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetcher.java
+@@ -49,7 +49,7 @@ public class ProfileFetcher {
+             THREAD_TASK.cancel();
+         }
+         PROFILE_THREAD = new ProfileFetchThread();
+-        THREAD_TASK = Bukkit.getScheduler().runTaskTimerAsynchronously(CitizensAPI.getPlugin(), PROFILE_THREAD, 21, 20);
++        THREAD_TASK = Bukkit.getAsyncScheduler().runAtFixedRate(CitizensAPI.getPlugin(), task -> PROFILE_THREAD.run(), 21 * 50, 20 * 50, java.util.concurrent.TimeUnit.MILLISECONDS);
+     }
+ 
+     /**
+@@ -67,5 +67,5 @@ public class ProfileFetcher {
+     }
+ 
+     private static ProfileFetchThread PROFILE_THREAD;
+-    private static BukkitTask THREAD_TASK;
++    private static io.papermc.paper.threadedregions.scheduler.ScheduledTask THREAD_TASK;
+ }
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileRequest.java b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileRequest.java
+index 3dc364f2f..0caebcfd0 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileRequest.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileRequest.java
+@@ -107,7 +107,7 @@ public class ProfileRequest {
+     void setResult(@Nullable GameProfile profile, ProfileFetchResult result) {
+         if (!CitizensAPI.hasImplementation())
+             return;
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++        Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(), (task) -> {
+             ProfileRequest.this.profile = profile;
+             ProfileRequest.this.result = result;
+ 
+diff --git a/main/src/main/java/net/citizensnpcs/trait/CommandTrait.java b/main/src/main/java/net/citizensnpcs/trait/CommandTrait.java
+index 39a140ffa..6390937e8 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/CommandTrait.java
++++ b/main/src/main/java/net/citizensnpcs/trait/CommandTrait.java
+@@ -368,8 +368,8 @@ public class CommandTrait extends Trait {
+                             if (temporaryPermissionsDuration <= 0) {
+                                 attachment.remove();
+                             } else {
+-                                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+-                                        () -> attachment.remove());
++                                player.getScheduler().run(CitizensAPI.getPlugin(),
++                                        (task1) -> attachment.remove(), null);
+                             }
+                             return;
+                         }
+@@ -379,14 +379,14 @@ public class CommandTrait extends Trait {
+                 if (command.delay <= 0) {
+                     runnable.run();
+                 } else {
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable, command.delay);
++                    player.getScheduler().runDelayed(CitizensAPI.getPlugin(), task1 -> runnable.run(), null, Math.min(1, command.delay));
+                 }
+             }
+         };
+-        if (Bukkit.isPrimaryThread()) {
++        if (false && Bukkit.isPrimaryThread()) {
+             task.run();
+         } else {
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), task);
++            player.getScheduler().run(CitizensAPI.getPlugin(), task1 -> task.run(), null);
+         }
+     }
+ 
+diff --git a/main/src/main/java/net/citizensnpcs/trait/PacketNPC.java b/main/src/main/java/net/citizensnpcs/trait/PacketNPC.java
+index 0f7211146..5bcbd5140 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/PacketNPC.java
++++ b/main/src/main/java/net/citizensnpcs/trait/PacketNPC.java
+@@ -35,7 +35,8 @@ public class PacketNPC extends Trait {
+     public void onRemove(RemoveReason reason) {
+         if (reason == RemoveReason.REMOVAL) {
+             npc.despawn(DespawnReason.PENDING_RESPAWN);
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++            if (npc.getStoredLocation() == null) return;
++            Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), npc.getStoredLocation(), (task) -> {
+                 if (npc.getStoredLocation() != null) {
+                     npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
+                 }
+diff --git a/main/src/main/java/net/citizensnpcs/trait/PausePathfindingTrait.java b/main/src/main/java/net/citizensnpcs/trait/PausePathfindingTrait.java
+index 4470cfbe6..2c69173bb 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/PausePathfindingTrait.java
++++ b/main/src/main/java/net/citizensnpcs/trait/PausePathfindingTrait.java
+@@ -22,7 +22,7 @@ public class PausePathfindingTrait extends Trait {
+     @Persist("rightclick")
+     private boolean rightclick;
+     private int t;
+-    private int unpauseTaskId = -1;
++    private io.papermc.paper.threadedregions.scheduler.ScheduledTask unpauseTaskId;
+ 
+     public PausePathfindingTrait() {
+         super("pausepathfinding");
+@@ -49,15 +49,15 @@ public class PausePathfindingTrait extends Trait {
+     }
+ 
+     private void pause() {
+-        if (unpauseTaskId != -1) {
+-            Bukkit.getScheduler().cancelTask(unpauseTaskId);
++        if (unpauseTaskId != null) {
++            unpauseTaskId.cancel();
+         }
+         npc.getNavigator().cancelNavigation();
+         npc.getNavigator().setPaused(true);
+-        unpauseTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++        unpauseTaskId = npc.getEntity().getScheduler().runDelayed(CitizensAPI.getPlugin(), (task) -> {
+             NMS.setPitch(npc.getEntity(), 0);
+             npc.getNavigator().setPaused(false);
+-        }, pauseTicks <= 0 ? 20 : pauseTicks);
++        }, null, Math.min(1, pauseTicks <= 0 ? 20 : pauseTicks));
+         t = 0;
+     }
+ 
+@@ -68,7 +68,7 @@ public class PausePathfindingTrait extends Trait {
+     @Override
+     public void run() {
+         if (lockoutDuration > t++ || playerRange == -1 || !npc.isSpawned()
+-                || unpauseTaskId == -1 && !npc.getNavigator().isNavigating())
++                || unpauseTaskId == null && !npc.getNavigator().isNavigating())
+             return;
+ 
+         if (CitizensAPI.getLocationLookup()
+diff --git a/main/src/main/java/net/citizensnpcs/trait/ScoreboardTrait.java b/main/src/main/java/net/citizensnpcs/trait/ScoreboardTrait.java
+index 95d761c1d..d0562c3c4 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/ScoreboardTrait.java
++++ b/main/src/main/java/net/citizensnpcs/trait/ScoreboardTrait.java
+@@ -66,6 +66,7 @@ public class ScoreboardTrait extends Trait {
+     }
+ 
+     public void createTeam(String entityName) {
++        if (true) return; // Not Supported on Folia
+         String teamName = Util.getTeamName(npc.getUniqueId());
+         npc.data().set(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, teamName);
+         Scoreboard scoreboard = Util.getDummyScoreboard();
+@@ -84,6 +85,7 @@ public class ScoreboardTrait extends Trait {
+     }
+ 
+     private Team getTeam() {
++        if (true) return null; // Not Supported on Folia
+         String teamName = npc.data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
+         if (teamName.isEmpty())
+             return null;
+@@ -92,6 +94,7 @@ public class ScoreboardTrait extends Trait {
+ 
+     @Override
+     public void onDespawn(DespawnReason reason) {
++        if (true) return; // Not Supported on Folia
+         previousGlowingColor = null;
+         String name = lastName;
+         String teamName = npc.data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
+@@ -127,7 +130,7 @@ public class ScoreboardTrait extends Trait {
+         if (reason == DespawnReason.REMOVAL || reason == DespawnReason.RELOAD) {
+             cleanup.run();
+         } else {
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), cleanup,
++            npc.getEntity().getScheduler().runDelayed(CitizensAPI.getPlugin(),  task -> cleanup.run(), null,
+                     reason == DespawnReason.DEATH && npc.getEntity() instanceof LivingEntity ? 20 : 2);
+         }
+     }
+diff --git a/main/src/main/java/net/citizensnpcs/trait/ShopTrait.java b/main/src/main/java/net/citizensnpcs/trait/ShopTrait.java
+index 1b3d3c784..bc681f162 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/ShopTrait.java
++++ b/main/src/main/java/net/citizensnpcs/trait/ShopTrait.java
+@@ -921,8 +921,8 @@ public class ShopTrait extends Trait {
+             currentPage = newPage;
+             NPCShopPage page = shop.pages.get(currentPage);
+             if (page.title != null && !page.title.isEmpty()) {
+-                Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
+-                        () -> ctx.setTitle(Placeholders.replace(page.title, player)), 1);
++                player.getScheduler().runDelayed(CitizensAPI.getPlugin(),
++                        (task) -> ctx.setTitle(Placeholders.replace(page.title, player)), null, 1);
+             }
+             for (int i = 0; i < ctx.getInventory().getSize(); i++) {
+                 ctx.getSlot(i).clear();
+diff --git a/main/src/main/java/net/citizensnpcs/trait/shop/OpenShopAction.java b/main/src/main/java/net/citizensnpcs/trait/shop/OpenShopAction.java
+index 75962be7f..053a136c1 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/shop/OpenShopAction.java
++++ b/main/src/main/java/net/citizensnpcs/trait/shop/OpenShopAction.java
+@@ -54,7 +54,7 @@ public class OpenShopAction extends NPCShopAction {
+         // TODO: support hierarchical shops? would need to call InventoryMenu#transition somehow
+         return Transaction.create(() -> shop.canView(player), () -> {
+             player.closeInventory();
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> shop.display(player));
++            player.getScheduler().run(CitizensAPI.getPlugin(), (task) -> shop.display(player), null);
+         }, () -> {
+             // TODO: closeInventory()? transitionBack()?
+         });
+diff --git a/main/src/main/java/net/citizensnpcs/trait/waypoint/GuidedWaypointProvider.java b/main/src/main/java/net/citizensnpcs/trait/waypoint/GuidedWaypointProvider.java
+index eec1377d2..b40409f89 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/waypoint/GuidedWaypointProvider.java
++++ b/main/src/main/java/net/citizensnpcs/trait/waypoint/GuidedWaypointProvider.java
+@@ -132,10 +132,10 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
+                     return;
+                 if (event.getMessage().equalsIgnoreCase("toggle path")) {
+                     event.setCancelled(true);
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), this::togglePath);
++                    Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(), task -> togglePath());
+                 } else if (event.getMessage().equalsIgnoreCase("clear")) {
+                     event.setCancelled(true);
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++                    Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(), (task) -> {
+                         destinations.clear();
+                         guides.clear();
+                         if (showPath) {
+@@ -147,7 +147,7 @@ public class GuidedWaypointProvider implements EnumerableWaypointProvider {
+                     double d = Double.parseDouble(event.getMessage().replace("distance ", "").trim());
+                     if (d <= 0)
+                         return;
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++                    Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(), (task) -> {
+                         distance = (float) d;
+                         Messaging.sendTr(sender, Messages.GUIDED_WAYPOINT_EDITOR_DISTANCE_SET, d);
+                     });
+diff --git a/main/src/main/java/net/citizensnpcs/trait/waypoint/LinearWaypointProvider.java b/main/src/main/java/net/citizensnpcs/trait/waypoint/LinearWaypointProvider.java
+index 1f95b75d5..824dca67d 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/waypoint/LinearWaypointProvider.java
++++ b/main/src/main/java/net/citizensnpcs/trait/waypoint/LinearWaypointProvider.java
+@@ -359,7 +359,7 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
+             String message = event.getMessage();
+             if (message.equalsIgnoreCase("triggers")) {
+                 event.setCancelled(true);
+-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++                Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(), (task) -> {
+                     conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
+                     conversation.addConversationAbandonedListener(e -> {
+                         setPaused(false);
+@@ -369,21 +369,21 @@ public class LinearWaypointProvider implements EnumerableWaypointProvider {
+                 });
+             } else if (message.equalsIgnoreCase("clear")) {
+                 event.setCancelled(true);
+-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), this::clearWaypoints);
++                Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(),  task -> clearWaypoints());
+             } else if (message.equalsIgnoreCase("toggle path") || message.equalsIgnoreCase("markers")) {
+                 event.setCancelled(true);
+-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), this::togglePath);
++                Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(), task -> togglePath());
+             } else if (message.equalsIgnoreCase("cycle")) {
+                 event.setCancelled(true);
+-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++                Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(), (task) -> {
+                     cycle = !cycle;
+                     Messaging.sendTr(event.getPlayer(), cycle ? Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_SET
+                             : Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET);
+                 });
+             } else if (message.equalsIgnoreCase("here")) {
+                 event.setCancelled(true);
+-                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+-                        () -> addWaypoint(player.getLocation()));
++                Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(),
++                        (task) -> addWaypoint(player.getLocation()));
+             }
+         }
+ 
+diff --git a/main/src/main/java/net/citizensnpcs/trait/waypoint/WanderWaypointProvider.java b/main/src/main/java/net/citizensnpcs/trait/waypoint/WanderWaypointProvider.java
+index ab33c40b3..d973f4bd9 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/waypoint/WanderWaypointProvider.java
++++ b/main/src/main/java/net/citizensnpcs/trait/waypoint/WanderWaypointProvider.java
+@@ -112,12 +112,12 @@ public class WanderWaypointProvider implements WaypointProvider {
+                         recalculateTree();
+                     } catch (NumberFormatException ex) {
+                     }
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+-                            () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_RANGE_SET, xrange, yrange));
++                    Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(),
++                            (task) -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_RANGE_SET, xrange, yrange));
+                 } else if (message.startsWith("regions")) {
+                     event.setCancelled(true);
+                     editingRegions = !editingRegions;
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++                    Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(), (task) -> {
+                         if (editingRegions) {
+                             for (Location regionCentre : regionCentres) {
+                                 Entity entity = markers.createMarker(regionCentre, regionCentre);
+@@ -133,11 +133,11 @@ public class WanderWaypointProvider implements WaypointProvider {
+                 } else if (message.startsWith("delay")) {
+                     event.setCancelled(true);
+                     setDelay(Util.parseTicks(message.split(" ")[1]));
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
+-                            () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay));
++                    Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(),
++                            (task) -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay));
+                 } else if (message.startsWith("worldguardregion")) {
+                     event.setCancelled(true);
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++                    Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(), (task) -> {
+                         Object region = null;
+                         String regionId = message.replace("worldguardregion", "").trim();
+                         try {
+@@ -156,7 +156,7 @@ public class WanderWaypointProvider implements WaypointProvider {
+                     });
+                 } else if (message.startsWith("pathfind")) {
+                     event.setCancelled(true);
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++                    Bukkit.getGlobalRegionScheduler().run(CitizensAPI.getPlugin(), (task) -> {
+                         pathfind = !pathfind;
+                         if (currentGoal != null) {
+                             currentGoal.setPathfind(pathfind);
+diff --git a/main/src/main/java/net/citizensnpcs/trait/waypoint/Waypoint.java b/main/src/main/java/net/citizensnpcs/trait/waypoint/Waypoint.java
+index a50f33e14..ca64fe58c 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/waypoint/Waypoint.java
++++ b/main/src/main/java/net/citizensnpcs/trait/waypoint/Waypoint.java
+@@ -114,7 +114,7 @@ public class Waypoint {
+                 continue;
+             }
+             int newStart = i + 1;
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> runTriggers(npc, newStart),
++            Bukkit.getGlobalRegionScheduler().runDelayed(CitizensAPI.getPlugin(), (task) -> runTriggers(npc, newStart),
+                     delay);
+             break;
+         }
+diff --git a/main/src/main/java/net/citizensnpcs/trait/waypoint/triggers/DelayTrigger.java b/main/src/main/java/net/citizensnpcs/trait/waypoint/triggers/DelayTrigger.java
+index 5c0ac995d..953f05a5d 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/waypoint/triggers/DelayTrigger.java
++++ b/main/src/main/java/net/citizensnpcs/trait/waypoint/triggers/DelayTrigger.java
+@@ -22,7 +22,7 @@ public class DelayTrigger implements WaypointTrigger {
+ 
+     private void delay(WaypointProvider provider) {
+         provider.setPaused(true);
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> provider.setPaused(false), delay);
++        Bukkit.getGlobalRegionScheduler().runDelayed(CitizensAPI.getPlugin(), (task) -> provider.setPaused(false), delay);
+     }
+ 
+     @Override
+diff --git a/main/src/main/java/net/citizensnpcs/util/PlayerAnimation.java b/main/src/main/java/net/citizensnpcs/util/PlayerAnimation.java
+index 3bf68a205..083fb066f 100644
+--- a/main/src/main/java/net/citizensnpcs/util/PlayerAnimation.java
++++ b/main/src/main/java/net/citizensnpcs/util/PlayerAnimation.java
+@@ -1,9 +1,11 @@
+ package net.citizensnpcs.util;
+ 
+ import java.util.EnumSet;
++import java.util.Objects;
+ import java.util.Set;
+ import java.util.function.Supplier;
+ 
++import fr.euphyllia.utils.FoliaRunnable;
+ import org.bukkit.Bukkit;
+ import org.bukkit.Material;
+ import org.bukkit.entity.EntityType;
+@@ -69,7 +71,7 @@ public enum PlayerAnimation {
+             final NPC holder = CitizensAPI.getTemporaryNPCRegistry().createNPC(EntityType.ARMOR_STAND, "");
+             holder.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
+             holder.spawn(player.getLocation());
+-            new BukkitRunnable() {
++            new fr.euphyllia.utils.FoliaRunnable(holder.getEntity().getScheduler(), null) {
+                 @Override
+                 public void cancel() {
+                     super.cancel();
+@@ -87,7 +89,7 @@ public enum PlayerAnimation {
+                         NMS.mount(holder.getEntity(), player);
+                     }
+                 }
+-            }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
++            }.runAtFixedRate(CitizensAPI.getPlugin(), 0, 1);
+             return;
+         } else if (this == STOP_SITTING) {
+             if (player instanceof NPCHolder) {
+@@ -114,7 +116,8 @@ public enum PlayerAnimation {
+         } else if (this == STOP_USE_ITEM || this == START_USE_MAINHAND_ITEM || this == START_USE_OFFHAND_ITEM) {
+             NMS.playAnimation(this, player, to.get());
+             if (player.hasMetadata("citizens-using-item-id")) {
+-                Bukkit.getScheduler().cancelTask(player.getMetadata("citizens-using-item-id").get(0).asInt());
++                io.papermc.paper.threadedregions.scheduler.ScheduledTask obj = (io.papermc.paper.threadedregions.scheduler.ScheduledTask) player.getMetadata("citizens-using-item-id").get(0).value();
++                if (obj != null) obj.cancel();
+                 player.removeMetadata("citizens-using-item-id", CitizensAPI.getPlugin());
+             }
+             if (this == STOP_USE_ITEM)
+@@ -125,7 +128,7 @@ public enum PlayerAnimation {
+             if (using != null && BAD_ITEMS_TO_USE.contains(using.getType())
+                     && player.hasMetadata("citizens-using-item-remaining-ticks")) {
+                 int remainingTicks = player.getMetadata("citizens-using-item-remaining-ticks").get(0).asInt();
+-                new BukkitRunnable() {
++                new FoliaRunnable(player.getScheduler(), null) {
+                     @Override
+                     public void run() {
+                         if (!NMS.isValid(player)) {
+@@ -136,10 +139,10 @@ public enum PlayerAnimation {
+                         NMS.playAnimation(PlayerAnimation.this, player, to.get());
+                         if (!player.hasMetadata("citizens-using-item-id")) {
+                             player.setMetadata("citizens-using-item-id",
+-                                    new FixedMetadataValue(CitizensAPI.getPlugin(), getTaskId()));
++                                    new FixedMetadataValue(CitizensAPI.getPlugin(), this));
+                         }
+                     }
+-                }.runTaskTimer(CitizensAPI.getPlugin(), Math.max(0, remainingTicks + 1),
++                }.runAtFixedRate(CitizensAPI.getPlugin(), Math.max(0, remainingTicks + 1),
+                         Math.max(1, remainingTicks + 1));
+             }
+             return;
+diff --git a/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java b/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java
+index 6356b04ac..d845adb94 100644
+--- a/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java
++++ b/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java
+@@ -19,10 +19,14 @@ import net.citizensnpcs.api.util.Messaging;
+ import net.citizensnpcs.npc.ai.NPCHolder;
+ import net.citizensnpcs.trait.PacketNPC;
+ 
+-public class PlayerUpdateTask extends BukkitRunnable {
++public class PlayerUpdateTask extends fr.euphyllia.utils.FoliaRunnable {
+     private final List<PlayerTick> players = Lists.newArrayList();
+     private final Set<UUID> uuids = Sets.newHashSet();
+ 
++    public PlayerUpdateTask() {
++        super(org.bukkit.Bukkit.getGlobalRegionScheduler());
++    }
++
+     @Override
+     public void cancel() {
+         super.cancel();
+diff --git a/main/src/main/java/net/citizensnpcs/util/Util.java b/main/src/main/java/net/citizensnpcs/util/Util.java
+index b20c97966..ceeb3f005 100644
+--- a/main/src/main/java/net/citizensnpcs/util/Util.java
++++ b/main/src/main/java/net/citizensnpcs/util/Util.java
+@@ -81,6 +81,9 @@ public class Util {
+     }
+ 
+     public static <T> T callPossiblySync(Callable<T> callable, boolean sync) {
++        if (true) {
++            throw new UnsupportedOperationException("Not supported");
++        }
+         if (!sync) {
+             try {
+                 return callable.call();
+-- 
+2.47.1.windows.2
+

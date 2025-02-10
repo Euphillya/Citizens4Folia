@@ -1,0 +1,34 @@
+From 8d5b8d02f1d00d25a062929e27a4c77968f91c1b Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Mon, 10 Feb 2025 18:12:06 +0100
+Subject: [PATCH 5/6] Add new class EntityExtends
+
+---
+ .../java/fr/euphyllia/utils/EntityExtends.java    | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+ create mode 100644 src/main/java/fr/euphyllia/utils/EntityExtends.java
+
+diff --git a/src/main/java/fr/euphyllia/utils/EntityExtends.java b/src/main/java/fr/euphyllia/utils/EntityExtends.java
+new file mode 100644
+index 0000000..c09ce77
+--- /dev/null
++++ b/src/main/java/fr/euphyllia/utils/EntityExtends.java
+@@ -0,0 +1,15 @@
++package fr.euphyllia.utils;
++
++import org.bukkit.Location;
++import org.bukkit.entity.Entity;
++import org.bukkit.event.player.PlayerTeleportEvent;
++import org.jetbrains.annotations.NotNull;
++
++import java.util.concurrent.CompletableFuture;
++
++public class EntityExtends {
++
++    public static @NotNull CompletableFuture<Boolean> ASYNC_TELEPORT(Entity entity, Location location, PlayerTeleportEvent.TeleportCause cause) {
++        return entity.teleportAsync(location, cause);
++    }
++}
+-- 
+2.47.1.windows.2
+

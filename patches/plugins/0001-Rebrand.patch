@@ -1,0 +1,102 @@
+From 889f3e9490601f8406fc93ba04c29708dc718527 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Mon, 10 Feb 2025 18:12:06 +0100
+Subject: [PATCH 1/5] Rebrand
+
+---
+ dist/pom.xml                       | 16 ++--------------
+ main/pom.xml                       | 10 ++++++++++
+ main/src/main/resources/plugin.yml |  1 +
+ pom.xml                            |  2 +-
+ 4 files changed, 14 insertions(+), 15 deletions(-)
+
+diff --git a/dist/pom.xml b/dist/pom.xml
+index ca8ad7425..851ef2266 100644
+--- a/dist/pom.xml
++++ b/dist/pom.xml
+@@ -68,13 +68,7 @@
+                     <type>jar</type>
+                     <scope>compile</scope>
+                 </dependency> 
+-                <dependency>
+-                    <groupId>${project.groupId}</groupId>
+-                    <artifactId>citizens-v1_19_R3</artifactId>
+-                    <version>${project.version}</version>
+-                    <type>jar</type>
+-                    <scope>compile</scope>
+-                </dependency>
++                
+                 <dependency>
+                     <groupId>${project.groupId}</groupId>
+                     <artifactId>citizens-v1_20_R4</artifactId>
+@@ -171,13 +165,7 @@
+                     <type>jar</type>
+                     <scope>compile</scope>
+                 </dependency>
+-                <dependency>
+-                    <groupId>${project.groupId}</groupId>
+-                    <artifactId>citizens-v1_19_R3</artifactId>
+-                    <version>${project.version}</version>
+-                    <type>jar</type>
+-                    <scope>compile</scope>
+-                </dependency>
++                
+                 <dependency>
+                     <groupId>${project.groupId}</groupId>
+                     <artifactId>citizens-v1_20_R4</artifactId>
+diff --git a/main/pom.xml b/main/pom.xml
+index df78e1972..9b20475ac 100644
+--- a/main/pom.xml
++++ b/main/pom.xml
+@@ -17,6 +17,10 @@
+         <worldguard.version>7.1.0-SNAPSHOT</worldguard.version>
+     </properties>
+     <repositories>
++        <repository>
++            <id>papermc</id>
++            <url>https://repo.papermc.io/repository/maven-public/</url>
++        </repository>
+         <repository>
+             <id>spigot-repo</id>
+             <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+@@ -47,6 +51,12 @@
+         </repository>
+     </repositories>
+     <dependencies>
++        <dependency>
++            <groupId>io.papermc.paper</groupId>
++            <artifactId>paper-api</artifactId>
++            <version>1.21.4-R0.1-SNAPSHOT</version>
++            <scope>provided</scope>
++        </dependency>
+         <dependency>
+             <groupId>org.spigotmc</groupId>
+             <artifactId>spigot</artifactId>
+diff --git a/main/src/main/resources/plugin.yml b/main/src/main/resources/plugin.yml
+index 6634c66f9..19bd1ac6d 100644
+--- a/main/src/main/resources/plugin.yml
++++ b/main/src/main/resources/plugin.yml
+@@ -5,6 +5,7 @@ version: ${project.version} (build ${BUILD_NUMBER})
+ main: net.citizensnpcs.Citizens
+ website: https://www.citizensnpcs.co
+ api-version: "1.13"
++folia-supported: true
+ libraries:
+   - ch.ethz.globis.phtree:phtree:2.8.1
+   - org.joml:joml:1.10.8
+diff --git a/pom.xml b/pom.xml
+index c02678a9c..17208d8e2 100644
+--- a/pom.xml
++++ b/pom.xml
+@@ -41,7 +41,7 @@
+             </activation>
+             <modules>
+                 <module>main</module> 
+-                <module>v1_19_R3</module>
++
+                 <module>v1_20_R4</module>
+                 <module>v1_21_R3</module>
+                 <module>dist</module>
+-- 
+2.47.1.windows.2
+

@@ -1,0 +1,27 @@
+From 46d72d3dd0327cc9635afe2fae439671d7165409 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Mon, 10 Feb 2025 18:12:07 +0100
+Subject: [PATCH 5/5] Fix spawn in reload
+
+---
+ main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java b/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
+index 4c2821b75..e26802f8d 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
++++ b/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
+@@ -185,7 +185,9 @@ public class CitizensNPC extends AbstractNPC {
+         CurrentLocation spawnLocation = getOrAddTrait(CurrentLocation.class);
+         if (getOrAddTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
+             if (spawnLocation.getLocation() != null) {
+-                spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
++                org.bukkit.Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), spawnLocation.getLocation().getWorld().getSpawnLocation(), task -> {
++                    spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
++                });
+             } else {
+                 Messaging.debug("Tried to spawn", this, "on load but world was null");
+             }
+-- 
+2.47.1.windows.2
+

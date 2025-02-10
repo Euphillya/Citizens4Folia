@@ -1,0 +1,25 @@
+From d71cf428019f59193dc6ae73d185abb4b7346e46 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Mon, 10 Feb 2025 18:12:06 +0100
+Subject: [PATCH 4/6] Replace teleportAsync
+
+---
+ src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java b/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
+index 6b1ca7f..fd7863b 100644
+--- a/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
++++ b/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
+@@ -502,7 +502,7 @@ public abstract class AbstractNPC implements NPC {
+             entity.getScheduler().execute(CitizensAPI.getPlugin(),
+                     () -> entity.teleportAsync(location, cause), null, delay++);
+         } else {
+-            entity.teleport(location, cause);
++            entity.teleportAsync(location, cause);
+         }
+         if (passenger == null)
+             return;
+-- 
+2.47.1.windows.2
+

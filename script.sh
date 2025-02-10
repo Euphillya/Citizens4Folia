@@ -83,13 +83,17 @@ case "$1" in
     updateUpstream)
         case "$2" in
             repo)
+                echo "Mise à jour du repo PLUGINS :"
                 reclone_repo "$REPO_DIR" "$REPO_DIR_PATCH" "$REPO_URL"
                 ;;
             api)
+                echo "Mise à jour du repo API :"
                 reclone_repo "$API_REPO_DIR" "$API_REPO_DIR_PATCH" "$API_REPO_URL"
                 ;;
             both|"")
+                echo "Mise à jour du repo API :"
                 reclone_repo "$API_REPO_DIR" "$API_REPO_DIR_PATCH" "$API_REPO_URL"
+                echo "Mise à jour du repo PLUGINS :"
                 reclone_repo "$REPO_DIR" "$REPO_DIR_PATCH" "$REPO_URL"
                 ;;
             *)
@@ -101,13 +105,17 @@ case "$1" in
     createPatches)
         case "$2" in
             repo)
+                echo "Créations des patches PLUGINS :"
                 create_patches "$REPO_DIR_PATCH" "$PATCHES_DIR" "$BRANCH_GIT_REPO"
                 ;;
             api)
+                echo "Créations des patches API :"
                 create_patches "$API_REPO_DIR_PATCH" "$API_PATCHES_DIR" "$BRANCH_GIT_API"
                 ;;
             both|"")
+                echo "Créations des patches API :"
                 create_patches "$API_REPO_DIR_PATCH" "$API_PATCHES_DIR" "$BRANCH_GIT_API"
+                echo "Créations des patches PLUGINS :"
                 create_patches "$REPO_DIR_PATCH" "$PATCHES_DIR" "$BRANCH_GIT_REPO"
                 ;;
             *)
@@ -119,14 +127,18 @@ case "$1" in
     applyPatches)
         case "$2" in
             repo)
+                echo "Application des patches PLUGINS :"
                 apply_patches "$REPO_DIR_PATCH" "$PATCHES_DIR"
                 ;;
             api)
+                echo "Application des patches API :"
                 apply_patches "$API_REPO_DIR_PATCH" "$API_PATCHES_DIR"
                 ;;
             both|"")
-                apply_patches "$REPO_DIR_PATCH" "$PATCHES_DIR"
+                echo "Application des patches API :"
                 apply_patches "$API_REPO_DIR_PATCH" "$API_PATCHES_DIR"
+                echo "Application des patches PLUGINS :"
+                apply_patches "$REPO_DIR_PATCH" "$PATCHES_DIR"
                 ;;
             *)
                 echo "Option invalide pour applyPatches. Utilisez : repo, api ou both"

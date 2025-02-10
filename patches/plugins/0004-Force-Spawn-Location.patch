@@ -1,0 +1,29 @@
+From f65f6558a3e50d7a3d1dcf49606cccea56aa3f40 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Mon, 10 Feb 2025 18:12:07 +0100
+Subject: [PATCH 4/5] Force Spawn Location
+
+---
+ .../main/java/net/citizensnpcs/commands/NPCCommands.java    | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
+index afcfa7cbc..575383bca 100644
+--- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
++++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
+@@ -946,7 +946,11 @@ public class NPCCommands {
+             msg += " with templates " + builder.toString();
+         }
+         if (!args.hasFlag('u')) {
+-            npc.spawn(spawnLoc, SpawnReason.CREATE);
++            final Location locationSpawn = spawnLoc;
++            final NPC npcFinal = npc;
++            org.bukkit.Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), locationSpawn.getWorld().getSpawnLocation(), task -> {
++                npcFinal.spawn(locationSpawn, SpawnReason.CREATE);
++            });
+         }
+         selector.select(sender, npc);
+         history.add(sender, new CreateNPCHistoryItem(npc));
+-- 
+2.47.1.windows.2
+
