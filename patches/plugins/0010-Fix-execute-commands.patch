@@ -1,0 +1,34 @@
+From a23f1f7f00a02b46f6a6e699983cc639d445fe33 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Mon, 10 Feb 2025 23:24:54 +0100
+Subject: [PATCH 10/10] Fix execute commands
+
+---
+ main/src/main/java/net/citizensnpcs/util/Util.java | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/util/Util.java b/main/src/main/java/net/citizensnpcs/util/Util.java
+index ceeb3f005..b3a39860d 100644
+--- a/main/src/main/java/net/citizensnpcs/util/Util.java
++++ b/main/src/main/java/net/citizensnpcs/util/Util.java
+@@ -468,7 +468,7 @@ public class Util {
+                 + " clicker " + clicker);
+ 
+         if (!player) {
+-            Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand);
++            Bukkit.getGlobalRegionScheduler().execute(CitizensAPI.getPlugin(), () -> Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), interpolatedCommand));
+             return;
+         }
+         boolean wasOp = clicker.isOp();
+@@ -483,7 +483,7 @@ public class Util {
+ 
+                 clicker.sendPluginMessage(CitizensAPI.getPlugin(), "BungeeCord", out.toByteArray());
+             } else {
+-                clicker.chat("/" + interpolatedCommand);
++                clicker.getScheduler().run(CitizensAPI.getPlugin(), task -> clicker.chat("/" + interpolatedCommand), null);
+             }
+         } catch (Throwable t) {
+             t.printStackTrace();
+-- 
+2.47.1.windows.2
+
