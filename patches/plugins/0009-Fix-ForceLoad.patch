@@ -1,0 +1,25 @@
+From a74ca952c74afa9537ac07e41e899826b766b540 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Mon, 10 Feb 2025 22:29:15 +0100
+Subject: [PATCH 9/9] Fix ForceLoad
+
+---
+ main/src/main/java/net/citizensnpcs/util/ChunkCoord.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/util/ChunkCoord.java b/main/src/main/java/net/citizensnpcs/util/ChunkCoord.java
+index a3a25356f..31a1450e8 100644
+--- a/main/src/main/java/net/citizensnpcs/util/ChunkCoord.java
++++ b/main/src/main/java/net/citizensnpcs/util/ChunkCoord.java
+@@ -57,7 +57,7 @@ public class ChunkCoord {
+             return;
+         Chunk chunk = getChunk();
+         if (chunk != null) {
+-            chunk.setForceLoaded(b);
++            org.bukkit.Bukkit.getGlobalRegionScheduler().execute(net.citizensnpcs.api.CitizensAPI.getPlugin(), () -> chunk.setForceLoaded(b));
+         }
+     }
+ 
+-- 
+2.47.1.windows.2
+

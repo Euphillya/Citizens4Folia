@@ -1,0 +1,43 @@
+From f5e5c221e9edc119e1ac0379f89b122bc639a885 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Mon, 10 Feb 2025 22:26:10 +0100
+Subject: [PATCH 8/9] Fix ticket
+
+---
+ .../java/net/citizensnpcs/npc/ai/CitizensNavigator.java     | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
+index 9650fc88a..0c6b878ed 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
++++ b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
+@@ -8,6 +8,7 @@ import java.util.function.Function;
+ import org.bukkit.Bukkit;
+ import org.bukkit.Chunk;
+ import org.bukkit.Location;
++import org.bukkit.World;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.LivingEntity;
+ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+@@ -420,7 +421,7 @@ public class CitizensNavigator implements Navigator, Runnable {
+         if (!SUPPORT_CHUNK_TICKETS || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
+             return;
+ 
+-        Bukkit.getRegionScheduler().runDelayed(CitizensAPI.getPlugin(), executing.getTargetAsLocation(),
++        Bukkit.getGlobalRegionScheduler().runDelayed(CitizensAPI.getPlugin(),
+                 (task) -> updateTicket(isNavigating() ? executing.getTargetAsLocation() : null), 10);
+ 
+         // Location loc = npc.getEntity().getLocation(STATIONARY_LOCATION);
+@@ -536,7 +537,8 @@ public class CitizensNavigator implements Navigator, Runnable {
+ 
+         // switch ticket to the new chunk
+         if (activeTicket != null) {
+-            activeTicket.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin());
++            final Location finalActiveTicket = activeTicket.clone();
++            Bukkit.getRegionScheduler().execute(CitizensAPI.getPlugin(), finalActiveTicket, () -> finalActiveTicket.getChunk().removePluginChunkTicket(CitizensAPI.getPlugin()));
+         }
+         if (target == null) {
+             activeTicket = null;
+-- 
+2.47.1.windows.2
+

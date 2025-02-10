@@ -1,0 +1,32 @@
+From 3274969302a78ec7a38d2dbff517518e081669b4 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Mon, 10 Feb 2025 22:00:40 +0100
+Subject: [PATCH 7/9] Fix Respawn when set Skin
+
+---
+ main/src/main/java/net/citizensnpcs/npc/skin/Skin.java | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/Skin.java b/main/src/main/java/net/citizensnpcs/npc/skin/Skin.java
+index f94b47b3b..46d6d8dc1 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/Skin.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/Skin.java
+@@ -125,10 +125,12 @@ public class Skin {
+         if (!npc.isSpawned())
+             return;
+ 
+-        npc.getEntity().getScheduler().run(CitizensAPI.getPlugin(), (task) -> {
++        org.bukkit.Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), npc.getStoredLocation(), task -> {
+             npc.despawn(DespawnReason.PENDING_RESPAWN);
+-            npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
+-        }, null);
++            org.bukkit.Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), npc.getStoredLocation().getWorld().getSpawnLocation(), task1 -> {
++                npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
++            });
++        });
+     }
+ 
+     private void fetch() {
+-- 
+2.47.1.windows.2
+

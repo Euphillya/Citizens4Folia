@@ -1,0 +1,36 @@
+From 23f4f41d2a173509efaea99008f5b53ebb741dae Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Mon, 10 Feb 2025 21:55:13 +0100
+Subject: [PATCH 6/9] Fix npc sitting
+
+---
+ .../net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
+
+diff --git a/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java b/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java
+index 846eb766c..4e3a341bb 100644
+--- a/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java
++++ b/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java
+@@ -1819,10 +1819,15 @@ public class NMSImpl implements NMSBridge {
+ 
+     @Override
+     public void setStepHeight(org.bukkit.entity.Entity entity, float height) {
+-        Entity handle = getHandle(entity);
+-        if (!(handle instanceof LivingEntity))
+-            return;
+-        ((LivingEntity) handle).getAttribute(Attributes.STEP_HEIGHT).setBaseValue(height);
++        new fr.euphyllia.utils.FoliaRunnable(entity, null) {
++            @Override
++            public void run() {
++                Entity handle = getHandle(entity);
++                if (!(handle instanceof LivingEntity))
++                    return;
++                ((LivingEntity) handle).getAttribute(Attributes.STEP_HEIGHT).setBaseValue(height);
++            }
++        }.run(CitizensAPI.getPlugin());
+     }
+ 
+     @Override
+-- 
+2.47.1.windows.2
+

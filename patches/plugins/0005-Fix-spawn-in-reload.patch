@@ -1,7 +1,7 @@
 From 46d72d3dd0327cc9635afe2fae439671d7165409 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Mon, 10 Feb 2025 18:12:07 +0100
-Subject: [PATCH 5/5] Fix spawn in reload
+Subject: [PATCH 5/9] Fix spawn in reload
 
 ---
  main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java | 4 +++-
