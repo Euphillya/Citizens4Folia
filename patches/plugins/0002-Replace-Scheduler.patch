@@ -1,7 +1,7 @@
 From 10cc5f6ca4df2d870a4260cece80e785dd61072c Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Mon, 10 Feb 2025 18:12:07 +0100
-Subject: [PATCH 02/10] Replace Scheduler
+Subject: [PATCH 02/11] Replace Scheduler
 
 ---
  .../main/java/net/citizensnpcs/Citizens.java  |  8 ++---

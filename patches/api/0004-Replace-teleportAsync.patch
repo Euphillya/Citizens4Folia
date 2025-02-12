@@ -1,7 +1,7 @@
 From d71cf428019f59193dc6ae73d185abb4b7346e46 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Mon, 10 Feb 2025 18:12:06 +0100
-Subject: [PATCH 4/6] Replace teleportAsync
+Subject: [PATCH 4/7] Replace teleportAsync
 
 ---
  src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java | 2 +-

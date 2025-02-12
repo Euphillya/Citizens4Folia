@@ -1,7 +1,7 @@
 From 6bc5bf7c720117e3903fc76aea93228cc8789d6c Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Mon, 10 Feb 2025 18:12:07 +0100
-Subject: [PATCH 03/10] Patch 1.21.4
+Subject: [PATCH 03/11] Patch 1.21.4
 
 ---
  v1_21_R3/pom.xml                              | 19 +++++-

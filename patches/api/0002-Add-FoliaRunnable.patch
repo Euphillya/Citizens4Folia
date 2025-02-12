@@ -1,7 +1,7 @@
 From 35b5335160bf3583bbec97120dc91d4b58ab8be4 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Mon, 10 Feb 2025 18:12:05 +0100
-Subject: [PATCH 2/6] Add FoliaRunnable
+Subject: [PATCH 2/7] Add FoliaRunnable
 
 ---
  .../fr/euphyllia/utils/FoliaRunnable.java     | 303 ++++++++++++++++++

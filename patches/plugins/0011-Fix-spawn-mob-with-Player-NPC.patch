@@ -1,0 +1,60 @@
+From 3b6a792643e76d64a5e6721c68d478cbbb08838b Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Thu, 13 Feb 2025 00:30:36 +0100
+Subject: [PATCH 11/11] Fix spawn mob with Player NPC
+
+---
+ .../java/net/citizensnpcs/commands/NPCCommands.java  | 12 +++++++++---
+ .../main/java/net/citizensnpcs/npc/CitizensNPC.java  | 12 +++++++++---
+ .../net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java  |  3 +++
+ 3 files changed, 21 insertions(+), 6 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
+index 575383bca..76e0a8993 100644
+--- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
++++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
+@@ -948,9 +948,15 @@ public class NPCCommands {
+         if (!args.hasFlag('u')) {
+             final Location locationSpawn = spawnLoc;
+             final NPC npcFinal = npc;
+-            org.bukkit.Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), locationSpawn.getWorld().getSpawnLocation(), task -> {
+-                npcFinal.spawn(locationSpawn, SpawnReason.CREATE);
+-            });
++            if (type.equals(EntityType.PLAYER)) {
++                org.bukkit.Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), locationSpawn.getWorld().getSpawnLocation(), task -> {
++                    npcFinal.spawn(locationSpawn, SpawnReason.CREATE);
++                });
++            } else {
++                org.bukkit.Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), locationSpawn, task -> {
++                    npcFinal.spawn(locationSpawn, SpawnReason.CREATE);
++                });
++            }
+         }
+         selector.select(sender, npc);
+         history.add(sender, new CreateNPCHistoryItem(npc));
+diff --git a/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java b/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
+index e26802f8d..92dcab70a 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
++++ b/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
+@@ -185,9 +185,15 @@ public class CitizensNPC extends AbstractNPC {
+         CurrentLocation spawnLocation = getOrAddTrait(CurrentLocation.class);
+         if (getOrAddTrait(Spawned.class).shouldSpawn() && spawnLocation.getLocation() != null) {
+             if (spawnLocation.getLocation() != null) {
+-                org.bukkit.Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), spawnLocation.getLocation().getWorld().getSpawnLocation(), task -> {
+-                    spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
+-                });
++                if (this.getEntityType().equals(EntityType.PLAYER)) {
++                    org.bukkit.Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), spawnLocation.getLocation().getWorld().getSpawnLocation(), task -> {
++                        spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
++                    });
++                } else {
++                    org.bukkit.Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), spawnLocation.getLocation(), task -> {
++                        spawn(spawnLocation.getLocation(), SpawnReason.RESPAWN);
++                    });
++                }
+             } else {
+                 Messaging.debug("Tried to spawn", this, "on load but world was null");
+             }
+-- 
+2.47.1.windows.2
+
