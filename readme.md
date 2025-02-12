@@ -112,8 +112,7 @@ Want to contribute? Follow these steps:
 ## ❓ Need Help?
 
 Join my **Discord** server to ask questions or report issues:  
-[![Discord](https://img.shields.io/discord/123456789012345678?color=7289DA&label=Join&logo=discord&logoColor=white)](https://discord.gg/uUJQEB7XNN)
-
+[![Join us on Discord](https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2)](https://discord.gg/uUJQEB7XNN)
 ## 📜 License
 
 This project is licensed under **OSL 3.0**, in accordance with the CitizensAPI and Citizens projects. More details can be found in the [LICENSE](LICENSE) file.
