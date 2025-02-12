@@ -1,7 +1,7 @@
-From 23f4f41d2a173509efaea99008f5b53ebb741dae Mon Sep 17 00:00:00 2001
+From af00387883de006f8b1f904b4c44787be969f435 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Mon, 10 Feb 2025 21:55:13 +0100
-Subject: [PATCH 06/11] Fix npc sitting
+Date: Thu, 13 Feb 2025 00:43:45 +0100
+Subject: [PATCH 06/12] Fix npc sitting
 
 ---
  .../net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java | 13 +++++++++----
