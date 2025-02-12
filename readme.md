@@ -115,4 +115,4 @@ Join my **Discord** server to ask questions or report issues:
 [![Join us on Discord](https://discord.com/api/guilds/1196471429936463943/widget.png?style=banner2)](https://discord.gg/uUJQEB7XNN)
 ## 📜 License
 
-This project is licensed under **OSL 3.0**, in accordance with the CitizensAPI and Citizens projects. More details can be found in the [LICENSE](LICENSE) file.
+This project is licensed under **OSL 3.0**, in accordance with the CitizensAPI and Citizens projects. More details can be found in the [LICENSE](LICENSE.txt) file.
