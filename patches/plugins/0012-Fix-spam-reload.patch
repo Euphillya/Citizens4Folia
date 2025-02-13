@@ -1,7 +1,7 @@
 From 867fe44177198fd6b8c0560dee23586300e111b9 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Thu, 13 Feb 2025 00:47:08 +0100
-Subject: [PATCH 12/12] Fix spam reload
+Subject: [PATCH 12/14] Fix spam reload
 
 ---
  .../net/citizensnpcs/nms/v1_21_R3/entity/HumanController.java    | 1 +

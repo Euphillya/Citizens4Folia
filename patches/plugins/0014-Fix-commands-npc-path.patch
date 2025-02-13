@@ -1,0 +1,201 @@
+From 77bbb4d224ae016352ce743316bfc7793e57a7c0 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Thu, 13 Feb 2025 01:33:55 +0100
+Subject: [PATCH 14/14] Fix commands npc path
+
+---
+ .../citizensnpcs/commands/NPCCommands.java    | 40 +++++-----
+ .../npc/ai/CitizensNavigator.java             | 76 +++++++++++--------
+ .../npc/ai/MCNavigationStrategy.java          |  3 -
+ 3 files changed, 66 insertions(+), 53 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
+index dfc999158..712b63b4c 100644
+--- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
++++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
+@@ -949,11 +949,11 @@ public class NPCCommands {
+             final Location locationSpawn = spawnLoc;
+             final NPC npcFinal = npc;
+             if (type.equals(EntityType.PLAYER)) {
+-                org.bukkit.Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), locationSpawn.getWorld().getSpawnLocation(), task -> {
++                Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), locationSpawn.getWorld().getSpawnLocation(), task -> {
+                     npcFinal.spawn(locationSpawn, SpawnReason.CREATE);
+                 });
+             } else {
+-                org.bukkit.Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), locationSpawn, task -> {
++                Bukkit.getRegionScheduler().run(CitizensAPI.getPlugin(), locationSpawn, task -> {
+                     npcFinal.spawn(locationSpawn, SpawnReason.CREATE);
+                 });
+             }
+@@ -2350,27 +2350,33 @@ public class NPCCommands {
+     public void pathto(CommandContext args, CommandSender sender, NPC npc,
+             @Arg(value = 1, completions = { "me", "here", "cursor" }) String option, @Flag("margin") Double margin)
+             throws CommandException {
+-        Location loc = npc.getStoredLocation();
++        java.util.concurrent.atomic.AtomicReference<Location> loc = new java.util.concurrent.atomic.AtomicReference<>();
+         if (args.argsLength() == 2) {
+             if (option.equalsIgnoreCase("me") || option.equalsIgnoreCase("here")) {
+-                loc = args.getSenderLocation();
++                loc.set(args.getSenderLocation());
+             } else if (option.equalsIgnoreCase("cursor")) {
+-                loc = ((Player) sender).getTargetBlockExact(32).getLocation();
++                loc.set(((Player) sender).getTargetBlockExact(32).getLocation());
+             } else
+                 throw new CommandUsageException();
+-        } else {
+-            loc.setX(args.getDouble(1));
+-            loc.setY(args.getDouble(2));
+-            loc.setZ(args.getDouble(3));
+-        }
+-        if (args.hasFlag('s')) {
+-            npc.getNavigator().setStraightLineTarget(loc);
+-        } else {
+-            npc.getNavigator().setTarget(loc);
+-        }
+-        if (margin != null) {
+-            npc.getNavigator().getLocalParameters().distanceMargin(margin);
+         }
++
++        npc.getEntity().getScheduler().run(CitizensAPI.getPlugin(), task -> {
++            if (loc.get() == null) {
++                loc.set(npc.getStoredLocation());
++                loc.get().setX(args.getDouble(1));
++                loc.get().setY(args.getDouble(2));
++                loc.get().setZ(args.getDouble(3));
++            }
++
++            if (args.hasFlag('s')) {
++                npc.getNavigator().setStraightLineTarget(loc.get());
++            } else {
++                npc.getNavigator().setTarget(loc.get());
++            }
++            if (margin != null) {
++                npc.getNavigator().getLocalParameters().distanceMargin(margin);
++            }
++        }, null);
+     }
+ 
+     @Command(
+diff --git a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
+index 0c6b878ed..f85feb1b7 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
++++ b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
+@@ -335,34 +335,36 @@ public class CitizensNavigator implements Navigator, Runnable {
+ 
+     @Override
+     public void setTarget(Function<NavigatorParameters, PathStrategy> strategy) {
+-        if (!npc.isSpawned())
+-            throw new IllegalStateException("npc is not spawned");
+-
+-        if (executing != null) {
+-            stopNavigating(CancelReason.REPLACE);
+-        }
+-        localParams = defaultParams.clone();
++        npc.getEntity().getScheduler().run(CitizensAPI.getPlugin(), task -> {
++            if (!npc.isSpawned())
++                throw new IllegalStateException("npc is not spawned");
+ 
+-        if (localParams.useNewPathfinder()) {
+-            int fallDistance = localParams.fallDistance();
+-            if (fallDistance != -1) {
+-                localParams.examiner(new FallingExaminer(fallDistance));
++            if (executing != null) {
++                stopNavigating(CancelReason.REPLACE);
+             }
+-            if (npc.data().get(NPC.Metadata.PATHFINDER_OPEN_DOORS, Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean())) {
+-                localParams.examiner(new DoorExaminer());
++            localParams = defaultParams.clone();
++
++            if (localParams.useNewPathfinder()) {
++                int fallDistance = localParams.fallDistance();
++                if (fallDistance != -1) {
++                    localParams.examiner(new FallingExaminer(fallDistance));
++                }
++                if (npc.data().get(NPC.Metadata.PATHFINDER_OPEN_DOORS, Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean())) {
++                    localParams.examiner(new DoorExaminer());
++                }
++                if (Setting.NEW_PATHFINDER_CHECK_BOUNDING_BOXES.asBoolean()) {
++                    localParams.examiner(new BoundingBoxExaminer(npc.getEntity()));
++                }
+             }
+-            if (Setting.NEW_PATHFINDER_CHECK_BOUNDING_BOXES.asBoolean()) {
+-                localParams.examiner(new BoundingBoxExaminer(npc.getEntity()));
++            updatePathfindingRange();
++            executing = strategy.apply(localParams);
++            stationaryTicks = 0;
++            if (npc.isSpawned()) {
++                NMS.updateNavigationWorld(npc.getEntity(), npc.getEntity().getWorld());
++                updateTicket(executing.getTargetAsLocation());
+             }
+-        }
+-        updatePathfindingRange();
+-        executing = strategy.apply(localParams);
+-        stationaryTicks = 0;
+-        if (npc.isSpawned()) {
+-            NMS.updateNavigationWorld(npc.getEntity(), npc.getEntity().getWorld());
+-            updateTicket(executing.getTargetAsLocation());
+-        }
+-        Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
++            Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
++        }, null);
+     }
+ 
+     @Override
+@@ -392,15 +394,23 @@ public class CitizensNavigator implements Navigator, Runnable {
+             cancelNavigation();
+             return;
+         }
+-        Location target = targetIn.clone();
+-        setTarget(params -> {
+-            if (npc.isFlyable()) {
+-                return new FlyingAStarNavigationStrategy(npc, target, params);
+-            } else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
+-                return new AStarNavigationStrategy(npc, target, params);
+-            } else {
+-                return new MCNavigationStrategy(npc, target, params);
++        final Location target = targetIn.clone();
++        org.bukkit.Bukkit.getRegionScheduler().execute(CitizensAPI.getPlugin(), target, () -> {
++            Location targetTmp = target;
++            // Prescan for MCNavigationStrategy
++            if (!MinecraftBlockExaminer.canStandIn(targetTmp.getBlock())) {
++                targetTmp = MinecraftBlockExaminer.findValidLocationAbove(targetTmp, 2);
+             }
++            final Location targetFinal = targetTmp;
++            setTarget(params -> {
++                if (npc.isFlyable()) {
++                    return new FlyingAStarNavigationStrategy(npc, target, params);
++                } else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
++                    return new AStarNavigationStrategy(npc, target, params);
++                } else {
++                    return new MCNavigationStrategy(npc, targetFinal, params);
++                }
++            });
+         });
+     }
+ 
+@@ -545,7 +555,7 @@ public class CitizensNavigator implements Navigator, Runnable {
+             return;
+         }
+         activeTicket = target.clone();
+-        activeTicket.getChunk().addPluginChunkTicket(CitizensAPI.getPlugin());
++        org.bukkit.Bukkit.getRegionScheduler().execute(CitizensAPI.getPlugin(), activeTicket, () ->  activeTicket.getChunk().addPluginChunkTicket(CitizensAPI.getPlugin()));
+     }
+ 
+     private static boolean SUPPORT_CHUNK_TICKETS = true;
+diff --git a/main/src/main/java/net/citizensnpcs/npc/ai/MCNavigationStrategy.java b/main/src/main/java/net/citizensnpcs/npc/ai/MCNavigationStrategy.java
+index 886a61f17..cf920f4c4 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/ai/MCNavigationStrategy.java
++++ b/main/src/main/java/net/citizensnpcs/npc/ai/MCNavigationStrategy.java
+@@ -34,9 +34,6 @@ public class MCNavigationStrategy extends AbstractPathStrategy {
+ 
+     MCNavigationStrategy(NPC npc, Location dest, NavigatorParameters params) {
+         super(TargetType.LOCATION);
+-        if (!MinecraftBlockExaminer.canStandIn(dest.getBlock())) {
+-            dest = MinecraftBlockExaminer.findValidLocationAbove(dest, 2);
+-        }
+         target = Util.getCenterLocation(dest.getBlock());
+         parameters = params;
+         entity = npc.getEntity();
+-- 
+2.47.1.windows.2
+

@@ -1,7 +1,7 @@
 From 12bbad7923d2df0002040483999269a76546c88e Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Thu, 13 Feb 2025 00:43:44 +0100
-Subject: [PATCH 01/12] Rebrand
+Subject: [PATCH 01/14] Rebrand
 
 ---
  dist/pom.xml                       | 16 ++--------------

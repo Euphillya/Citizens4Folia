@@ -1,0 +1,29 @@
+From 0fee7d9f95f3766726616a6859840366ddb26d60 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Thu, 13 Feb 2025 01:02:29 +0100
+Subject: [PATCH 13/14] Fix select NPC out of region
+
+---
+ .../main/java/net/citizensnpcs/commands/NPCCommands.java    | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
+index 76e0a8993..dfc999158 100644
+--- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
++++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
+@@ -2861,8 +2861,10 @@ public class NPCCommands {
+                 throw new CommandException(Messages.NPC_NOT_FOUND);
+             if (npc != null && toSelect.getId() == npc.getId())
+                 throw new CommandException(Messages.NPC_ALREADY_SELECTED);
+-            selector.select(sender, toSelect);
+-            Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
++            toSelect.getEntity().getScheduler().run(CitizensAPI.getPlugin(), task -> {
++                selector.select(sender, toSelect);
++                Messaging.sendWithNPC(sender, Setting.SELECTION_MESSAGE.asString(), toSelect);
++            }, null);
+         };
+ 
+         NPCRegistry registry = registryName != null ? CitizensAPI.getNamedNPCRegistry(registryName)
+-- 
+2.47.1.windows.2
+

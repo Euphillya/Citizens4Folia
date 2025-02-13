@@ -1,7 +1,7 @@
 From f7dbd65192d264f34fb8a69e9cae0ac50671ffbd Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Thu, 13 Feb 2025 00:43:45 +0100
-Subject: [PATCH 08/12] Fix ticket
+Subject: [PATCH 08/14] Fix ticket
 
 ---
  .../java/net/citizensnpcs/npc/ai/CitizensNavigator.java     | 6 ++++--

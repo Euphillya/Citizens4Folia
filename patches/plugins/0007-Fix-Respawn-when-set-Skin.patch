@@ -1,7 +1,7 @@
 From 87dfd4be77585281431bbb0fb30c143f23559ddd Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Thu, 13 Feb 2025 00:43:45 +0100
-Subject: [PATCH 07/12] Fix Respawn when set Skin
+Subject: [PATCH 07/14] Fix Respawn when set Skin
 
 ---
  main/src/main/java/net/citizensnpcs/npc/skin/Skin.java | 8 +++++---
