@@ -1,6 +1,6 @@
-From 97a31187006b5390f14b658a0754073338e9e7f6 Mon Sep 17 00:00:00 2001
+From e06413b439fba59e89c8da7ea01126929320aa64 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Thu, 13 Feb 2025 00:43:44 +0100
+Date: Thu, 13 Feb 2025 03:42:02 +0100
 Subject: [PATCH 03/14] Patch 1.21.4
 
 ---
@@ -217,7 +217,7 @@ index 3ac83f89a..a0c855237 100644
              if (cancelled)
                  return;
 diff --git a/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java b/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java
-index 8e4623068..846eb766c 100644
+index 8e4623068..6d0636d71 100644
 --- a/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java
 +++ b/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java
 @@ -1408,8 +1408,45 @@ public class NMSImpl implements NMSBridge {
@@ -311,7 +311,7 @@ index 8e4623068..846eb766c 100644
 +                    }
                  }
 -            }, 84);
-+            }.runDelayed(CitizensAPI.getPlugin(), 134);
++            }.runDelayed(CitizensAPI.getPlugin(), 84);
          } else {
              warden.setPose(Pose.STANDING);
          }

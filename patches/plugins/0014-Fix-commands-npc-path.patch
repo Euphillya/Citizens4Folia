@@ -1,6 +1,6 @@
-From 77bbb4d224ae016352ce743316bfc7793e57a7c0 Mon Sep 17 00:00:00 2001
+From a6e71543dfbfa27a4593e2ae2097309bfc731727 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Thu, 13 Feb 2025 01:33:55 +0100
+Date: Thu, 13 Feb 2025 03:42:05 +0100
 Subject: [PATCH 14/14] Fix commands npc path
 
 ---
@@ -77,10 +77,10 @@ index dfc999158..712b63b4c 100644
  
      @Command(
 diff --git a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
-index 0c6b878ed..f85feb1b7 100644
+index 510d1df98..dfbe128d0 100644
 --- a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
 +++ b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
-@@ -335,34 +335,36 @@ public class CitizensNavigator implements Navigator, Runnable {
+@@ -334,34 +334,36 @@ public class CitizensNavigator implements Navigator, Runnable {
  
      @Override
      public void setTarget(Function<NavigatorParameters, PathStrategy> strategy) {
@@ -141,7 +141,7 @@ index 0c6b878ed..f85feb1b7 100644
      }
  
      @Override
-@@ -392,15 +394,23 @@ public class CitizensNavigator implements Navigator, Runnable {
+@@ -391,15 +393,23 @@ public class CitizensNavigator implements Navigator, Runnable {
              cancelNavigation();
              return;
          }
@@ -173,7 +173,7 @@ index 0c6b878ed..f85feb1b7 100644
          });
      }
  
-@@ -545,7 +555,7 @@ public class CitizensNavigator implements Navigator, Runnable {
+@@ -544,7 +554,7 @@ public class CitizensNavigator implements Navigator, Runnable {
              return;
          }
          activeTicket = target.clone();
