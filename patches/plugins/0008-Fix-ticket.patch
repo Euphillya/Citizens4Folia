@@ -1,7 +1,7 @@
-From 2927def61afa2f203d6ff3058259b2dcd2fb64d3 Mon Sep 17 00:00:00 2001
+From ae899144e2aee58d3b16954f8cc18e11e6d786c7 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Thu, 13 Feb 2025 03:42:03 +0100
-Subject: [PATCH 08/14] Fix ticket
+Date: Mon, 17 Feb 2025 23:51:38 +0100
+Subject: [PATCH 08/15] Fix ticket
 
 ---
  .../main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java | 5 +++--
@@ -31,5 +31,5 @@ index 9650fc88a..510d1df98 100644
          if (target == null) {
              activeTicket = null;
 -- 
-2.47.1.windows.2
+2.48.1.windows.1
 
