@@ -1,6 +1,6 @@
-From 6e77a2a3558552dc46ff00af1bb276168ecd9870 Mon Sep 17 00:00:00 2001
+From 2c893bbd0f6baa8badd7075217e4f6d7b75e1b39 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Mon, 17 Feb 2025 23:51:37 +0100
+Date: Fri, 21 Feb 2025 00:01:57 +0100
 Subject: [PATCH 06/16] Fix npc sitting
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 06/16] Fix npc sitting
  1 file changed, 9 insertions(+), 4 deletions(-)
 
 diff --git a/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java b/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java
-index 6d0636d71..e34927bc6 100644
+index e4aea75e5..1335e6626 100644
 --- a/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java
 +++ b/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java
 @@ -1819,10 +1819,15 @@ public class NMSImpl implements NMSBridge {

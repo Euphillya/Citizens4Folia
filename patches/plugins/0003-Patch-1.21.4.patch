@@ -1,6 +1,6 @@
-From 6ec6501dc57f7d7eb9052420d95907a523049fb9 Mon Sep 17 00:00:00 2001
+From dc51189bebaa39293fe772fc909c3f94af39ee64 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Mon, 17 Feb 2025 23:51:36 +0100
+Date: Fri, 21 Feb 2025 00:01:55 +0100
 Subject: [PATCH 03/16] Patch 1.21.4
 
 ---
@@ -217,7 +217,7 @@ index 3ac83f89a..a0c855237 100644
              if (cancelled)
                  return;
 diff --git a/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java b/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java
-index 8e4623068..6d0636d71 100644
+index 868db9687..e4aea75e5 100644
 --- a/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java
 +++ b/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java
 @@ -1408,8 +1408,45 @@ public class NMSImpl implements NMSBridge {

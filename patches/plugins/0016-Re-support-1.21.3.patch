@@ -1,7 +1,7 @@
-From da845b1db68cd80c5de22c164e3fc4515ba2ffb7 Mon Sep 17 00:00:00 2001
+From 3d165589dac71ea7bc2166e99ff32b17b7358b32 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Thu, 20 Feb 2025 23:58:40 +0100
-Subject: [PATCH 16/16] Re-support 1.21.3
+Date: Fri, 21 Feb 2025 00:02:02 +0100
+Subject: [PATCH 16/16] Re support 1.21.3
 
 ---
  dist/pom.xml                                  |   21 +
