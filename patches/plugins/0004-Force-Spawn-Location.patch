@@ -1,7 +1,7 @@
 From b7da3acd653f6f3bd52688af15f9f6810a3d4717 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Mon, 17 Feb 2025 23:51:36 +0100
-Subject: [PATCH 04/15] Force Spawn Location
+Subject: [PATCH 04/16] Force Spawn Location
 
 ---
  .../main/java/net/citizensnpcs/commands/NPCCommands.java    | 6 +++++-

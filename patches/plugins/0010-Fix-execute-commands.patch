@@ -1,7 +1,7 @@
 From e92a932888b19b03dcbd2771b03b829f239ef454 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Mon, 17 Feb 2025 23:51:38 +0100
-Subject: [PATCH 10/15] Fix execute commands
+Subject: [PATCH 10/16] Fix execute commands
 
 ---
  main/src/main/java/net/citizensnpcs/util/Util.java | 4 ++--

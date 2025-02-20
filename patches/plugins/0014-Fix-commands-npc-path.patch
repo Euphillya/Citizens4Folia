@@ -1,7 +1,7 @@
 From 07e1ff5ec1a5915e6380a07fb121b54406ecfca1 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Mon, 17 Feb 2025 23:51:39 +0100
-Subject: [PATCH 14/15] Fix commands npc path
+Subject: [PATCH 14/16] Fix commands npc path
 
 ---
  .../citizensnpcs/commands/NPCCommands.java    | 40 +++++-----

@@ -1,7 +1,7 @@
 From 8a2ea025606349caf792be629e09da828addfc90 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Mon, 17 Feb 2025 23:51:39 +0100
-Subject: [PATCH 13/15] Fix select NPC out of region
+Subject: [PATCH 13/16] Fix select NPC out of region
 
 ---
  .../main/java/net/citizensnpcs/commands/NPCCommands.java    | 6 ++++--

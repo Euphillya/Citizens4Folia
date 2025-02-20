@@ -1,7 +1,7 @@
 From 6354e7c01fb8ecf9fdf3e3f7bfe64fba68518981 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Mon, 17 Feb 2025 23:51:38 +0100
-Subject: [PATCH 11/15] Fix spawn mob with Player NPC
+Subject: [PATCH 11/16] Fix spawn mob with Player NPC
 
 ---
  .../java/net/citizensnpcs/commands/NPCCommands.java  | 12 +++++++++---

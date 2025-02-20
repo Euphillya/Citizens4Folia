@@ -1,7 +1,7 @@
 From bc45ecf369bf9d5dd4d32d60927dd87681950e7d Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Mon, 17 Feb 2025 23:59:46 +0100
-Subject: [PATCH 15/15] Change teleport to teleportAsync
+Subject: [PATCH 15/16] Change teleport to teleportAsync
 
 ---
  main/src/main/java/net/citizensnpcs/EventListen.java      | 6 +++---
