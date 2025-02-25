@@ -1,6 +1,6 @@
-From c35295dde2b4c2f83575209d24928ded84999c0b Mon Sep 17 00:00:00 2001
+From 4385a9c4775e4646f32f9cb9175570e93ef0e51f Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 21 Feb 2025 00:01:52 +0100
+Date: Tue, 25 Feb 2025 03:48:40 +0100
 Subject: [PATCH 4/7] Replace teleportAsync
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 4/7] Replace teleportAsync
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java b/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
-index 6b1ca7f..fd7863b 100644
+index 6b1ca7f9..fd7863ba 100644
 --- a/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
 +++ b/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
 @@ -502,7 +502,7 @@ public abstract class AbstractNPC implements NPC {

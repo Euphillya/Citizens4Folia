@@ -1,6 +1,6 @@
-From 2ea82b247372d47aa4eeb264b499b88c7cef797c Mon Sep 17 00:00:00 2001
+From d95715fa27b542437c4b5c6649e3eb26c9799a00 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 21 Feb 2025 00:02:01 +0100
+Date: Tue, 25 Feb 2025 03:48:45 +0100
 Subject: [PATCH 15/16] Change teleport to teleportAsync
 
 ---
@@ -11,10 +11,10 @@ Subject: [PATCH 15/16] Change teleport to teleportAsync
  4 files changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/EventListen.java b/main/src/main/java/net/citizensnpcs/EventListen.java
-index 22edc7bef..0b156ffab 100644
+index eee472fc0..ccacf7b70 100644
 --- a/main/src/main/java/net/citizensnpcs/EventListen.java
 +++ b/main/src/main/java/net/citizensnpcs/EventListen.java
-@@ -743,7 +743,7 @@ public class EventListen implements Listener {
+@@ -745,7 +745,7 @@ public class EventListen implements Listener {
              event.setCancelled(true);
              event.getPlayer().getScheduler().runDelayed(plugin, (task) -> {
                  npc.data().set("citizens-force-teleporting", true);
@@ -23,7 +23,7 @@ index 22edc7bef..0b156ffab 100644
                  npc.data().remove("citizens-force-teleporting");
              }, null, Math.max(1, Setting.PLAYER_TELEPORT_DELAY.asTicks()));
          }
-@@ -935,11 +935,11 @@ public class EventListen implements Listener {
+@@ -937,11 +937,11 @@ public class EventListen implements Listener {
                      if (!npcMoveEvent.isCancelled()) {
                          final Location eventTo = npcMoveEvent.getTo();
                          if (!to.equals(eventTo)) {
@@ -38,10 +38,10 @@ index 22edc7bef..0b156ffab 100644
                  } catch (Throwable ex) {
                      ex.printStackTrace();
 diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-index 712b63b4c..a074a30f6 100644
+index ec3899a7b..3edbf9a47 100644
 --- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
 +++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-@@ -3492,7 +3492,7 @@ public class NPCCommands {
+@@ -3520,7 +3520,7 @@ public class NPCCommands {
              to = to.clone().add(to.getDirection().setY(0));
              to.setDirection(to.getDirection().multiply(-1)).setPitch(0);
          }
@@ -50,7 +50,7 @@ index 712b63b4c..a074a30f6 100644
          Messaging.sendTr(player, Messages.TELEPORTED_TO_NPC, npc.getName());
      }
  
-@@ -3593,7 +3593,7 @@ public class NPCCommands {
+@@ -3621,7 +3621,7 @@ public class NPCCommands {
              throw new CommandException(Messages.FROM_ENTITY_NOT_FOUND);
          if (to == null)
              throw new CommandException(Messages.TPTO_ENTITY_NOT_FOUND);

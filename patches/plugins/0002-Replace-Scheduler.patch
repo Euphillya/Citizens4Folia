@@ -1,6 +1,6 @@
-From 6302591e5095113a8745a863f8453a2085d796ae Mon Sep 17 00:00:00 2001
+From 5e83161109278a35aca61d060800ebcf275868ae Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 21 Feb 2025 00:01:55 +0100
+Date: Tue, 25 Feb 2025 03:48:41 +0100
 Subject: [PATCH 02/16] Replace Scheduler
 
 ---
@@ -34,7 +34,7 @@ Subject: [PATCH 02/16] Replace Scheduler
  27 files changed, 119 insertions(+), 99 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/Citizens.java b/main/src/main/java/net/citizensnpcs/Citizens.java
-index e51912905..a49688b51 100644
+index 871ea4634..511d56a90 100644
 --- a/main/src/main/java/net/citizensnpcs/Citizens.java
 +++ b/main/src/main/java/net/citizensnpcs/Citizens.java
 @@ -344,7 +344,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
@@ -74,7 +74,7 @@ index e51912905..a49688b51 100644
          }
      }
 diff --git a/main/src/main/java/net/citizensnpcs/EventListen.java b/main/src/main/java/net/citizensnpcs/EventListen.java
-index 5ed08ba2d..22edc7bef 100644
+index 1174b34a1..eee472fc0 100644
 --- a/main/src/main/java/net/citizensnpcs/EventListen.java
 +++ b/main/src/main/java/net/citizensnpcs/EventListen.java
 @@ -266,7 +266,7 @@ public class EventListen implements Listener {
@@ -95,7 +95,7 @@ index 5ed08ba2d..22edc7bef 100644
              if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
                  npc.spawn(location, SpawnReason.TIMED_RESPAWN);
              }
-@@ -541,7 +541,7 @@ public class EventListen implements Listener {
+@@ -543,7 +543,7 @@ public class EventListen implements Listener {
          }
          if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
              HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
@@ -104,7 +104,7 @@ index 5ed08ba2d..22edc7bef 100644
          }
      }
  
-@@ -554,12 +554,12 @@ public class EventListen implements Listener {
+@@ -556,12 +556,12 @@ public class EventListen implements Listener {
              NMS.sendPositionUpdate(tracker, ImmutableList.of(event.getPlayer()), false, null, null,
                      NMS.getHeadYaw(tracker));
              if (resetYaw) {
@@ -120,7 +120,7 @@ index 5ed08ba2d..22edc7bef 100644
              if (!tracker.isValid() || !event.getPlayer().isValid())
                  return;
  
-@@ -569,7 +569,7 @@ public class EventListen implements Listener {
+@@ -571,7 +571,7 @@ public class EventListen implements Listener {
              if (resetYaw) {
                  PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer());
              }
@@ -129,7 +129,7 @@ index 5ed08ba2d..22edc7bef 100644
      }
  
      @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-@@ -609,10 +609,10 @@ public class EventListen implements Listener {
+@@ -611,10 +611,10 @@ public class EventListen implements Listener {
          if (plugin.getNPCRegistry().getNPC(event.getPlayer()) == null)
              return;
  
@@ -142,7 +142,7 @@ index 5ed08ba2d..22edc7bef 100644
          // on teleport, player NPCs are added to the server player list. this is
          // undesirable as player NPCs are not real players and confuse plugins.
      }
-@@ -672,8 +672,8 @@ public class EventListen implements Listener {
+@@ -674,8 +674,8 @@ public class EventListen implements Listener {
              if (SUPPORT_STOP_USE_ITEM) {
                  try {
                      PlayerAnimation.STOP_USE_ITEM.play(player);
@@ -153,7 +153,7 @@ index 5ed08ba2d..22edc7bef 100644
                  } catch (UnsupportedOperationException e) {
                      SUPPORT_STOP_USE_ITEM = false;
                  }
-@@ -741,11 +741,11 @@ public class EventListen implements Listener {
+@@ -743,11 +743,11 @@ public class EventListen implements Listener {
          if (event.getCause() == TeleportCause.PLUGIN && npc != null && !npc.data().has("citizens-force-teleporting")
                  && Setting.PLAYER_TELEPORT_DELAY.asTicks() > 0) {
              event.setCancelled(true);
@@ -167,7 +167,7 @@ index 5ed08ba2d..22edc7bef 100644
          }
          skinUpdateTracker.updatePlayer(event.getPlayer(), 15, true);
      }
-@@ -781,7 +781,7 @@ public class EventListen implements Listener {
+@@ -783,7 +783,7 @@ public class EventListen implements Listener {
          if (!(event.getEntity() instanceof FishHook))
              return;
          NMS.removeHookIfNecessary((FishHook) event.getEntity());
@@ -176,7 +176,7 @@ index 5ed08ba2d..22edc7bef 100644
              int n = 0;
  
              @Override
-@@ -792,7 +792,7 @@ public class EventListen implements Listener {
+@@ -794,7 +794,7 @@ public class EventListen implements Listener {
                  }
                  NMS.removeHookIfNecessary((FishHook) event.getEntity());
              }
@@ -185,7 +185,7 @@ index 5ed08ba2d..22edc7bef 100644
      }
  
      @EventHandler
-@@ -935,11 +935,11 @@ public class EventListen implements Listener {
+@@ -937,11 +937,11 @@ public class EventListen implements Listener {
                      if (!npcMoveEvent.isCancelled()) {
                          final Location eventTo = npcMoveEvent.getTo();
                          if (!to.equals(eventTo)) {
@@ -199,7 +199,7 @@ index 5ed08ba2d..22edc7bef 100644
                      }
                  } catch (Throwable ex) {
                      ex.printStackTrace();
-@@ -1047,7 +1047,7 @@ public class EventListen implements Listener {
+@@ -1049,7 +1049,7 @@ public class EventListen implements Listener {
          }
          if (loadChunk) {
              Messaging.idebug(() -> Joiner.on(' ').join("Loading chunk in 10 ticks due to forced chunk load at", coord));
@@ -222,10 +222,10 @@ index cb5091f08..aec4b75bc 100644
                  message -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData,
                  logResponseStatusText);
 diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-index 881fd18f3..afcfa7cbc 100644
+index 8e9bdb5e6..cd0dab380 100644
 --- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
 +++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-@@ -871,11 +871,11 @@ public class NPCCommands {
+@@ -890,11 +890,11 @@ public class NPCCommands {
          }
          if (temporaryDuration != null) {
              NPC temp = npc;
@@ -239,7 +239,7 @@ index 881fd18f3..afcfa7cbc 100644
          }
          npc.getOrAddTrait(MobType.class).setType(type);
  
-@@ -3078,15 +3078,15 @@ public class NPCCommands {
+@@ -3106,15 +3106,15 @@ public class NPCCommands {
              return;
          } else if (url != null || file != null) {
              Messaging.sendTr(sender, Messages.FETCHING_SKIN, url == null ? file : url);
@@ -258,7 +258,7 @@ index 881fd18f3..afcfa7cbc 100644
                              return;
                          }
                          data = MojangSkinGenerator.generateFromPNG(Files.readAllBytes(skin.toPath()),
-@@ -3100,19 +3100,19 @@ public class NPCCommands {
+@@ -3128,19 +3128,19 @@ public class NPCCommands {
                      String textureEncoded = (String) texture.get("value");
                      String signature = (String) texture.get("signature");
  
@@ -650,7 +650,7 @@ index 95d761c1d..d0562c3c4 100644
          }
      }
 diff --git a/main/src/main/java/net/citizensnpcs/trait/ShopTrait.java b/main/src/main/java/net/citizensnpcs/trait/ShopTrait.java
-index 1b3d3c784..bc681f162 100644
+index cb7edc933..77b056a50 100644
 --- a/main/src/main/java/net/citizensnpcs/trait/ShopTrait.java
 +++ b/main/src/main/java/net/citizensnpcs/trait/ShopTrait.java
 @@ -921,8 +921,8 @@ public class ShopTrait extends Trait {
@@ -744,10 +744,10 @@ index 1f95b75d5..824dca67d 100644
          }
  
 diff --git a/main/src/main/java/net/citizensnpcs/trait/waypoint/WanderWaypointProvider.java b/main/src/main/java/net/citizensnpcs/trait/waypoint/WanderWaypointProvider.java
-index ab33c40b3..d973f4bd9 100644
+index f23842a4c..3e96d212a 100644
 --- a/main/src/main/java/net/citizensnpcs/trait/waypoint/WanderWaypointProvider.java
 +++ b/main/src/main/java/net/citizensnpcs/trait/waypoint/WanderWaypointProvider.java
-@@ -112,12 +112,12 @@ public class WanderWaypointProvider implements WaypointProvider {
+@@ -110,12 +110,12 @@ public class WanderWaypointProvider implements WaypointProvider {
                          recalculateTree();
                      } catch (NumberFormatException ex) {
                      }
@@ -763,7 +763,7 @@ index ab33c40b3..d973f4bd9 100644
                          if (editingRegions) {
                              for (Location regionCentre : regionCentres) {
                                  Entity entity = markers.createMarker(regionCentre, regionCentre);
-@@ -133,11 +133,11 @@ public class WanderWaypointProvider implements WaypointProvider {
+@@ -131,11 +131,11 @@ public class WanderWaypointProvider implements WaypointProvider {
                  } else if (message.startsWith("delay")) {
                      event.setCancelled(true);
                      setDelay(Util.parseTicks(message.split(" ")[1]));
@@ -778,7 +778,7 @@ index ab33c40b3..d973f4bd9 100644
                          Object region = null;
                          String regionId = message.replace("worldguardregion", "").trim();
                          try {
-@@ -156,7 +156,7 @@ public class WanderWaypointProvider implements WaypointProvider {
+@@ -154,7 +154,7 @@ public class WanderWaypointProvider implements WaypointProvider {
                      });
                  } else if (message.startsWith("pathfind")) {
                      event.setCancelled(true);

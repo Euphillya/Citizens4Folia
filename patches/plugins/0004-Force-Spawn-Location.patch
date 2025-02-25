@@ -1,6 +1,6 @@
-From 0ebf0192910e918f1a938e511e1438388450166a Mon Sep 17 00:00:00 2001
+From 8efb8fc51bcf887a48f2c48617691b5faed65125 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 21 Feb 2025 00:01:56 +0100
+Date: Tue, 25 Feb 2025 03:48:42 +0100
 Subject: [PATCH 04/16] Force Spawn Location
 
 ---
@@ -8,10 +8,10 @@ Subject: [PATCH 04/16] Force Spawn Location
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-index afcfa7cbc..575383bca 100644
+index cd0dab380..403820051 100644
 --- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
 +++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-@@ -946,7 +946,11 @@ public class NPCCommands {
+@@ -965,7 +965,11 @@ public class NPCCommands {
              msg += " with templates " + builder.toString();
          }
          if (!args.hasFlag('u')) {

@@ -1,6 +1,6 @@
-From 6e57bf4adc3510fb4c2b815b8abb611e3ba9422d Mon Sep 17 00:00:00 2001
+From 3dbf6981d6a90d408003e669b8ad37917883c6ea Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 21 Feb 2025 00:01:53 +0100
+Date: Tue, 25 Feb 2025 03:48:40 +0100
 Subject: [PATCH 5/7] Add new class EntityExtends
 
 ---
@@ -10,7 +10,7 @@ Subject: [PATCH 5/7] Add new class EntityExtends
 
 diff --git a/src/main/java/fr/euphyllia/utils/EntityExtends.java b/src/main/java/fr/euphyllia/utils/EntityExtends.java
 new file mode 100644
-index 0000000..c09ce77
+index 00000000..c09ce774
 --- /dev/null
 +++ b/src/main/java/fr/euphyllia/utils/EntityExtends.java
 @@ -0,0 +1,15 @@

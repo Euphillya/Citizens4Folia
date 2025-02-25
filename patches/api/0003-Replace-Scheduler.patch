@@ -1,6 +1,6 @@
-From a275156be3f37baaaa9b4e799adb43cfcc1996bd Mon Sep 17 00:00:00 2001
+From 2c885e1e1ab4f313213c6e4ab759e4e9d90fe1c6 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 21 Feb 2025 00:01:52 +0100
+Date: Tue, 25 Feb 2025 03:48:39 +0100
 Subject: [PATCH 3/7] Replace Scheduler
 
 ---
@@ -13,7 +13,7 @@ Subject: [PATCH 3/7] Replace Scheduler
  6 files changed, 21 insertions(+), 13 deletions(-)
 
 diff --git a/src/main/java/net/citizensnpcs/api/LocationLookup.java b/src/main/java/net/citizensnpcs/api/LocationLookup.java
-index 82fa97c..7b0d4d4 100644
+index 82fa97c2..7b0d4d4c 100644
 --- a/src/main/java/net/citizensnpcs/api/LocationLookup.java
 +++ b/src/main/java/net/citizensnpcs/api/LocationLookup.java
 @@ -31,7 +31,7 @@ import ch.ethz.globis.phtree.PhTreeF;
@@ -62,7 +62,7 @@ index 82fa97c..7b0d4d4 100644
  
      public void onWorldUnload(WorldUnloadEvent event) {
 diff --git a/src/main/java/net/citizensnpcs/api/astar/pathfinder/AsyncChunkSnapshotBlockSource.java b/src/main/java/net/citizensnpcs/api/astar/pathfinder/AsyncChunkSnapshotBlockSource.java
-index b7011d2..410bf1e 100644
+index b7011d21..410bf1e7 100644
 --- a/src/main/java/net/citizensnpcs/api/astar/pathfinder/AsyncChunkSnapshotBlockSource.java
 +++ b/src/main/java/net/citizensnpcs/api/astar/pathfinder/AsyncChunkSnapshotBlockSource.java
 @@ -23,6 +23,13 @@ public class AsyncChunkSnapshotBlockSource extends CachingChunkBlockSource<Chunk
@@ -80,7 +80,7 @@ index b7011d2..410bf1e 100644
              if (!Bukkit.isPrimaryThread()) {
                  return Bukkit.getScheduler().callSyncMethod(null, call).get();
 diff --git a/src/main/java/net/citizensnpcs/api/astar/pathfinder/DoorExaminer.java b/src/main/java/net/citizensnpcs/api/astar/pathfinder/DoorExaminer.java
-index 7ccfbd0..f120595 100644
+index 7ccfbd07..f120595f 100644
 --- a/src/main/java/net/citizensnpcs/api/astar/pathfinder/DoorExaminer.java
 +++ b/src/main/java/net/citizensnpcs/api/astar/pathfinder/DoorExaminer.java
 @@ -86,7 +86,7 @@ public class DoorExaminer implements BlockExaminer {
@@ -102,7 +102,7 @@ index 7ccfbd0..f120595 100644
  
          private void open(NPC npc, Block point, Material type) {
 diff --git a/src/main/java/net/citizensnpcs/api/gui/InputMenus.java b/src/main/java/net/citizensnpcs/api/gui/InputMenus.java
-index cb2bb58..96e1291 100644
+index cb2bb588..96e1291c 100644
 --- a/src/main/java/net/citizensnpcs/api/gui/InputMenus.java
 +++ b/src/main/java/net/citizensnpcs/api/gui/InputMenus.java
 @@ -244,14 +244,14 @@ public class InputMenus {
@@ -123,7 +123,7 @@ index cb2bb58..96e1291 100644
          }, CitizensAPI.getPlugin());
      }
 diff --git a/src/main/java/net/citizensnpcs/api/gui/InventoryMenu.java b/src/main/java/net/citizensnpcs/api/gui/InventoryMenu.java
-index 006bcf3..e7388ba 100644
+index 006bcf34..e7388ba6 100644
 --- a/src/main/java/net/citizensnpcs/api/gui/InventoryMenu.java
 +++ b/src/main/java/net/citizensnpcs/api/gui/InventoryMenu.java
 @@ -439,7 +439,7 @@ public class InventoryMenu implements Listener, Runnable {
@@ -136,7 +136,7 @@ index 006bcf3..e7388ba 100644
              run.run();
          }
 diff --git a/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java b/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
-index 84b1af6..6b1ca7f 100644
+index 84b1af66..6b1ca7f9 100644
 --- a/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
 +++ b/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
 @@ -499,8 +499,8 @@ public abstract class AbstractNPC implements NPC {

@@ -1,6 +1,6 @@
-From 54a47195093326f06508b7fbe484962849026f2c Mon Sep 17 00:00:00 2001
+From 53009c2d968ca48b82ac4b561375b9e86185783e Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 21 Feb 2025 00:01:53 +0100
+Date: Tue, 25 Feb 2025 03:48:40 +0100
 Subject: [PATCH 6/7] Add more support in FoliaRunnable
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 6/7] Add more support in FoliaRunnable
  1 file changed, 26 insertions(+)
 
 diff --git a/src/main/java/fr/euphyllia/utils/FoliaRunnable.java b/src/main/java/fr/euphyllia/utils/FoliaRunnable.java
-index 85dd97e..26a65b8 100644
+index 85dd97e4..26a65b88 100644
 --- a/src/main/java/fr/euphyllia/utils/FoliaRunnable.java
 +++ b/src/main/java/fr/euphyllia/utils/FoliaRunnable.java
 @@ -1,8 +1,10 @@

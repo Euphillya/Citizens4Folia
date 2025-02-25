@@ -1,6 +1,6 @@
-From dc51189bebaa39293fe772fc909c3f94af39ee64 Mon Sep 17 00:00:00 2001
+From 5ecff4b5fb186b2d91f4d451063ce499deb227c5 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 21 Feb 2025 00:01:55 +0100
+Date: Tue, 25 Feb 2025 03:48:41 +0100
 Subject: [PATCH 03/16] Patch 1.21.4
 
 ---
@@ -91,7 +91,7 @@ index 588bad51f..7037b8232 100644
                  return InteractionResult.FAIL;
              }
 diff --git a/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/entity/EntityHumanNPC.java b/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/entity/EntityHumanNPC.java
-index 58719c57d..810922bb3 100644
+index e6d13cd84..c0aa9a9b9 100644
 --- a/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/entity/EntityHumanNPC.java
 +++ b/v1_21_R3/src/main/java/net/citizensnpcs/nms/v1_21_R3/entity/EntityHumanNPC.java
 @@ -114,10 +114,13 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable

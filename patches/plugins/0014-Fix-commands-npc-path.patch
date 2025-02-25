@@ -1,6 +1,6 @@
-From 8d98cc75bb2be769c4938a7b52e55e15c51f7f5a Mon Sep 17 00:00:00 2001
+From 5bef01c8701505cfe8045c6395fa254781e5cd02 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 21 Feb 2025 00:02:01 +0100
+Date: Tue, 25 Feb 2025 03:48:44 +0100
 Subject: [PATCH 14/16] Fix commands npc path
 
 ---
@@ -10,10 +10,10 @@ Subject: [PATCH 14/16] Fix commands npc path
  3 files changed, 66 insertions(+), 53 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-index dfc999158..712b63b4c 100644
+index d33a92e4a..ec3899a7b 100644
 --- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
 +++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-@@ -949,11 +949,11 @@ public class NPCCommands {
+@@ -968,11 +968,11 @@ public class NPCCommands {
              final Location locationSpawn = spawnLoc;
              final NPC npcFinal = npc;
              if (type.equals(EntityType.PLAYER)) {
@@ -27,7 +27,7 @@ index dfc999158..712b63b4c 100644
                      npcFinal.spawn(locationSpawn, SpawnReason.CREATE);
                  });
              }
-@@ -2350,27 +2350,33 @@ public class NPCCommands {
+@@ -2369,27 +2369,33 @@ public class NPCCommands {
      public void pathto(CommandContext args, CommandSender sender, NPC npc,
              @Arg(value = 1, completions = { "me", "here", "cursor" }) String option, @Flag("margin") Double margin)
              throws CommandException {
