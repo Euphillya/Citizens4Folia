@@ -1,6 +1,6 @@
-From 6abe74141567d03e9109454b4cdd53c98333de99 Mon Sep 17 00:00:00 2001
+From b534de449cf5d68b65906ec30a633f07b73fac9a Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 25 Feb 2025 03:48:26 +0100
+Date: Fri, 7 Mar 2025 18:13:35 +0100
 Subject: [PATCH 1/7] Rebrand
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 1/7] Rebrand
  1 file changed, 26 insertions(+), 11 deletions(-)
 
 diff --git a/pom.xml b/pom.xml
-index a670f704..adc458e1 100644
+index f84d16b3..a5805835 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -10,10 +10,14 @@

@@ -1,6 +1,6 @@
-From 2c885e1e1ab4f313213c6e4ab759e4e9d90fe1c6 Mon Sep 17 00:00:00 2001
+From 9ffa0db0856915532fa3c87429618c6ba8f94366 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 25 Feb 2025 03:48:39 +0100
+Date: Fri, 7 Mar 2025 18:13:36 +0100
 Subject: [PATCH 3/7] Replace Scheduler
 
 ---
@@ -13,7 +13,7 @@ Subject: [PATCH 3/7] Replace Scheduler
  6 files changed, 21 insertions(+), 13 deletions(-)
 
 diff --git a/src/main/java/net/citizensnpcs/api/LocationLookup.java b/src/main/java/net/citizensnpcs/api/LocationLookup.java
-index 82fa97c2..7b0d4d4c 100644
+index 833d6959..ee53c5ec 100644
 --- a/src/main/java/net/citizensnpcs/api/LocationLookup.java
 +++ b/src/main/java/net/citizensnpcs/api/LocationLookup.java
 @@ -31,7 +31,7 @@ import ch.ethz.globis.phtree.PhTreeF;
@@ -102,10 +102,10 @@ index 7ccfbd07..f120595f 100644
  
          private void open(NPC npc, Block point, Material type) {
 diff --git a/src/main/java/net/citizensnpcs/api/gui/InputMenus.java b/src/main/java/net/citizensnpcs/api/gui/InputMenus.java
-index cb2bb588..96e1291c 100644
+index dc631352..17287a0f 100644
 --- a/src/main/java/net/citizensnpcs/api/gui/InputMenus.java
 +++ b/src/main/java/net/citizensnpcs/api/gui/InputMenus.java
-@@ -244,14 +244,14 @@ public class InputMenus {
+@@ -252,14 +252,14 @@ public class InputMenus {
                  HandlerList.unregisterAll(this);
                  String chat = event.getMessage();
                  event.setCancelled(true);
@@ -123,10 +123,10 @@ index cb2bb588..96e1291c 100644
          }, CitizensAPI.getPlugin());
      }
 diff --git a/src/main/java/net/citizensnpcs/api/gui/InventoryMenu.java b/src/main/java/net/citizensnpcs/api/gui/InventoryMenu.java
-index 006bcf34..e7388ba6 100644
+index d1305191..d3f1efb8 100644
 --- a/src/main/java/net/citizensnpcs/api/gui/InventoryMenu.java
 +++ b/src/main/java/net/citizensnpcs/api/gui/InventoryMenu.java
-@@ -439,7 +439,7 @@ public class InventoryMenu implements Listener, Runnable {
+@@ -438,7 +438,7 @@ public class InventoryMenu implements Listener, Runnable {
  
      private void runViewerModifier(Runnable run) {
          if (delayViewerChanges) {
@@ -136,10 +136,10 @@ index 006bcf34..e7388ba6 100644
              run.run();
          }
 diff --git a/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java b/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
-index 84b1af66..6b1ca7f9 100644
+index cacdd1ff..f5398b0a 100644
 --- a/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
 +++ b/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
-@@ -499,8 +499,8 @@ public abstract class AbstractNPC implements NPC {
+@@ -504,8 +504,8 @@ public abstract class AbstractNPC implements NPC {
          final Entity passenger = entity.getPassenger();
          entity.eject();
          if (!location.getWorld().equals(entity.getWorld())) {
@@ -150,7 +150,7 @@ index 84b1af66..6b1ca7f9 100644
          } else {
              entity.teleport(location, cause);
          }
-@@ -509,7 +509,7 @@ public abstract class AbstractNPC implements NPC {
+@@ -514,7 +514,7 @@ public abstract class AbstractNPC implements NPC {
          teleport(passenger, location, delay++, cause);
          Runnable task = () -> entity.setPassenger(passenger);
          if (!location.getWorld().equals(entity.getWorld())) {

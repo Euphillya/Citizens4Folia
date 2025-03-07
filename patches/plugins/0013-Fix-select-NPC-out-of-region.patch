@@ -1,6 +1,6 @@
-From f41952a848712b90e953aba6eb501083a8da27fa Mon Sep 17 00:00:00 2001
+From 6c03554b325e6398460b89e217a672e8ab0816f2 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 25 Feb 2025 03:48:44 +0100
+Date: Fri, 7 Mar 2025 18:13:42 +0100
 Subject: [PATCH 13/16] Fix select NPC out of region
 
 ---
@@ -8,10 +8,10 @@ Subject: [PATCH 13/16] Fix select NPC out of region
  1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-index 3ff6f479e..d33a92e4a 100644
+index dbeb27121..d4d20440c 100644
 --- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
 +++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-@@ -2889,8 +2889,10 @@ public class NPCCommands {
+@@ -2894,8 +2894,10 @@ public class NPCCommands {
                  throw new CommandException(Messages.NPC_NOT_FOUND);
              if (npc != null && toSelect.getId() == npc.getId())
                  throw new CommandException(Messages.NPC_ALREADY_SELECTED);

@@ -1,6 +1,6 @@
-From 4385a9c4775e4646f32f9cb9175570e93ef0e51f Mon Sep 17 00:00:00 2001
+From 6c8e28cab56753166fc0d5287f7a6cf19628d4e8 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 25 Feb 2025 03:48:40 +0100
+Date: Fri, 7 Mar 2025 18:13:36 +0100
 Subject: [PATCH 4/7] Replace teleportAsync
 
 ---
@@ -8,10 +8,10 @@ Subject: [PATCH 4/7] Replace teleportAsync
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java b/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
-index 6b1ca7f9..fd7863ba 100644
+index f5398b0a..d20cbec0 100644
 --- a/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
 +++ b/src/main/java/net/citizensnpcs/api/npc/AbstractNPC.java
-@@ -502,7 +502,7 @@ public abstract class AbstractNPC implements NPC {
+@@ -507,7 +507,7 @@ public abstract class AbstractNPC implements NPC {
              entity.getScheduler().execute(CitizensAPI.getPlugin(),
                      () -> entity.teleportAsync(location, cause), null, delay++);
          } else {

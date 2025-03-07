@@ -1,6 +1,6 @@
-From 95eab275d451cc3fed40b484bab8ffc541f6da81 Mon Sep 17 00:00:00 2001
+From 122ff4178f2070f97e758f1755b77a7352486b62 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 25 Feb 2025 03:48:39 +0100
+Date: Fri, 7 Mar 2025 18:13:36 +0100
 Subject: [PATCH 2/7] Add FoliaRunnable
 
 ---
@@ -10,7 +10,7 @@ Subject: [PATCH 2/7] Add FoliaRunnable
 
 diff --git a/src/main/java/fr/euphyllia/utils/FoliaRunnable.java b/src/main/java/fr/euphyllia/utils/FoliaRunnable.java
 new file mode 100644
-index 00000000..85dd97e4
+index 00000000..fe3c1969
 --- /dev/null
 +++ b/src/main/java/fr/euphyllia/utils/FoliaRunnable.java
 @@ -0,0 +1,303 @@

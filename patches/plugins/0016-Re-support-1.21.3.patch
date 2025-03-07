@@ -1,6 +1,6 @@
-From 76d32dc6389d1aeed69c04dfbe4d17f0ed2fd500 Mon Sep 17 00:00:00 2001
+From 1bae0f2f5477f904662807d93a1529e7adf4db36 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 25 Feb 2025 03:48:45 +0100
+Date: Fri, 7 Mar 2025 18:13:44 +0100
 Subject: [PATCH 16/16] Re support 1.21.3
 
 ---
@@ -386,7 +386,7 @@ index 17208d8e2..504b5bbc7 100644
              </modules>
 diff --git a/v1_21_R2/pom.xml b/v1_21_R2/pom.xml
 new file mode 100644
-index 000000000..e54458db6
+index 000000000..ff277af2f
 --- /dev/null
 +++ b/v1_21_R2/pom.xml
 @@ -0,0 +1,124 @@
@@ -11174,7 +11174,7 @@ index 000000000..118f0eba3
 +}
 diff --git a/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/entity/MobEntityController.java b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/entity/MobEntityController.java
 new file mode 100644
-index 000000000..7d6689dc2
+index 000000000..e533667d8
 --- /dev/null
 +++ b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/entity/MobEntityController.java
 @@ -0,0 +1,83 @@
@@ -26452,7 +26452,7 @@ index 000000000..95d6db33c
 +}
 diff --git a/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/entity/nonliving/MinecartHopperController.java b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/entity/nonliving/MinecartHopperController.java
 new file mode 100644
-index 000000000..1c498858e
+index 000000000..fb384739f
 --- /dev/null
 +++ b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/entity/nonliving/MinecartHopperController.java
 @@ -0,0 +1,117 @@
@@ -26717,7 +26717,7 @@ index 000000000..900f11ddd
 +}
 diff --git a/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/entity/nonliving/MinecartSpawnerController.java b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/entity/nonliving/MinecartSpawnerController.java
 new file mode 100644
-index 000000000..d8720ef20
+index 000000000..cf7b4b994
 --- /dev/null
 +++ b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/entity/nonliving/MinecartSpawnerController.java
 @@ -0,0 +1,117 @@
@@ -26841,7 +26841,7 @@ index 000000000..d8720ef20
 \ No newline at end of file
 diff --git a/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/entity/nonliving/MinecartTNTController.java b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/entity/nonliving/MinecartTNTController.java
 new file mode 100644
-index 000000000..582ba73b0
+index 000000000..385e004d3
 --- /dev/null
 +++ b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/entity/nonliving/MinecartTNTController.java
 @@ -0,0 +1,117 @@
@@ -29300,7 +29300,7 @@ index 000000000..2e4d1ff94
 +}
 diff --git a/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/network/EmptyConnection.java b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/network/EmptyConnection.java
 new file mode 100644
-index 000000000..f5af70f8b
+index 000000000..18ca96545
 --- /dev/null
 +++ b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/network/EmptyConnection.java
 @@ -0,0 +1,53 @@
@@ -29360,7 +29360,7 @@ index 000000000..f5af70f8b
 \ No newline at end of file
 diff --git a/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/network/EmptyPacketListener.java b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/network/EmptyPacketListener.java
 new file mode 100644
-index 000000000..3b86d8c77
+index 000000000..04bae2664
 --- /dev/null
 +++ b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/network/EmptyPacketListener.java
 @@ -0,0 +1,23 @@
@@ -29390,7 +29390,7 @@ index 000000000..3b86d8c77
 \ No newline at end of file
 diff --git a/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/util/CitizensBlockBreaker.java b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/util/CitizensBlockBreaker.java
 new file mode 100644
-index 000000000..157393434
+index 000000000..7c17e4c9b
 --- /dev/null
 +++ b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/util/CitizensBlockBreaker.java
 @@ -0,0 +1,97 @@
@@ -29662,7 +29662,7 @@ index 000000000..47d412ff9
 +}
 diff --git a/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/util/CustomEntityRegistry.java b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/util/CustomEntityRegistry.java
 new file mode 100644
-index 000000000..6e8382b53
+index 000000000..49d97d3bf
 --- /dev/null
 +++ b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/util/CustomEntityRegistry.java
 @@ -0,0 +1,271 @@
@@ -30153,7 +30153,7 @@ index 000000000..fe8f2c4d3
 +}
 diff --git a/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/util/EntityMoveControl.java b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/util/EntityMoveControl.java
 new file mode 100644
-index 000000000..816829ef4
+index 000000000..4784b7ac0
 --- /dev/null
 +++ b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/util/EntityMoveControl.java
 @@ -0,0 +1,127 @@
@@ -34875,7 +34875,7 @@ index 000000000..ff14cc999
 +}
 diff --git a/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/util/PitchableLookControl.java b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/util/PitchableLookControl.java
 new file mode 100644
-index 000000000..75c1a61eb
+index 000000000..bd78e1fd2
 --- /dev/null
 +++ b/v1_21_R2/src/main/java/net/citizensnpcs/nms/v1_21_R2/util/PitchableLookControl.java
 @@ -0,0 +1,27 @@

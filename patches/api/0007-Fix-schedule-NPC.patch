@@ -1,6 +1,6 @@
-From dc9c3a05384d44d32c96a4bd30b17e7bd1dbf6b9 Mon Sep 17 00:00:00 2001
+From 9e6a2db3d25f278dfd9f80ede880a0fc02cef580 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 25 Feb 2025 03:48:40 +0100
+Date: Fri, 7 Mar 2025 18:13:37 +0100
 Subject: [PATCH 7/7] Fix schedule NPC
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 7/7] Fix schedule NPC
  1 file changed, 10 insertions(+), 6 deletions(-)
 
 diff --git a/src/main/java/net/citizensnpcs/api/LocationLookup.java b/src/main/java/net/citizensnpcs/api/LocationLookup.java
-index 7b0d4d4c..2bf229cf 100644
+index ee53c5ec..3a1046e8 100644
 --- a/src/main/java/net/citizensnpcs/api/LocationLookup.java
 +++ b/src/main/java/net/citizensnpcs/api/LocationLookup.java
 @@ -174,12 +174,16 @@ public class LocationLookup extends fr.euphyllia.utils.FoliaRunnable {

@@ -1,6 +1,6 @@
-From 8018929e1286ccac594f02623e8d2e7511915c6a Mon Sep 17 00:00:00 2001
+From 06f0bc09a1d4d77ad1bdd565e08f7feb6663f78a Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 25 Feb 2025 03:48:41 +0100
+Date: Fri, 7 Mar 2025 18:13:38 +0100
 Subject: [PATCH 01/16] Rebrand
 
 ---
@@ -45,7 +45,7 @@ index ca8ad7425..851ef2266 100644
                      <groupId>${project.groupId}</groupId>
                      <artifactId>citizens-v1_20_R4</artifactId>
 diff --git a/main/pom.xml b/main/pom.xml
-index df78e1972..9b20475ac 100644
+index e53c5c78d..54b43548b 100644
 --- a/main/pom.xml
 +++ b/main/pom.xml
 @@ -17,6 +17,10 @@
@@ -73,7 +73,7 @@ index df78e1972..9b20475ac 100644
              <groupId>org.spigotmc</groupId>
              <artifactId>spigot</artifactId>
 diff --git a/main/src/main/resources/plugin.yml b/main/src/main/resources/plugin.yml
-index 6634c66f9..19bd1ac6d 100644
+index f6f49c2c4..380db1935 100644
 --- a/main/src/main/resources/plugin.yml
 +++ b/main/src/main/resources/plugin.yml
 @@ -5,6 +5,7 @@ version: ${project.version} (build ${BUILD_NUMBER})

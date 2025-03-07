@@ -1,6 +1,6 @@
-From a01c23c6555decbb0e08504cf21c20b441ed8a24 Mon Sep 17 00:00:00 2001
+From b9e0e4dbf0d6b9861625bc3358161124422986ed Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 25 Feb 2025 03:48:43 +0100
+Date: Fri, 7 Mar 2025 18:13:42 +0100
 Subject: [PATCH 11/16] Fix spawn mob with Player NPC
 
 ---
@@ -9,7 +9,7 @@ Subject: [PATCH 11/16] Fix spawn mob with Player NPC
  2 files changed, 18 insertions(+), 6 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-index 403820051..3ff6f479e 100644
+index 688d3c033..dbeb27121 100644
 --- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
 +++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
 @@ -967,9 +967,15 @@ public class NPCCommands {
