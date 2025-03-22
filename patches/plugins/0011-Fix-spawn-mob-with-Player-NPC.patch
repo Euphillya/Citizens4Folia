@@ -1,7 +1,7 @@
-From b9e0e4dbf0d6b9861625bc3358161124422986ed Mon Sep 17 00:00:00 2001
+From af67e389085f48e45c87340969259a51650d3893 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 7 Mar 2025 18:13:42 +0100
-Subject: [PATCH 11/16] Fix spawn mob with Player NPC
+Date: Sat, 22 Mar 2025 02:08:33 +0100
+Subject: [PATCH 11/15] Fix spawn mob with Player NPC
 
 ---
  .../java/net/citizensnpcs/commands/NPCCommands.java  | 12 +++++++++---
@@ -9,10 +9,10 @@ Subject: [PATCH 11/16] Fix spawn mob with Player NPC
  2 files changed, 18 insertions(+), 6 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-index 688d3c033..dbeb27121 100644
+index 4889d2667..e170dd55a 100644
 --- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
 +++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-@@ -967,9 +967,15 @@ public class NPCCommands {
+@@ -969,9 +969,15 @@ public class NPCCommands {
          if (!args.hasFlag('u')) {
              final Location locationSpawn = spawnLoc;
              final NPC npcFinal = npc;
@@ -55,5 +55,5 @@ index e26802f8d..92dcab70a 100644
                  Messaging.debug("Tried to spawn", this, "on load but world was null");
              }
 -- 
-2.48.1.windows.1
+2.49.0.windows.1
 

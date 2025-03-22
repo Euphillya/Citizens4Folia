@@ -1,7 +1,7 @@
-From 06f0bc09a1d4d77ad1bdd565e08f7feb6663f78a Mon Sep 17 00:00:00 2001
+From d0fcea5d7e8f22da5bd023d6eb5ec54809ca002c Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 7 Mar 2025 18:13:38 +0100
-Subject: [PATCH 01/16] Rebrand
+Date: Sat, 22 Mar 2025 02:08:29 +0100
+Subject: [PATCH 01/15] Rebrand
 
 ---
  dist/pom.xml                       | 16 ++--------------
@@ -98,5 +98,5 @@ index c02678a9c..17208d8e2 100644
                  <module>v1_21_R3</module>
                  <module>dist</module>
 -- 
-2.48.1.windows.1
+2.49.0.windows.1
 

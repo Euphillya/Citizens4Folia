@@ -1,6 +1,6 @@
-From b534de449cf5d68b65906ec30a633f07b73fac9a Mon Sep 17 00:00:00 2001
+From 301b5f6ffed278489669857613681950515614d6 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 7 Mar 2025 18:13:35 +0100
+Date: Sat, 22 Mar 2025 02:08:27 +0100
 Subject: [PATCH 1/7] Rebrand
 
 ---
@@ -97,5 +97,5 @@ index f84d16b3..a5805835 100644
                      <execution>
                          <id>bundle-sources</id>
 -- 
-2.48.1.windows.1
+2.49.0.windows.1
 

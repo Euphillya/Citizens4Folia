@@ -1,17 +1,17 @@
-From a89c5ef1b6583ad2749171e01c6de11845e1bfba Mon Sep 17 00:00:00 2001
+From e4c1a70e6f9b638ae335f237a09f265e81af47f4 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 7 Mar 2025 18:13:39 +0100
-Subject: [PATCH 04/16] Force Spawn Location
+Date: Sat, 22 Mar 2025 02:08:31 +0100
+Subject: [PATCH 04/15] Force Spawn Location
 
 ---
  .../main/java/net/citizensnpcs/commands/NPCCommands.java    | 6 +++++-
  1 file changed, 5 insertions(+), 1 deletion(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-index fb1cf0ed8..688d3c033 100644
+index bd048023e..4889d2667 100644
 --- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
 +++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-@@ -965,7 +965,11 @@ public class NPCCommands {
+@@ -967,7 +967,11 @@ public class NPCCommands {
              msg += " with templates " + builder.toString();
          }
          if (!args.hasFlag('u')) {
@@ -25,5 +25,5 @@ index fb1cf0ed8..688d3c033 100644
          selector.select(sender, npc);
          history.add(sender, new CreateNPCHistoryItem(npc));
 -- 
-2.48.1.windows.1
+2.49.0.windows.1
 

@@ -1,19 +1,19 @@
-From acdb74d1b6279e80100f20e77c3f2c417ee6e431 Mon Sep 17 00:00:00 2001
+From 72250a3e64a8fe0cbd3eb8937e6a57a09776c75b Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 7 Mar 2025 18:13:43 +0100
-Subject: [PATCH 14/16] Fix commands npc path
+Date: Sat, 22 Mar 2025 02:08:34 +0100
+Subject: [PATCH 14/15] Fix commands npc path
 
 ---
- .../citizensnpcs/commands/NPCCommands.java    | 40 +++++-----
- .../npc/ai/CitizensNavigator.java             | 76 +++++++++++--------
- .../npc/ai/MCNavigationStrategy.java          |  3 -
- 3 files changed, 66 insertions(+), 53 deletions(-)
+ .../citizensnpcs/commands/NPCCommands.java    | 40 +++++++++++--------
+ .../npc/ai/CitizensNavigator.java             |  6 ++-
+ .../npc/ai/MCNavigationStrategy.java          |  3 --
+ 3 files changed, 28 insertions(+), 21 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-index d4d20440c..de71477ee 100644
+index 457a29bbc..6f88c3442 100644
 --- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
 +++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-@@ -968,11 +968,11 @@ public class NPCCommands {
+@@ -970,11 +970,11 @@ public class NPCCommands {
              final Location locationSpawn = spawnLoc;
              final NPC npcFinal = npc;
              if (type.equals(EntityType.PLAYER)) {
@@ -27,7 +27,7 @@ index d4d20440c..de71477ee 100644
                      npcFinal.spawn(locationSpawn, SpawnReason.CREATE);
                  });
              }
-@@ -2374,27 +2374,33 @@ public class NPCCommands {
+@@ -2376,27 +2376,33 @@ public class NPCCommands {
      public void pathto(CommandContext args, CommandSender sender, NPC npc,
              @Arg(value = 1, completions = { "me", "here", "cursor" }) String option, @Flag("margin") Double margin)
              throws CommandException {
@@ -77,103 +77,42 @@ index d4d20440c..de71477ee 100644
  
      @Command(
 diff --git a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
-index 510d1df98..dfbe128d0 100644
+index f0302ec11..eb6f5c5a0 100644
 --- a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
 +++ b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
-@@ -334,34 +334,36 @@ public class CitizensNavigator implements Navigator, Runnable {
+@@ -336,6 +336,7 @@ public class CitizensNavigator implements Navigator, Runnable {
  
      @Override
      public void setTarget(Function<NavigatorParameters, PathStrategy> strategy) {
--        if (!npc.isSpawned())
--            throw new IllegalStateException("npc is not spawned");
--
--        if (executing != null) {
--            stopNavigating(CancelReason.REPLACE);
--        }
--        localParams = defaultParams.clone();
 +        npc.getEntity().getScheduler().run(CitizensAPI.getPlugin(), task -> {
-+            if (!npc.isSpawned())
-+                throw new IllegalStateException("npc is not spawned");
+         if (!npc.isSpawned())
+             throw new IllegalStateException("npc is not spawned");
  
--        if (localParams.useNewPathfinder()) {
--            int fallDistance = localParams.fallDistance();
--            if (fallDistance != -1) {
--                localParams.examiner(new FallingExaminer(fallDistance));
-+            if (executing != null) {
-+                stopNavigating(CancelReason.REPLACE);
-             }
--            if (npc.data().get(NPC.Metadata.PATHFINDER_OPEN_DOORS, Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean())) {
--                localParams.examiner(new DoorExaminer());
-+            localParams = defaultParams.clone();
-+
-+            if (localParams.useNewPathfinder()) {
-+                int fallDistance = localParams.fallDistance();
-+                if (fallDistance != -1) {
-+                    localParams.examiner(new FallingExaminer(fallDistance));
-+                }
-+                if (npc.data().get(NPC.Metadata.PATHFINDER_OPEN_DOORS, Setting.NEW_PATHFINDER_OPENS_DOORS.asBoolean())) {
-+                    localParams.examiner(new DoorExaminer());
-+                }
-+                if (Setting.NEW_PATHFINDER_CHECK_BOUNDING_BOXES.asBoolean()) {
-+                    localParams.examiner(new BoundingBoxExaminer(npc.getEntity()));
-+                }
-             }
--            if (Setting.NEW_PATHFINDER_CHECK_BOUNDING_BOXES.asBoolean()) {
--                localParams.examiner(new BoundingBoxExaminer(npc.getEntity()));
-+            updatePathfindingRange();
-+            executing = strategy.apply(localParams);
-+            stationaryTicks = 0;
-+            if (npc.isSpawned()) {
-+                NMS.updateNavigationWorld(npc.getEntity(), npc.getEntity().getWorld());
-+                updateTicket(executing.getTargetAsLocation());
-             }
--        }
--        updatePathfindingRange();
--        executing = strategy.apply(localParams);
--        stationaryTicks = 0;
--        if (npc.isSpawned()) {
--            NMS.updateNavigationWorld(npc.getEntity(), npc.getEntity().getWorld());
--            updateTicket(executing.getTargetAsLocation());
--        }
--        Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
-+            Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
+@@ -364,6 +365,7 @@ public class CitizensNavigator implements Navigator, Runnable {
+             updateTicket(executing.getTargetAsLocation());
+         }
+         Bukkit.getPluginManager().callEvent(new NavigationBeginEvent(this));
 +        }, null);
      }
  
      @Override
-@@ -391,15 +393,23 @@ public class CitizensNavigator implements Navigator, Runnable {
-             cancelNavigation();
+@@ -395,6 +397,7 @@ public class CitizensNavigator implements Navigator, Runnable {
              return;
          }
--        Location target = targetIn.clone();
--        setTarget(params -> {
--            if (npc.isFlyable()) {
--                return new FlyingAStarNavigationStrategy(npc, target, params);
--            } else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
--                return new AStarNavigationStrategy(npc, target, params);
--            } else {
--                return new MCNavigationStrategy(npc, target, params);
-+        final Location target = targetIn.clone();
+         Location target = targetIn.clone();
 +        org.bukkit.Bukkit.getRegionScheduler().execute(CitizensAPI.getPlugin(), target, () -> {
-+            Location targetTmp = target;
-+            // Prescan for MCNavigationStrategy
-+            if (!MinecraftBlockExaminer.canStandIn(targetTmp.getBlock())) {
-+                targetTmp = MinecraftBlockExaminer.findValidLocationAbove(targetTmp, 2);
+         setTarget(params -> {
+             if (npc.isFlyable()) {
+                 return new FlyingAStarNavigationStrategy(npc, target, params);
+@@ -405,6 +408,7 @@ public class CitizensNavigator implements Navigator, Runnable {
+                 return new MCNavigationStrategy(npc, target, params);
              }
-+            final Location targetFinal = targetTmp;
-+            setTarget(params -> {
-+                if (npc.isFlyable()) {
-+                    return new FlyingAStarNavigationStrategy(npc, target, params);
-+                } else if (params.useNewPathfinder() || !(npc.getEntity() instanceof LivingEntity)) {
-+                    return new AStarNavigationStrategy(npc, target, params);
-+                } else {
-+                    return new MCNavigationStrategy(npc, targetFinal, params);
-+                }
-+            });
          });
++        });
      }
  
-@@ -544,7 +554,7 @@ public class CitizensNavigator implements Navigator, Runnable {
+     private void stopNavigating() {
+@@ -548,7 +552,7 @@ public class CitizensNavigator implements Navigator, Runnable {
              return;
          }
          activeTicket = target.clone();
@@ -197,5 +136,5 @@ index 886a61f17..cf920f4c4 100644
          parameters = params;
          entity = npc.getEntity();
 -- 
-2.48.1.windows.1
+2.49.0.windows.1
 

@@ -1,6 +1,6 @@
-From c6c8e4f351cf41eb74ba6c9f220bceab0a8307c8 Mon Sep 17 00:00:00 2001
+From e7f8b31f098762987761320fcdd095470f0b1db1 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 7 Mar 2025 18:13:37 +0100
+Date: Sat, 22 Mar 2025 02:08:29 +0100
 Subject: [PATCH 6/7] Add more support in FoliaRunnable
 
 ---
@@ -60,5 +60,5 @@ index fe3c1969..0b67d83a 100644
  }
 \ No newline at end of file
 -- 
-2.48.1.windows.1
+2.49.0.windows.1
 

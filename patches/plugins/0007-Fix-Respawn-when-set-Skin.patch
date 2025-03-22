@@ -1,7 +1,7 @@
-From 40603d305fc04da737757e18ea5df39c62cfe251 Mon Sep 17 00:00:00 2001
+From af66cf9f36d6ad40f18dd7c62a8e9be4c2dc8c24 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 7 Mar 2025 18:13:40 +0100
-Subject: [PATCH 07/16] Fix Respawn when set Skin
+Date: Sat, 22 Mar 2025 02:08:32 +0100
+Subject: [PATCH 07/15] Fix Respawn when set Skin
 
 ---
  main/src/main/java/net/citizensnpcs/npc/skin/Skin.java | 8 +++++---
@@ -28,5 +28,5 @@ index f94b47b3b..46d6d8dc1 100644
  
      private void fetch() {
 -- 
-2.48.1.windows.1
+2.49.0.windows.1
 

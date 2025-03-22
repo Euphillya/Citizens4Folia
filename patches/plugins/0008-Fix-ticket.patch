@@ -1,17 +1,17 @@
-From 5742d2019076fbd1e589011a3770f78836dfe018 Mon Sep 17 00:00:00 2001
+From b1dd5ca313e76ef9d9eb09a7fcaa934571d1eee6 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 7 Mar 2025 18:13:41 +0100
-Subject: [PATCH 08/16] Fix ticket
+Date: Sat, 22 Mar 2025 02:08:32 +0100
+Subject: [PATCH 08/15] Fix ticket
 
 ---
  .../main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
-index 9650fc88a..510d1df98 100644
+index c483ab5ce..f0302ec11 100644
 --- a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
 +++ b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
-@@ -420,7 +420,7 @@ public class CitizensNavigator implements Navigator, Runnable {
+@@ -424,7 +424,7 @@ public class CitizensNavigator implements Navigator, Runnable {
          if (!SUPPORT_CHUNK_TICKETS || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
              return;
  
@@ -20,7 +20,7 @@ index 9650fc88a..510d1df98 100644
                  (task) -> updateTicket(isNavigating() ? executing.getTargetAsLocation() : null), 10);
  
          // Location loc = npc.getEntity().getLocation(STATIONARY_LOCATION);
-@@ -536,7 +536,8 @@ public class CitizensNavigator implements Navigator, Runnable {
+@@ -540,7 +540,8 @@ public class CitizensNavigator implements Navigator, Runnable {
  
          // switch ticket to the new chunk
          if (activeTicket != null) {
@@ -31,5 +31,5 @@ index 9650fc88a..510d1df98 100644
          if (target == null) {
              activeTicket = null;
 -- 
-2.48.1.windows.1
+2.49.0.windows.1
 

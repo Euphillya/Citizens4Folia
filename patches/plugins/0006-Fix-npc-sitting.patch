@@ -1,7 +1,7 @@
-From 104504888e09cc56425d9d372ddb03edea54a014 Mon Sep 17 00:00:00 2001
+From 33e5a1e5caf83bd31d37a7e891731bade17973f4 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 7 Mar 2025 18:13:40 +0100
-Subject: [PATCH 06/16] Fix npc sitting
+Date: Sat, 22 Mar 2025 02:08:32 +0100
+Subject: [PATCH 06/15] Fix npc sitting
 
 ---
  .../net/citizensnpcs/nms/v1_21_R3/util/NMSImpl.java | 13 +++++++++----
@@ -32,5 +32,5 @@ index e4aea75e5..1335e6626 100644
  
      @Override
 -- 
-2.48.1.windows.1
+2.49.0.windows.1
 

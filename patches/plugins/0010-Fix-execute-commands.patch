@@ -1,7 +1,7 @@
-From 579ff347952e43b3319e3a4ff86d427425b36544 Mon Sep 17 00:00:00 2001
+From 7f36c80699671040bce5bf397adcade6f0737f3b Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Fri, 7 Mar 2025 18:13:41 +0100
-Subject: [PATCH 10/16] Fix execute commands
+Date: Sat, 22 Mar 2025 02:08:33 +0100
+Subject: [PATCH 10/15] Fix execute commands
 
 ---
  main/src/main/java/net/citizensnpcs/util/Util.java | 4 ++--
@@ -30,5 +30,5 @@ index ceeb3f005..b3a39860d 100644
          } catch (Throwable t) {
              t.printStackTrace();
 -- 
-2.48.1.windows.1
+2.49.0.windows.1
 
