@@ -43,7 +43,7 @@ index 16bda350e..efa8e2f6f 100644
 -                if (taskId == -1) {
 -                    taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
 +                if (taskId == null) {
-+                    taskId = CitizensAPI.getScheduler().runEntityLater(var0.getBukkitEntity(), () -> {
++                    taskId = CitizensAPI.getScheduler().runEntityTaskLater(var0.getBukkitEntity(), () -> {
                          NMSImpl.sendPacket((org.bukkit.entity.Player) var0.getBukkitEntity(),
                                  new ClientboundSetEquipmentPacket(getId(),
                                          Lists.newArrayList(
@@ -65,7 +65,7 @@ index 91b592701..074567116 100644
  
          super.die(damagesource);
 -        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> {
-+        CitizensAPI.getScheduler().runEntityLater(this.getBukkitEntity(), () -> {
++        CitizensAPI.getScheduler().runEntityTaskLater(this.getBukkitEntity(), () -> {
              ((ServerLevel) level()).removePlayerImmediately(EntityHumanNPC.this, RemovalReason.KILLED);
              ((ServerLevel) level()).getChunkSource().removeEntity(EntityHumanNPC.this);
          }, 15); // give enough time for death and smoke animation
@@ -74,7 +74,7 @@ index 91b592701..074567116 100644
          if (damaged && hurtMarked) {
              hurtMarked = false;
 -            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> EntityHumanNPC.this.hurtMarked = true);
-+            CitizensAPI.getScheduler().runEntity(this.getBukkitEntity(), () -> EntityHumanNPC.this.hurtMarked = true);
++            CitizensAPI.getScheduler().runEntityTask(this.getBukkitEntity(), () -> EntityHumanNPC.this.hurtMarked = true);
          }
          return damaged;
      }
@@ -87,7 +87,7 @@ index dabcf6ced..423163771 100644
              skin.apply(handle);
          }
 -        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+        CitizensAPI.getScheduler().runRegionLater(at, () -> {
++        CitizensAPI.getScheduler().runRegionTaskLater(at, () -> {
              if (getBukkitEntity() == null || !getBukkitEntity().isValid()
                      || getBukkitEntity() != handle.getBukkitEntity())
                  return;
@@ -198,7 +198,7 @@ index 0b6107f27..c65f74747 100644
              warden.playSound(SoundEvents.WARDEN_EMERGE, 5.0F, 1.0F);
  
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+            CitizensAPI.getScheduler().runEntityLater(warden.getBukkitEntity(), () -> {
++            CitizensAPI.getScheduler().runEntityTaskLater(warden.getBukkitEntity(), () -> {
                  if (warden.hasPose(Pose.EMERGING)) {
                      warden.setPose(Pose.STANDING);
                  }
@@ -207,7 +207,7 @@ index 0b6107f27..c65f74747 100644
              warden.playSound(SoundEvents.WARDEN_ROAR, 3.0F, 1.0F);
  
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+            CitizensAPI.getScheduler().runEntityLater(warden.getBukkitEntity(), () -> {
++            CitizensAPI.getScheduler().runEntityTaskLater(warden.getBukkitEntity(), () -> {
                  if (warden.hasPose(Pose.ROARING)) {
                      warden.setPose(Pose.STANDING);
                  }
@@ -281,7 +281,7 @@ index 588bad51f..00490e52d 100644
 -                if (taskId == -1) {
 -                    taskId = Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
 +                if (taskId == null) {
-+                    taskId = CitizensAPI.getScheduler().runEntityLater(var0.getBukkitEntity(), () -> {
++                    taskId = CitizensAPI.getScheduler().runEntityTaskLater(var0.getBukkitEntity(), () -> {
                          NMSImpl.sendPacket((org.bukkit.entity.Player) var0.getBukkitEntity(),
                                  new ClientboundSetEquipmentPacket(getId(),
                                          Lists.newArrayList(
@@ -303,7 +303,7 @@ index e6d13cd84..7412a16fb 100644
  
          super.die(damagesource);
 -        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> {
-+        CitizensAPI.getScheduler().runEntityLater(this.getBukkitEntity(), () -> {
++        CitizensAPI.getScheduler().runEntityTaskLater(this.getBukkitEntity(), () -> {
              ((ServerLevel) level()).removePlayerImmediately(EntityHumanNPC.this, RemovalReason.KILLED);
              ((ServerLevel) level()).getChunkSource().removeEntity(EntityHumanNPC.this);
          }, 15); // give enough time for death and smoke animation
@@ -312,7 +312,7 @@ index e6d13cd84..7412a16fb 100644
          if (damaged && hurtMarked) {
              hurtMarked = false;
 -            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> EntityHumanNPC.this.hurtMarked = true);
-+            CitizensAPI.getScheduler().runEntity(this.getBukkitEntity(), () -> EntityHumanNPC.this.hurtMarked = true);
++            CitizensAPI.getScheduler().runEntityTask(this.getBukkitEntity(), () -> EntityHumanNPC.this.hurtMarked = true);
          }
          return damaged;
      }
@@ -325,7 +325,7 @@ index 2f8fa8115..8a4aae098 100644
              }
          }
 -        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+        CitizensAPI.getScheduler().runRegionLater(at, () -> {
++        CitizensAPI.getScheduler().runRegionTaskLater(at, () -> {
              if (getBukkitEntity() == null || !getBukkitEntity().isValid()
                      || getBukkitEntity() != handle.getBukkitEntity())
                  return;
@@ -434,7 +434,7 @@ index 868db9687..242443cc2 100644
              warden.playSound(SoundEvents.WARDEN_EMERGE, 5.0F, 1.0F);
  
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+            CitizensAPI.getScheduler().runEntityLater(warden.getBukkitEntity(), () -> {
++            CitizensAPI.getScheduler().runEntityTaskLater(warden.getBukkitEntity(), () -> {
                  if (warden.hasPose(Pose.EMERGING)) {
                      warden.setPose(Pose.STANDING);
                  }
@@ -443,7 +443,7 @@ index 868db9687..242443cc2 100644
              warden.playSound(SoundEvents.WARDEN_ROAR, 3.0F, 1.0F);
  
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+            CitizensAPI.getScheduler().runEntityLater(warden.getBukkitEntity(), () -> {
++            CitizensAPI.getScheduler().runEntityTaskLater(warden.getBukkitEntity(), () -> {
                  if (warden.hasPose(Pose.ROARING)) {
                      warden.setPose(Pose.STANDING);
                  }

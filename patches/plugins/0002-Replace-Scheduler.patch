@@ -42,7 +42,7 @@ index 759f4c7bd..eba723187 100644
          // Setup NPCs after all plugins have been enabled (allows for multiworld
          // support and for NPCs to properly register external settings)
 -        if (getServer().getScheduler().scheduleSyncDelayedTask(this, new CitizensLoadTask(), 1) == -1) {
-+        if (CitizensAPI.getScheduler().runGlobalLater(() -> new CitizensLoadTask().run(), 1) == null) {
++        if (CitizensAPI.getScheduler().runTaskLater(() -> new CitizensLoadTask().run(), 1) == null) {
              Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
              Bukkit.getPluginManager().disablePlugin(this);
          }
@@ -51,7 +51,7 @@ index 759f4c7bd..eba723187 100644
  
      private void scheduleSaveTask(int delay) {
 -        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CitizensSaveTask(), delay, delay);
-+        CitizensAPI.getScheduler().runGlobalTimer(() -> new CitizensSaveTask().run(), delay, delay);
++        CitizensAPI.getScheduler().runTaskTimer(() -> new CitizensSaveTask().run(), delay, delay);
      }
  
      @Override
@@ -64,7 +64,7 @@ index 48355b304..0813fc8a1 100644
              runnable.run();
          } else {
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, runnable);
-+            CitizensAPI.getScheduler().runRegion(event.getWorld(), coord.x, coord.z, runnable);
++            CitizensAPI.getScheduler().runRegionTask(event.getWorld(), coord.x, coord.z, runnable);
          }
      }
  
@@ -73,7 +73,7 @@ index 48355b304..0813fc8a1 100644
  
          int deathAnimationTicks = event.getEntity() instanceof LivingEntity ? 20 : 2;
 -        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-+        CitizensAPI.getScheduler().runRegionLater(location, () -> {
++        CitizensAPI.getScheduler().runRegionTaskLater(location, () -> {
              if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
                  npc.spawn(location, SpawnReason.TIMED_RESPAWN);
              }
@@ -82,7 +82,7 @@ index 48355b304..0813fc8a1 100644
          if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
              HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> hr.onSeenByPlayer(npc, event.getPlayer()), 2);
-+            CitizensAPI.getScheduler().runEntityLater(event.getPlayer(), () -> hr.onSeenByPlayer(npc, event.getPlayer()), 2);
++            CitizensAPI.getScheduler().runEntityTaskLater(event.getPlayer(), () -> hr.onSeenByPlayer(npc, event.getPlayer()), 2);
          }
      }
  
@@ -91,13 +91,13 @@ index 48355b304..0813fc8a1 100644
                      NMS.getHeadYaw(tracker));
              if (resetYaw) {
 -                Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
-+                CitizensAPI.getScheduler().runEntity(tracker,
++                CitizensAPI.getScheduler().runEntityTask(tracker,
                          () -> PlayerAnimation.ARM_SWING.play((Player) tracker, event.getPlayer()));
              }
              return;
          }
 -        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-+        CitizensAPI.getScheduler().runRegionLater(tracker.getLocation(), () -> {
++        CitizensAPI.getScheduler().runRegionTaskLater(tracker.getLocation(), () -> {
              if (!tracker.isValid() || !event.getPlayer().isValid())
                  return;
  
@@ -106,7 +106,7 @@ index 48355b304..0813fc8a1 100644
              return;
  
 -        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-+        CitizensAPI.getScheduler().runEntityLater(event.getPlayer(), () -> {
++        CitizensAPI.getScheduler().runEntityTaskLater(event.getPlayer(), () -> {
              NMS.replaceTracker(event.getPlayer());
              NMS.removeFromServerPlayerList(event.getPlayer());
          }, 1);
@@ -115,7 +115,7 @@ index 48355b304..0813fc8a1 100644
                  try {
                      PlayerAnimation.STOP_USE_ITEM.play(player);
 -                    Bukkit.getScheduler().scheduleSyncDelayedTask(plugin,
-+                    CitizensAPI.getScheduler().runEntity(player,
++                    CitizensAPI.getScheduler().runEntityTask(player,
                              () -> PlayerAnimation.STOP_USE_ITEM.play(player));
                  } catch (UnsupportedOperationException e) {
                      SUPPORT_STOP_USE_ITEM = false;
@@ -124,7 +124,7 @@ index 48355b304..0813fc8a1 100644
                  && Setting.PLAYER_TELEPORT_DELAY.asTicks() > 0) {
              event.setCancelled(true);
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-+            CitizensAPI.getScheduler().runEntityLater(event.getPlayer(), () -> {
++            CitizensAPI.getScheduler().runEntityTaskLater(event.getPlayer(), () -> {
                  npc.data().set("citizens-force-teleporting", true);
                  event.getPlayer().teleport(event.getTo());
                  npc.data().remove("citizens-force-teleporting");
@@ -133,12 +133,12 @@ index 48355b304..0813fc8a1 100644
                          final Location eventTo = npcMoveEvent.getTo();
                          if (!to.equals(eventTo)) {
 -                            Bukkit.getScheduler().runTaskLater(plugin, () -> entity.teleport(eventTo), 1L);
-+                            CitizensAPI.getScheduler().runEntityLater(entity, () -> SpigotUtil.teleportAsync(entity, eventTo), 1L);
++                            CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> SpigotUtil.teleportAsync(entity, eventTo), 1L);
                          }
                      } else {
                          final Location eventFrom = npcMoveEvent.getFrom();
 -                        Bukkit.getScheduler().runTaskLater(plugin, () -> entity.teleport(eventFrom), 1L);
-+                        CitizensAPI.getScheduler().runEntityLater(entity, () -> SpigotUtil.teleportAsync(entity, eventFrom), 1L);
++                        CitizensAPI.getScheduler().runEntityTaskLater(entity, () -> SpigotUtil.teleportAsync(entity, eventFrom), 1L);
                      }
                  } catch (Throwable ex) {
                      ex.printStackTrace();
@@ -147,7 +147,7 @@ index 48355b304..0813fc8a1 100644
          if (loadChunk) {
              Messaging.idebug(() -> Joiner.on(' ').join("Loading chunk in 10 ticks due to forced chunk load at", coord));
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-+            CitizensAPI.getScheduler().runRegionLater(event.getWorld(), event.getChunk().getX(), event.getChunk().getZ(), () -> {
++            CitizensAPI.getScheduler().runRegionTaskLater(event.getWorld(), event.getChunk().getX(), event.getChunk().getZ(), () -> {
                  if (!event.getChunk().isLoaded()) {
                      event.getChunk().load();
                  }
@@ -168,7 +168,7 @@ index cb5091f08..dcac307cd 100644
          boolean logResponseStatusText = config.getBoolean("logResponseStatusText", false);
          metricsBase = new MetricsBase("bukkit", serverUUID, serviceId, enabled, this::appendPlatformData,
 -                this::appendServiceData, submitDataTask -> Bukkit.getScheduler().runTask(plugin, submitDataTask),
-+                this::appendServiceData, submitDataTask -> CitizensAPI.getScheduler().runGlobal(submitDataTask),
++                this::appendServiceData, submitDataTask -> CitizensAPI.getScheduler().runTask(submitDataTask),
                  plugin::isEnabled, (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
                  message -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData,
                  logResponseStatusText);
@@ -181,7 +181,7 @@ index b28a2093c..bd4a7d520 100644
          if (temporaryDuration != null) {
              NPC temp = npc;
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+            CitizensAPI.getScheduler().runEntityLater(temp.getEntity(), () -> {
++            CitizensAPI.getScheduler().runEntityTaskLater(temp.getEntity(), () -> {
                  if (temporaryRegistry.getByUniqueId(temp.getUniqueId()) == temp) {
                      temp.destroy();
                  }
@@ -198,7 +198,7 @@ index b28a2093c..bd4a7d520 100644
                          File skin = new File(skinsFolder, Placeholders.replace(file, sender, npc));
                          if (!skin.exists() || !skin.isFile() || skin.isHidden() || !isInDirectory(skin, skinsFolder)) {
 -                            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
-+                            CitizensAPI.getScheduler().runGlobal(
++                            CitizensAPI.getScheduler().runTask(
                                      () -> Messaging.sendErrorTr(sender, Messages.INVALID_SKIN_FILE, file));
                              return;
                          }
@@ -207,7 +207,7 @@ index b28a2093c..bd4a7d520 100644
                      String signature = (String) texture.get("signature");
  
 -                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> {
-+                    CitizensAPI.getScheduler().runEntity(npc.getEntity(), () -> {
++                    CitizensAPI.getScheduler().runEntityTask(npc.getEntity(), () -> {
                          try {
                              trait.setSkinPersistent(uuid, signature, textureEncoded);
                              Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url == null ? file : url);
@@ -216,7 +216,7 @@ index b28a2093c..bd4a7d520 100644
                          t.printStackTrace();
                      }
 -                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> Messaging.sendErrorTr(sender,
-+                    CitizensAPI.getScheduler().runGlobal(() -> Messaging.sendErrorTr(sender,
++                    CitizensAPI.getScheduler().runTask(() -> Messaging.sendErrorTr(sender,
                              Messages.ERROR_SETTING_SKIN_URL, url == null ? file : url));
                  }
              });
@@ -256,7 +256,7 @@ index 1f4713e56..06e819dc2 100644
              return;
  
 -        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-+        CitizensAPI.getScheduler().runRegionLater(executing.getTargetAsLocation(),
++        CitizensAPI.getScheduler().runRegionTaskLater(executing.getTargetAsLocation(),
                  () -> updateTicket(isNavigating() ? executing.getTargetAsLocation() : null), 10);
  
          // Location loc = npc.getEntity().getLocation(STATIONARY_LOCATION);
@@ -286,7 +286,7 @@ index a4c78a9ec..4cc756c16 100644
              return;
  
 -        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+        CitizensAPI.getScheduler().runEntity(npc.getEntity(), () -> {
++        CitizensAPI.getScheduler().runEntityTask(npc.getEntity(), () -> {
              npc.despawn(DespawnReason.PENDING_RESPAWN);
              npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
          });
@@ -295,7 +295,7 @@ index a4c78a9ec..4cc756c16 100644
                      fetchRetries++;
                      long delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
 -                    retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), (Runnable) this::fetch,
-+                    retryTask = CitizensAPI.getScheduler().runGlobalLater((Runnable) this::fetch,
++                    retryTask = CitizensAPI.getScheduler().runTaskLater((Runnable) this::fetch,
                              delay);
  
                      Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
@@ -304,7 +304,7 @@ index a4c78a9ec..4cc756c16 100644
                      fetchRetries++;
                      int delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
 -                    retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
-+                    retryTask = CitizensAPI.getScheduler().runGlobalLater(
++                    retryTask = CitizensAPI.getScheduler().runTaskLater(
                              (Runnable) this::fetchForced, delay);
  
                      Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
@@ -344,7 +344,7 @@ index 4cc969180..f6dfc1017 100644
              return;
  
 -        entry.removeTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
-+        entry.removeTask = CitizensAPI.getScheduler().runEntityLater(entry.player,
++        entry.removeTask = CitizensAPI.getScheduler().runEntityTaskLater(entry.player,
                  () -> TAB_LIST_REMOVER.sendPacket(entry.player, entity), PACKET_DELAY_REMOVE);
      }
  
@@ -410,7 +410,7 @@ index c85c2d6d4..f25f3528a 100644
  
      TabListRemover() {
 -        Bukkit.getScheduler().runTaskTimer(CitizensAPI.getPlugin(), new Sender(), 2, 2);
-+        CitizensAPI.getScheduler().runGlobalTimer(new Sender(), 2, 2);
++        CitizensAPI.getScheduler().runTaskTimer(new Sender(), 2, 2);
      }
  
      /**
@@ -423,7 +423,7 @@ index 9d11e8a5c..83860ced3 100644
  
      private static void addHandler(ProfileRequest request, ProfileFetchHandler handler) {
 -        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> request.addHandler(handler), 1);
-+        CitizensAPI.getScheduler().runGlobalLater(() -> request.addHandler(handler), 1);
++        CitizensAPI.getScheduler().runTaskLater(() -> request.addHandler(handler), 1);
      }
  
      @Nullable
@@ -432,7 +432,7 @@ index 9d11e8a5c..83860ced3 100644
  
      private static void sendResult(ProfileFetchHandler handler, ProfileRequest request) {
 -        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> handler.onResult(request), 1);
-+        CitizensAPI.getScheduler().runGlobalLater(() -> handler.onResult(request), 1);
++        CitizensAPI.getScheduler().runTaskLater(() -> handler.onResult(request), 1);
      }
  }
 diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetcher.java b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetcher.java
@@ -472,7 +472,7 @@ index 3dc364f2f..eae8ee222 100644
          if (!CitizensAPI.hasImplementation())
              return;
 -        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+        CitizensAPI.getScheduler().runGlobal(() -> {
++        CitizensAPI.getScheduler().runTask(() -> {
              ProfileRequest.this.profile = profile;
              ProfileRequest.this.result = result;
  
@@ -505,7 +505,7 @@ index 39a140ffa..5d25a8d85 100644
                                  attachment.remove();
                              } else {
 -                                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-+                                CitizensAPI.getScheduler().runEntity(player,
++                                CitizensAPI.getScheduler().runEntityTask(player,
                                          () -> attachment.remove());
                              }
                              return;
@@ -514,7 +514,7 @@ index 39a140ffa..5d25a8d85 100644
                      runnable.run();
                  } else {
 -                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable, command.delay);
-+                    CitizensAPI.getScheduler().runEntityLater(player, runnable, command.delay);
++                    CitizensAPI.getScheduler().runEntityTaskLater(player, runnable, command.delay);
                  }
              }
          };
@@ -523,7 +523,7 @@ index 39a140ffa..5d25a8d85 100644
              task.run();
          } else {
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), task);
-+            CitizensAPI.getScheduler().runEntity(player, task);
++            CitizensAPI.getScheduler().runEntityTask(player, task);
          }
      }
  
@@ -536,7 +536,7 @@ index 0f7211146..7ca430c1c 100644
          if (reason == RemoveReason.REMOVAL) {
              npc.despawn(DespawnReason.PENDING_RESPAWN);
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+            CitizensAPI.getScheduler().runRegion(npc.getStoredLocation(), () -> {
++            CitizensAPI.getScheduler().runRegionTask(npc.getStoredLocation(), () -> {
                  if (npc.getStoredLocation() != null) {
                      npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
                  }
@@ -572,7 +572,7 @@ index 4470cfbe6..a8d0a1844 100644
          npc.getNavigator().cancelNavigation();
          npc.getNavigator().setPaused(true);
 -        unpauseTaskId = Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+        unpauseTaskId = CitizensAPI.getScheduler().runEntityLater(npc.getEntity(), () -> {
++        unpauseTaskId = CitizensAPI.getScheduler().runEntityTaskLater(npc.getEntity(), () -> {
              NMS.setPitch(npc.getEntity(), 0);
              npc.getNavigator().setPaused(false);
          }, pauseTicks <= 0 ? 20 : pauseTicks);
@@ -618,7 +618,7 @@ index 95d761c1d..b945441fa 100644
              cleanup.run();
          } else {
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), cleanup,
-+            CitizensAPI.getScheduler().runEntityLater(npc.getEntity(), cleanup,
++            CitizensAPI.getScheduler().runEntityTaskLater(npc.getEntity(), cleanup,
                      reason == DespawnReason.DEATH && npc.getEntity() instanceof LivingEntity ? 20 : 2);
          }
      }
@@ -631,7 +631,7 @@ index 61ddcf842..9909bdaa5 100644
              NPCShopPage page = shop.pages.get(currentPage);
              if (page.title != null && !page.title.isEmpty()) {
 -                Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
-+                CitizensAPI.getScheduler().runEntityLater(player,
++                CitizensAPI.getScheduler().runEntityTaskLater(player,
                          () -> ctx.setTitle(Placeholders.replace(page.title, player)), 1);
              }
              for (int i = 0; i < ctx.getInventory().getSize(); i++) {
@@ -644,7 +644,7 @@ index 025cb9bc0..a5fd09dc2 100644
          return Transaction.create(() -> shop.canView(player), () -> {
              player.closeInventory();
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> shop.display(player));
-+            CitizensAPI.getScheduler().runEntity(player, () -> shop.display(player));
++            CitizensAPI.getScheduler().runEntityTask(player, () -> shop.display(player));
          }, () -> {
              // TODO: closeInventory()? transitionBack()?
          });
@@ -657,11 +657,11 @@ index 6b5c86501..7d9514771 100644
                  if (event.getMessage().equalsIgnoreCase("toggle path")) {
                      event.setCancelled(true);
 -                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), this::togglePath);
-+                    CitizensAPI.getScheduler().runGlobal(this::togglePath);
++                    CitizensAPI.getScheduler().runTask(this::togglePath);
                  } else if (event.getMessage().equalsIgnoreCase("clear")) {
                      event.setCancelled(true);
 -                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+                    CitizensAPI.getScheduler().runGlobal(() -> {
++                    CitizensAPI.getScheduler().runTask(() -> {
                          destinations.clear();
                          guides.clear();
                          if (showPath) {
@@ -670,7 +670,7 @@ index 6b5c86501..7d9514771 100644
                      if (d <= 0)
                          return;
 -                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+                    CitizensAPI.getScheduler().runGlobal(() -> {
++                    CitizensAPI.getScheduler().runTask(() -> {
                          distance = (float) d;
                          Messaging.sendTr(sender, Messages.GUIDED_WAYPOINT_EDITOR_DISTANCE_SET, d);
                      });
@@ -683,7 +683,7 @@ index bcee21cb6..2d2952e1f 100644
              if (message.equalsIgnoreCase("triggers")) {
                  event.setCancelled(true);
 -                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+                CitizensAPI.getScheduler().runEntity(event.getPlayer(), () -> {
++                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(), () -> {
                      conversation = TriggerEditPrompt.start(player, LinearWaypointEditor.this);
                      conversation.addConversationAbandonedListener(e -> {
                          setPaused(false);
@@ -692,15 +692,15 @@ index bcee21cb6..2d2952e1f 100644
              } else if (message.equalsIgnoreCase("clear")) {
                  event.setCancelled(true);
 -                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), this::clearWaypoints);
-+                CitizensAPI.getScheduler().runEntity(event.getPlayer(), this::clearWaypoints);
++                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(), this::clearWaypoints);
              } else if (message.equalsIgnoreCase("toggle path") || message.equalsIgnoreCase("markers")) {
                  event.setCancelled(true);
 -                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), this::togglePath);
-+                CitizensAPI.getScheduler().runEntity(event.getPlayer(), this::togglePath);
++                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(), this::togglePath);
              } else if (message.equalsIgnoreCase("cycle")) {
                  event.setCancelled(true);
 -                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+                CitizensAPI.getScheduler().runEntity(event.getPlayer(), () -> {
++                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(), () -> {
                      cycle = !cycle;
                      Messaging.sendTr(event.getPlayer(), cycle ? Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_SET
                              : Messages.LINEAR_WAYPOINT_EDITOR_CYCLE_UNSET);
@@ -708,7 +708,7 @@ index bcee21cb6..2d2952e1f 100644
              } else if (message.equalsIgnoreCase("here")) {
                  event.setCancelled(true);
 -                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-+                CitizensAPI.getScheduler().runEntity(event.getPlayer(),
++                CitizensAPI.getScheduler().runEntityTask(event.getPlayer(),
                          () -> addWaypoint(player.getLocation()));
              }
          }
@@ -721,19 +721,19 @@ index f23842a4c..d3ba3c807 100644
                      } catch (NumberFormatException ex) {
                      }
 -                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-+                    CitizensAPI.getScheduler().runGlobal(
++                    CitizensAPI.getScheduler().runTask(
                              () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_RANGE_SET, xrange, yrange));
                  } else if (message.startsWith("regions")) {
                      event.setCancelled(true);
                      editingRegions = !editingRegions;
 -                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+                    CitizensAPI.getScheduler().runGlobal(() -> {
++                    CitizensAPI.getScheduler().runTask(() -> {
                          if (editingRegions) {
                              for (Location regionCentre : regionCentres) {
 -                                Entity entity = markers.createMarker(regionCentre, regionCentre);
 -                                entity.setMetadata("wandermarker",
 -                                        new FixedMetadataValue(CitizensAPI.getPlugin(), regionCentre));
-+                                CitizensAPI.getScheduler().runRegion(regionCentre, () -> {
++                                CitizensAPI.getScheduler().runRegionTask(regionCentre, () -> {
 +                                    Entity entity = markers.createMarker(regionCentre, regionCentre);
 +                                    entity.setMetadata("wandermarker",
 +                                            new FixedMetadataValue(CitizensAPI.getPlugin(), regionCentre));
@@ -746,12 +746,12 @@ index f23842a4c..d3ba3c807 100644
                      event.setCancelled(true);
                      setDelay(Util.parseTicks(message.split(" ")[1]));
 -                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
-+                    CitizensAPI.getScheduler().runGlobal(
++                    CitizensAPI.getScheduler().runTask(
                              () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay));
                  } else if (message.startsWith("worldguardregion")) {
                      event.setCancelled(true);
 -                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+                    CitizensAPI.getScheduler().runGlobal(() -> {
++                    CitizensAPI.getScheduler().runTask(() -> {
                          Object region = null;
                          String regionId = message.replace("worldguardregion", "").trim();
                          try {
@@ -760,7 +760,7 @@ index f23842a4c..d3ba3c807 100644
                  } else if (message.startsWith("pathfind")) {
                      event.setCancelled(true);
 -                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
-+                    CitizensAPI.getScheduler().runGlobal(() -> {
++                    CitizensAPI.getScheduler().runTask(() -> {
                          pathfind = !pathfind;
                          if (currentGoal != null) {
                              currentGoal.setPathfind(pathfind);
@@ -773,7 +773,7 @@ index a50f33e14..dad5b7c74 100644
              }
              int newStart = i + 1;
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> runTriggers(npc, newStart),
-+            CitizensAPI.getScheduler().runEntityLater(npc.getEntity(), () -> runTriggers(npc, newStart),
++            CitizensAPI.getScheduler().runEntityTaskLater(npc.getEntity(), () -> runTriggers(npc, newStart),
                      delay);
              break;
          }
@@ -786,7 +786,7 @@ index 5c0ac995d..71ca1c660 100644
      private void delay(WaypointProvider provider) {
          provider.setPaused(true);
 -        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> provider.setPaused(false), delay);
-+        CitizensAPI.getScheduler().runGlobalLater(() -> provider.setPaused(false), delay);
++        CitizensAPI.getScheduler().runTaskLater(() -> provider.setPaused(false), delay);
      }
  
      @Override
