@@ -9,7 +9,7 @@ BRANCH_GIT_REPO="master"
 
 API_REPO_DIR="$SCRIPT_DIR/CitizensAPI"
 API_REPO_DIR_PATCH="$SCRIPT_DIR/CitizensAPI-Patchs"
-API_REPO_URL="https://github.com/CitizensDev/CitizensAPI"
+API_REPO_URL="https://github.com/Euphillya/CitizensAPI"
 BRANCH_GIT_API="master"
 
 PATCHES_DIR="$SCRIPT_DIR/patches/plugins"
