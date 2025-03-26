@@ -78,23 +78,88 @@ apply_patches() {
     done
 }
 
+
+# Fonction pour cloner un dépôt à un commit spécifique
+clone_specific_commit() {
+    local name=$1
+    local url=$2
+    local commit=$3
+    local dest_dir=$4
+
+    echo "Clonage de $name depuis $url à $commit..."
+    rm -rf "$dest_dir"
+    git clone "$url" "$dest_dir"
+    cd "$dest_dir" || exit
+    git checkout "$commit"
+    echo "$name cloné à $commit dans $dest_dir"
+}
+
+update_submodules_conf() {
+    local repo_dir=$1
+    local repo_url=$2
+    local module_name=$3
+
+    cd "$repo_dir" || exit
+    local commit_hash
+    commit_hash=$(git rev-parse HEAD)
+
+    # Supprimer ancienne ligne du module (si existante)
+    grep -v "^$module_name=" "$SCRIPT_DIR/submodules.conf" 2>/dev/null > "$SCRIPT_DIR/submodules.conf.tmp" || true
+    echo "$module_name=$repo_url@$commit_hash" >> "$SCRIPT_DIR/submodules.conf.tmp"
+    mv "$SCRIPT_DIR/submodules.conf.tmp" "$SCRIPT_DIR/submodules.conf"
+    echo "submodules.conf mis à jour pour $module_name → $commit_hash"
+}
+
 # Vérification des arguments pour choisir l'action
 case "$1" in
+    upstream)
+        if [ ! -f "$SCRIPT_DIR/submodules.conf" ]; then
+            echo "Fichier submodules.conf introuvable"
+            exit 1
+        fi
+
+        while IFS= read -r line; do
+            name=$(echo "$line" | cut -d'=' -f1)
+            url_commit=$(echo "$line" | cut -d'=' -f2)
+            url=$(echo "$url_commit" | cut -d'@' -f1)
+            commit=$(echo "$url_commit" | cut -d'@' -f2)
+
+            case "$name" in
+                Citizens2)
+                    dest="$REPO_DIR"
+                    ;;
+                CitizensAPI)
+                    dest="$API_REPO_DIR"
+                    ;;
+                *)
+                    echo "Dépôt inconnu : $name"
+                    continue
+                    ;;
+            esac
+
+            clone_specific_commit "$name" "$url" "$commit" "$dest"
+        done < "$SCRIPT_DIR/submodules.conf"
+        ;;
     updateUpstream)
         case "$2" in
             repo)
                 echo "Mise à jour du repo PLUGINS :"
                 reclone_repo "$REPO_DIR" "$REPO_DIR_PATCH" "$REPO_URL"
+                update_submodules_conf "$REPO_DIR" "$REPO_URL" "Citizens2"
                 ;;
             api)
                 echo "Mise à jour du repo API :"
                 reclone_repo "$API_REPO_DIR" "$API_REPO_DIR_PATCH" "$API_REPO_URL"
+                update_submodules_conf "$API_REPO_DIR" "$API_REPO_URL" "CitizensAPI"
                 ;;
             both|"")
                 echo "Mise à jour du repo API :"
                 reclone_repo "$API_REPO_DIR" "$API_REPO_DIR_PATCH" "$API_REPO_URL"
+                update_submodules_conf "$API_REPO_DIR" "$API_REPO_URL" "CitizensAPI"
+
                 echo "Mise à jour du repo PLUGINS :"
                 reclone_repo "$REPO_DIR" "$REPO_DIR_PATCH" "$REPO_URL"
+                update_submodules_conf "$REPO_DIR" "$REPO_URL" "Citizens2"
                 ;;
             *)
                 echo "Option invalide pour updateUpstream. Utilisez : repo, api ou both"
