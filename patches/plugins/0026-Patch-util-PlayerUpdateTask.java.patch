@@ -1,0 +1,25 @@
+From c4c28b4682b8f96b6ee13819f44d23125d93918f Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 16:20:05 +0200
+Subject: [PATCH 26/27] Patch util/PlayerUpdateTask.java
+
+---
+ main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java b/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java
+index a258e040a..1d23e9619 100644
+--- a/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java
++++ b/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java
+@@ -19,7 +19,7 @@ import net.citizensnpcs.api.util.Messaging;
+ import net.citizensnpcs.npc.ai.NPCHolder;
+ import net.citizensnpcs.trait.PacketNPC;
+ 
+-public class PlayerUpdateTask extends BukkitRunnable {
++public class PlayerUpdateTask extends net.citizensnpcs.api.util.schedulers.SchedulerRunnable {
+     private final List<PlayerTick> players = Lists.newArrayList();
+     private final Set<UUID> uuids = Sets.newHashSet();
+ 
+-- 
+2.50.1.windows.1
+

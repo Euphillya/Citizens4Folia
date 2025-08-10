@@ -1,0 +1,62 @@
+From 9870ad6609f808c81a27fdd6873e27faa484fd6e Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 16:19:05 +0200
+Subject: [PATCH 25/27] Patch util/PlayerAnimation.java
+
+---
+ .../java/net/citizensnpcs/util/PlayerAnimation.java   | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/util/PlayerAnimation.java b/main/src/main/java/net/citizensnpcs/util/PlayerAnimation.java
+index 3bf68a205..b9d4e384f 100644
+--- a/main/src/main/java/net/citizensnpcs/util/PlayerAnimation.java
++++ b/main/src/main/java/net/citizensnpcs/util/PlayerAnimation.java
+@@ -69,7 +69,7 @@ public enum PlayerAnimation {
+             final NPC holder = CitizensAPI.getTemporaryNPCRegistry().createNPC(EntityType.ARMOR_STAND, "");
+             holder.getOrAddTrait(ArmorStandTrait.class).setAsPointEntity();
+             holder.spawn(player.getLocation());
+-            new BukkitRunnable() {
++            new net.citizensnpcs.api.util.schedulers.SchedulerRunnable() {
+                 @Override
+                 public void cancel() {
+                     super.cancel();
+@@ -87,7 +87,7 @@ public enum PlayerAnimation {
+                         NMS.mount(holder.getEntity(), player);
+                     }
+                 }
+-            }.runTaskTimer(CitizensAPI.getPlugin(), 0, 1);
++            }.runEntityTaskTimer(CitizensAPI.getPlugin(), holder.getEntity(), null, 0, 1);
+             return;
+         } else if (this == STOP_SITTING) {
+             if (player instanceof NPCHolder) {
+@@ -114,7 +114,8 @@ public enum PlayerAnimation {
+         } else if (this == STOP_USE_ITEM || this == START_USE_MAINHAND_ITEM || this == START_USE_OFFHAND_ITEM) {
+             NMS.playAnimation(this, player, to.get());
+             if (player.hasMetadata("citizens-using-item-id")) {
+-                Bukkit.getScheduler().cancelTask(player.getMetadata("citizens-using-item-id").get(0).asInt());
++                net.citizensnpcs.api.util.schedulers.SchedulerTask task = (net.citizensnpcs.api.util.schedulers.SchedulerTask) player.getMetadata("citizens-using-item-id").get(0).value();
++                if (task != null) task.cancel();
+                 player.removeMetadata("citizens-using-item-id", CitizensAPI.getPlugin());
+             }
+             if (this == STOP_USE_ITEM)
+@@ -125,7 +126,7 @@ public enum PlayerAnimation {
+             if (using != null && BAD_ITEMS_TO_USE.contains(using.getType())
+                     && player.hasMetadata("citizens-using-item-remaining-ticks")) {
+                 int remainingTicks = player.getMetadata("citizens-using-item-remaining-ticks").get(0).asInt();
+-                new BukkitRunnable() {
++                new net.citizensnpcs.api.util.schedulers.SchedulerRunnable() {
+                     @Override
+                     public void run() {
+                         if (!NMS.isValid(player)) {
+@@ -139,7 +140,7 @@ public enum PlayerAnimation {
+                                     new FixedMetadataValue(CitizensAPI.getPlugin(), getTaskId()));
+                         }
+                     }
+-                }.runTaskTimer(CitizensAPI.getPlugin(), Math.max(0, remainingTicks + 1),
++                }.runEntityTaskTimer(CitizensAPI.getPlugin(), player, null, Math.max(0, remainingTicks + 1),
+                         Math.max(1, remainingTicks + 1));
+             }
+             return;
+-- 
+2.50.1.windows.1
+

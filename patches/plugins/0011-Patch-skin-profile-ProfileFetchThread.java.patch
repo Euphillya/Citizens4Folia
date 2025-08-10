@@ -1,0 +1,33 @@
+From 4dc002f3f5f88e0e56d73191b55a4f5128bb8abd Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 15:40:16 +0200
+Subject: [PATCH 11/27] Patch skin/profile/ProfileFetchThread.java
+
+---
+ .../net/citizensnpcs/npc/skin/profile/ProfileFetchThread.java | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetchThread.java b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetchThread.java
+index 7b2b25884..c3582b2ab 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetchThread.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetchThread.java
+@@ -221,7 +221,7 @@ class ProfileFetchThread implements Runnable {
+     }
+ 
+     private static void addHandler(ProfileRequest request, Consumer<ProfileRequest> handler) {
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> request.addHandler(handler), 1);
++        CitizensAPI.getScheduler().runTaskLater(() -> request.addHandler(handler), 1);
+     }
+ 
+     @Nullable
+@@ -255,6 +255,6 @@ class ProfileFetchThread implements Runnable {
+     }
+ 
+     private static void sendResult(Consumer<ProfileRequest> handler, ProfileRequest request) {
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> handler.accept(request), 1);
++        CitizensAPI.getScheduler().runTaskLater(() -> handler.accept(request), 1);
+     }
+ }
+-- 
+2.50.1.windows.1
+

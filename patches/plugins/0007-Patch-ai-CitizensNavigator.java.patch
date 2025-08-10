@@ -1,0 +1,25 @@
+From b7bd64d8e6a2bceb2c72303a603e300075dafa93 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 15:34:50 +0200
+Subject: [PATCH 07/27] Patch ai/CitizensNavigator.java
+
+---
+ .../main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
+index 077437dc8..eb2a55f91 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
++++ b/main/src/main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java
+@@ -420,7 +420,7 @@ public class CitizensNavigator implements Navigator, Runnable {
+         if (!SUPPORT_CHUNK_TICKETS || !CitizensAPI.hasImplementation() || !CitizensAPI.getPlugin().isEnabled())
+             return;
+ 
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
++        CitizensAPI.getScheduler().runRegionTaskLater(executing.getTargetAsLocation(),
+                 () -> updateTicket(isNavigating() ? executing.getTargetAsLocation() : null), 10);
+ 
+         // Location loc = npc.getEntity().getLocation(STATIONARY_LOCATION);
+-- 
+2.50.1.windows.1
+

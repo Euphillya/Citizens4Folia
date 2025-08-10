@@ -1,0 +1,25 @@
+From bf01cde2eb182cdecbef5198fdaf5e3c9558a66a Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 16:17:33 +0200
+Subject: [PATCH 24/27] Patch trait/waypoint/triggers/DelayTrigger.java
+
+---
+ .../net/citizensnpcs/trait/waypoint/triggers/DelayTrigger.java  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/trait/waypoint/triggers/DelayTrigger.java b/main/src/main/java/net/citizensnpcs/trait/waypoint/triggers/DelayTrigger.java
+index 5c0ac995d..cebb4b5ce 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/waypoint/triggers/DelayTrigger.java
++++ b/main/src/main/java/net/citizensnpcs/trait/waypoint/triggers/DelayTrigger.java
+@@ -22,7 +22,7 @@ public class DelayTrigger implements WaypointTrigger {
+ 
+     private void delay(WaypointProvider provider) {
+         provider.setPaused(true);
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> provider.setPaused(false), delay);
++        CitizensAPI.getScheduler().runTaskLater(() -> provider.setPaused(false), delay);
+     }
+ 
+     @Override
+-- 
+2.50.1.windows.1
+

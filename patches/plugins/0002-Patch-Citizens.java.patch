@@ -1,0 +1,34 @@
+From 78f62c6865356c722fe73b55760cedbc7e5bdcc0 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 15:26:35 +0200
+Subject: [PATCH 02/27] Patch Citizens.java
+
+---
+ main/src/main/java/net/citizensnpcs/Citizens.java | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/Citizens.java b/main/src/main/java/net/citizensnpcs/Citizens.java
+index 99a8e8c76..f65daf564 100644
+--- a/main/src/main/java/net/citizensnpcs/Citizens.java
++++ b/main/src/main/java/net/citizensnpcs/Citizens.java
+@@ -424,7 +424,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
+ 
+         // Setup NPCs after all plugins have been enabled (allows for multiworld
+         // support and for NPCs to properly register external settings)
+-        if (getServer().getScheduler().scheduleSyncDelayedTask(this, new CitizensLoadTask(), 1) == -1) {
++        if (CitizensAPI.getScheduler().runTaskLater(() -> new CitizensLoadTask().run(), 1) == null) {
+             Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
+             Bukkit.getPluginManager().disablePlugin(this);
+         }
+@@ -482,7 +482,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
+     }
+ 
+     private void scheduleSaveTask(int delay) {
+-        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new CitizensSaveTask(), delay, delay);
++        CitizensAPI.getScheduler().runTaskTimer(() -> new CitizensSaveTask().run(), delay, delay);
+     }
+ 
+     @Override
+-- 
+2.50.1.windows.1
+

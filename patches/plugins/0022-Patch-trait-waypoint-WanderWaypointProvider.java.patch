@@ -1,0 +1,61 @@
+From c81ab50a9fd6e14d127429ea00b54be5b4626c45 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 16:16:27 +0200
+Subject: [PATCH 22/27] Patch trait/waypoint/WanderWaypointProvider.java
+
+---
+ .../trait/waypoint/WanderWaypointProvider.java      | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/trait/waypoint/WanderWaypointProvider.java b/main/src/main/java/net/citizensnpcs/trait/waypoint/WanderWaypointProvider.java
+index 98a087714..2841c7958 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/waypoint/WanderWaypointProvider.java
++++ b/main/src/main/java/net/citizensnpcs/trait/waypoint/WanderWaypointProvider.java
+@@ -110,17 +110,18 @@ public class WanderWaypointProvider implements WaypointProvider {
+                         recalculateTree();
+                     } catch (NumberFormatException ex) {
+                     }
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
++                    CitizensAPI.getScheduler().runTask(
+                             () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_RANGE_SET, xrange, yrange));
+                 } else if (message.startsWith("regions")) {
+                     event.setCancelled(true);
+                     editingRegions = !editingRegions;
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++                    CitizensAPI.getScheduler().runTask(() -> {
+                         if (editingRegions) {
+                             for (Location regionCentre : regionCentres) {
++                                CitizensAPI.getScheduler().runRegionTask(regionCentre, () -> {
+                                 Entity entity = markers.createMarker(regionCentre, regionCentre);
+                                 entity.setMetadata("wandermarker",
+-                                        new FixedMetadataValue(CitizensAPI.getPlugin(), regionCentre));
++                                        new FixedMetadataValue(CitizensAPI.getPlugin(), regionCentre));});
+                             }
+                             Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_REGION_EDITING_START);
+                         } else {
+@@ -131,11 +132,11 @@ public class WanderWaypointProvider implements WaypointProvider {
+                 } else if (message.startsWith("delay")) {
+                     event.setCancelled(true);
+                     setDelay(Util.parseTicks(message.split(" ")[1]));
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
++                    CitizensAPI.getScheduler().runTask(
+                             () -> Messaging.sendTr(sender, Messages.WANDER_WAYPOINTS_DELAY_SET, delay));
+                 } else if (message.startsWith("worldguardregion")) {
+                     event.setCancelled(true);
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++                    CitizensAPI.getScheduler().runTask(() -> {
+                         Object region = null;
+                         String regionId = message.replace("worldguardregion", "").trim();
+                         if (regionId.isEmpty()) {
+@@ -159,7 +160,7 @@ public class WanderWaypointProvider implements WaypointProvider {
+                     });
+                 } else if (message.startsWith("pathfind")) {
+                     event.setCancelled(true);
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++                    CitizensAPI.getScheduler().runTask(() -> {
+                         pathfind = !pathfind;
+                         if (currentGoal != null) {
+                             currentGoal.setPathfind(pathfind);
+-- 
+2.50.1.windows.1
+

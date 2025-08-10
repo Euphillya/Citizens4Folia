@@ -1,0 +1,52 @@
+From 0414dae57946896ddd2e84a9cbe452b861b2d749 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 15:36:00 +0200
+Subject: [PATCH 08/27] Patch npc/skin/Skin.java
+
+---
+ main/src/main/java/net/citizensnpcs/npc/skin/Skin.java | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/Skin.java b/main/src/main/java/net/citizensnpcs/npc/skin/Skin.java
+index d25117ce4..517ea4411 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/Skin.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/Skin.java
+@@ -36,7 +36,7 @@ public class Skin {
+     private boolean hasFetched;
+     private volatile boolean isValid = true;
+     private final Map<SkinnableEntity, Void> pending = new WeakHashMap<>(15);
+-    private BukkitTask retryTask;
++    private net.citizensnpcs.api.util.schedulers.SchedulerTask retryTask;
+     private volatile SkinProperty skinData;
+     private volatile UUID skinId;
+     private final String skinName;
+@@ -124,7 +124,7 @@ public class Skin {
+         if (!npc.isSpawned())
+             return;
+ 
+-        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++        CitizensAPI.getScheduler().runEntityTask(npc.getEntity(), () -> {
+             npc.despawn(DespawnReason.PENDING_RESPAWN);
+             npc.spawn(npc.getStoredLocation(), SpawnReason.RESPAWN);
+         });
+@@ -162,7 +162,7 @@ public class Skin {
+ 
+                     fetchRetries++;
+                     long delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
+-                    retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), (Runnable) this::fetch,
++                    retryTask = CitizensAPI.getScheduler().runTaskLater((Runnable) this::fetch,
+                             delay);
+ 
+                     Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
+@@ -205,7 +205,7 @@ public class Skin {
+                     }
+                     fetchRetries++;
+                     int delay = Setting.NPC_SKIN_RETRY_DELAY.asTicks();
+-                    retryTask = Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
++                    retryTask = CitizensAPI.getScheduler().runTaskLater(
+                             (Runnable) this::fetchForced, delay);
+ 
+                     Messaging.idebug(() -> "Retrying skin fetch for '" + skinName + "' in " + delay + " ticks.");
+-- 
+2.50.1.windows.1
+

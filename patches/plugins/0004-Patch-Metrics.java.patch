@@ -1,0 +1,25 @@
+From ec4dda07ebf15144e6ad73fc74224f1a3a4d4879 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 15:31:58 +0200
+Subject: [PATCH 04/27] Patch Metrics.java
+
+---
+ main/src/main/java/net/citizensnpcs/Metrics.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/Metrics.java b/main/src/main/java/net/citizensnpcs/Metrics.java
+index 143373b80..5b79d7197 100644
+--- a/main/src/main/java/net/citizensnpcs/Metrics.java
++++ b/main/src/main/java/net/citizensnpcs/Metrics.java
+@@ -88,7 +88,7 @@ public class Metrics {
+         boolean logSentData = config.getBoolean("logSentData", false);
+         boolean logResponseStatusText = config.getBoolean("logResponseStatusText", false);
+         metricsBase = new MetricsBase("bukkit", serverUUID, serviceId, enabled, this::appendPlatformData,
+-                this::appendServiceData, submitDataTask -> Bukkit.getScheduler().runTask(plugin, submitDataTask),
++                this::appendServiceData, submitDataTask -> net.citizensnpcs.api.CitizensAPI.getScheduler().runTask(submitDataTask),
+                 plugin::isEnabled, (message, error) -> this.plugin.getLogger().log(Level.WARNING, message, error),
+                 message -> this.plugin.getLogger().log(Level.INFO, message), logErrors, logSentData,
+                 logResponseStatusText);
+-- 
+2.50.1.windows.1
+

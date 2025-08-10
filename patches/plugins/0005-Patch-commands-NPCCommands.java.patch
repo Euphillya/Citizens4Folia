@@ -1,0 +1,60 @@
+From 3afd8b04662525502e34194d890657dfc2149ea6 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 15:33:16 +0200
+Subject: [PATCH 05/27] Patch commands/NPCCommands.java
+
+---
+ .../java/net/citizensnpcs/commands/NPCCommands.java    | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
+index 588dbb0cf..acc1fd713 100644
+--- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
++++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
+@@ -900,7 +900,7 @@ public class NPCCommands {
+         }
+         if (temporaryDuration != null) {
+             NPC temp = npc;
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++            CitizensAPI.getScheduler().runEntityTaskLater(temp.getEntity(), () -> {
+                 if (temporaryRegistry.getByUniqueId(temp.getUniqueId()) == temp) {
+                     temp.destroy();
+                 }
+@@ -3165,14 +3165,14 @@ public class NPCCommands {
+             return;
+         } else if (url != null || file != null) {
+             Messaging.sendTr(sender, Messages.FETCHING_SKIN, url == null ? file : url);
+-            Bukkit.getScheduler().runTaskAsynchronously(CitizensAPI.getPlugin(), () -> {
++            CitizensAPI.getScheduler().runTaskAsynchronously(() -> {
+                 try {
+                     JSONObject data = null;
+                     if (file != null) {
+                         File skinsFolder = new File(CitizensAPI.getDataFolder(), "skins");
+                         File skin = new File(skinsFolder, Placeholders.replace(file, sender, npc));
+                         if (!skin.exists() || !skin.isFile() || skin.isHidden() || !isInDirectory(skin, skinsFolder)) {
+-                            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(),
++                            CitizensAPI.getScheduler().runTask(
+                                     () -> Messaging.sendErrorTr(sender, Messages.INVALID_SKIN_FILE, file));
+                             return;
+                         }
+@@ -3187,7 +3187,7 @@ public class NPCCommands {
+                     String textureEncoded = (String) texture.get("value");
+                     String signature = (String) texture.get("signature");
+ 
+-                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> {
++                    CitizensAPI.getScheduler().runEntityTask(npc.getEntity(), () -> {
+                         try {
+                             trait.setSkinPersistent(uuid, signature, textureEncoded);
+                             Messaging.sendTr(sender, Messages.SKIN_URL_SET, npc.getName(), url == null ? file : url);
+@@ -3199,7 +3199,7 @@ public class NPCCommands {
+                     if (Messaging.isDebugging()) {
+                         t.printStackTrace();
+                     }
+-                    Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> Messaging.sendErrorTr(sender,
++                    CitizensAPI.getScheduler().runTask(() -> Messaging.sendErrorTr(sender,
+                             Messages.ERROR_SETTING_SKIN_URL, url == null ? file : url));
+                 }
+             });
+-- 
+2.50.1.windows.1
+

@@ -1,0 +1,32 @@
+From be0caed84affb3faa656a61c799041a7f9eb0b79 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 15:41:11 +0200
+Subject: [PATCH 12/27] Patch skin/profile/ProfileFetcher.java
+
+---
+ .../net/citizensnpcs/npc/skin/profile/ProfileFetcher.java     | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetcher.java b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetcher.java
+index e21d8b719..b71965521 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetcher.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileFetcher.java
+@@ -48,7 +48,7 @@ public class ProfileFetcher {
+             THREAD_TASK.cancel();
+         }
+         PROFILE_THREAD = new ProfileFetchThread();
+-        THREAD_TASK = Bukkit.getScheduler().runTaskTimerAsynchronously(CitizensAPI.getPlugin(), PROFILE_THREAD, 21, 20);
++        THREAD_TASK = CitizensAPI.getScheduler().runTaskTimerAsynchronously(PROFILE_THREAD, 21, 20);
+     }
+ 
+     /**
+@@ -66,5 +66,5 @@ public class ProfileFetcher {
+     }
+ 
+     private static ProfileFetchThread PROFILE_THREAD;
+-    private static BukkitTask THREAD_TASK;
++    private static net.citizensnpcs.api.util.schedulers.SchedulerTask THREAD_TASK;
+ }
+-- 
+2.50.1.windows.1
+
