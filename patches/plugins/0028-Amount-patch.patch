@@ -1,7 +1,7 @@
-From c3ca99c9e07d632624d71babac443ef154c26d54 Mon Sep 17 00:00:00 2001
+From 009dbe1c09359ae812ab3b29c7e15f619dddba2c Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 10 Aug 2025 18:28:43 +0200
-Subject: [PATCH 29/29] Amount patch
+Date: Sun, 10 Aug 2025 21:48:00 +0200
+Subject: [PATCH 28/28] Amount patch
 
 ---
  .../npc/AbstractEntityController.java         |   5 +

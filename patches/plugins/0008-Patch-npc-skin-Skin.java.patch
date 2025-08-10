@@ -1,7 +1,7 @@
-From 0414dae57946896ddd2e84a9cbe452b861b2d749 Mon Sep 17 00:00:00 2001
+From 54e4f589a0d796ca8e84abcd9dbb189080249ec9 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 10 Aug 2025 15:36:00 +0200
-Subject: [PATCH 08/29] Patch npc/skin/Skin.java
+Date: Sun, 10 Aug 2025 21:47:52 +0200
+Subject: [PATCH 08/28] Patch npc skin Skin.java
 
 ---
  main/src/main/java/net/citizensnpcs/npc/skin/Skin.java | 8 ++++----

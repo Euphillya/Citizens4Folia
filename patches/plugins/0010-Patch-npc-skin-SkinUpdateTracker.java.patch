@@ -1,14 +1,14 @@
-From ac3e87445ad75907b22d37ab822a85169ca73124 Mon Sep 17 00:00:00 2001
+From 52e5b74e108afff0f7829d1d540ace4f94760e2c Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 10 Aug 2025 15:38:56 +0200
-Subject: [PATCH 10/29] Patch npc/skin/SkinUpdateTracker.java
+Date: Sun, 10 Aug 2025 21:47:53 +0200
+Subject: [PATCH 10/28] Patch npc skin SkinUpdateTracker.java
 
 ---
- .../java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java   | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ .../java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java b/main/src/main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java
-index 19a19ab0b..7b27888ac 100644
+index 19a19ab0b..5bf95162e 100644
 --- a/main/src/main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java
 +++ b/main/src/main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java
 @@ -290,7 +290,7 @@ public class SkinUpdateTracker {
@@ -34,6 +34,15 @@ index 19a19ab0b..7b27888ac 100644
          @Override
          public void run() {
              if (navigating.isEmpty() || playerTrackers.isEmpty())
+@@ -334,7 +334,7 @@ public class SkinUpdateTracker {
+ 
+     // Updates players. Repeating task used to schedule updates without
+     // causing excessive scheduling.
+-    private static class NPCNavigationUpdater extends BukkitRunnable {
++    private static class NPCNavigationUpdater extends net.citizensnpcs.api.util.schedulers.SchedulerRunnable {
+         Queue<UpdateInfo> queue = new ArrayDeque<>(20);
+ 
+         @Override
 -- 
 2.50.1.windows.1
 

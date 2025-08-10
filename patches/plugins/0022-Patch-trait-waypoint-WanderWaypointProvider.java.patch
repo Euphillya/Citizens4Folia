@@ -1,7 +1,7 @@
-From c81ab50a9fd6e14d127429ea00b54be5b4626c45 Mon Sep 17 00:00:00 2001
+From aabb025c5777f0c2d002cd3948cfb7fe559de957 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 10 Aug 2025 16:16:27 +0200
-Subject: [PATCH 22/29] Patch trait/waypoint/WanderWaypointProvider.java
+Date: Sun, 10 Aug 2025 21:47:57 +0200
+Subject: [PATCH 22/28] Patch trait waypoint WanderWaypointProvider.java
 
 ---
  .../trait/waypoint/WanderWaypointProvider.java      | 13 +++++++------

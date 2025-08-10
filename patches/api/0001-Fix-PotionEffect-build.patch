@@ -1,6 +1,6 @@
-From fedb324343129bcb1dda5772973c3c751f2f84f4 Mon Sep 17 00:00:00 2001
+From 3e69f16f2da81c0a44cb42143984cd4bb83fc000 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 10 Aug 2025 14:26:48 +0200
+Date: Sun, 10 Aug 2025 21:47:50 +0200
 Subject: [PATCH] Fix PotionEffect build
 
 ---

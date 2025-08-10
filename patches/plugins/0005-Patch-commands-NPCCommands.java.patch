@@ -1,7 +1,7 @@
-From 3afd8b04662525502e34194d890657dfc2149ea6 Mon Sep 17 00:00:00 2001
+From c0c07150f413ef510ef6fbbade578ca3e72ceca5 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 10 Aug 2025 15:33:16 +0200
-Subject: [PATCH 05/29] Patch commands/NPCCommands.java
+Date: Sun, 10 Aug 2025 21:47:51 +0200
+Subject: [PATCH 05/28] Patch commands NPCCommands.java
 
 ---
  .../java/net/citizensnpcs/commands/NPCCommands.java    | 10 +++++-----
