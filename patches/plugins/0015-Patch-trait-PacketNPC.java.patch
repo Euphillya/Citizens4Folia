@@ -1,7 +1,7 @@
 From e88069756f3e43079482e0f14a7eea8000929a24 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Sun, 10 Aug 2025 15:43:32 +0200
-Subject: [PATCH 15/27] Patch trait/PacketNPC.java
+Subject: [PATCH 15/29] Patch trait/PacketNPC.java
 
 ---
  main/src/main/java/net/citizensnpcs/trait/PacketNPC.java | 2 +-

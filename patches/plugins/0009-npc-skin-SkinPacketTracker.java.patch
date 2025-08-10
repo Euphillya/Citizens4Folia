@@ -1,7 +1,7 @@
 From ba8120dbe48f028bc2e7998c2c65a5188e672889 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Sun, 10 Aug 2025 15:37:42 +0200
-Subject: [PATCH 09/27] npc/skin/SkinPacketTracker.java
+Subject: [PATCH 09/29] npc/skin/SkinPacketTracker.java
 
 ---
  .../java/net/citizensnpcs/npc/skin/SkinPacketTracker.java   | 6 +++---

@@ -1,0 +1,25 @@
+From f9c2d955cb9ec82f99900be8da9bf5eb2e081440 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 16:30:34 +0200
+Subject: [PATCH 28/29] Patch skin/SkinUpdateTracker.java
+
+---
+ .../main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java b/main/src/main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java
+index 7b27888ac..5bf95162e 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/SkinUpdateTracker.java
+@@ -334,7 +334,7 @@ public class SkinUpdateTracker {
+ 
+     // Updates players. Repeating task used to schedule updates without
+     // causing excessive scheduling.
+-    private static class NPCNavigationUpdater extends BukkitRunnable {
++    private static class NPCNavigationUpdater extends net.citizensnpcs.api.util.schedulers.SchedulerRunnable {
+         Queue<UpdateInfo> queue = new ArrayDeque<>(20);
+ 
+         @Override
+-- 
+2.50.1.windows.1
+

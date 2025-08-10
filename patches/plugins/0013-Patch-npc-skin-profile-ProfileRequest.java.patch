@@ -1,7 +1,7 @@
 From 85d20685882880245347e7b46352bfc350242ea6 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Sun, 10 Aug 2025 15:41:41 +0200
-Subject: [PATCH 13/27] Patch npc/skin/profile/ProfileRequest.java
+Subject: [PATCH 13/29] Patch npc/skin/profile/ProfileRequest.java
 
 ---
  .../java/net/citizensnpcs/npc/skin/profile/ProfileRequest.java  | 2 +-

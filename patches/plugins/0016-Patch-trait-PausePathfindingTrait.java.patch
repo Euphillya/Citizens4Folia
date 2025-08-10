@@ -1,7 +1,7 @@
 From 0819297e365c3cee88678b0f498eb42d3fbd6c1a Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Sun, 10 Aug 2025 15:44:29 +0200
-Subject: [PATCH 16/27] Patch trait/PausePathfindingTrait.java
+Subject: [PATCH 16/29] Patch trait/PausePathfindingTrait.java
 
 ---
  .../net/citizensnpcs/trait/PausePathfindingTrait.java  | 10 +++++-----

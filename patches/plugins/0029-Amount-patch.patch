@@ -1,0 +1,521 @@
+From c3ca99c9e07d632624d71babac443ef154c26d54 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 18:28:43 +0200
+Subject: [PATCH 29/29] Amount patch
+
+---
+ .../npc/AbstractEntityController.java         |   5 +
+ .../net/citizensnpcs/npc/CitizensNPC.java     |   9 +-
+ .../citizensnpcs/npc/EntityController.java    |   3 +
+ .../net/citizensnpcs/trait/PacketNPC.java     |   7 ++
+ .../main/java/net/citizensnpcs/util/NMS.java  |   4 +
+ .../java/net/citizensnpcs/util/NMSBridge.java |   3 +
+ .../citizensnpcs/util/PlayerUpdateTask.java   |  52 +++++----
+ .../nms/v1_19_R3/util/NMSImpl.java            |  27 +++++
+ .../nms/v1_20_R4/util/NMSImpl.java            |  20 ++++
+ .../nms/v1_21_R5/entity/HumanController.java  |   5 +-
+ .../v1_21_R5/util/CitizensEntityTracker.java  |  59 +++++-----
+ .../nms/v1_21_R5/util/NMSImpl.java            | 104 +++++++++++++++---
+ 12 files changed, 232 insertions(+), 66 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/AbstractEntityController.java b/main/src/main/java/net/citizensnpcs/npc/AbstractEntityController.java
+index c86dbcead..075bd1009 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/AbstractEntityController.java
++++ b/main/src/main/java/net/citizensnpcs/npc/AbstractEntityController.java
+@@ -61,4 +61,9 @@ public abstract class AbstractEntityController implements EntityController {
+     public boolean spawn(Location at) {
+         return !Util.isLoaded(at) ? false : NMS.addEntityToWorld(bukkitEntity, CreatureSpawnEvent.SpawnReason.CUSTOM);
+     }
++
++    @Override
++    public void spawn(Location at, java.util.function.Consumer<Boolean> isSpawned) {
++        NMS.addEntityToWorld(bukkitEntity, CreatureSpawnEvent.SpawnReason.CUSTOM, isSpawned);
++    }
+ }
+\ No newline at end of file
+diff --git a/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java b/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
+index 180118999..60927dce8 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
++++ b/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
+@@ -327,7 +327,14 @@ public class CitizensNPC extends AbstractNPC {
+         }
+         data().set(NPC.Metadata.NPC_SPAWNING_IN_PROGRESS, true);
+         boolean wasLoaded = Messaging.isDebugging() ? Util.isLoaded(at) : false;
+-        boolean couldSpawn = entityController.spawn(at);
++        final Location location = at;
++        entityController.spawn(location, couldSpawn -> {
++            this.spawn(couldSpawn, reason, wasLoaded, location, callback);
++        });
++        return true;
++    }
++
++    private boolean spawn(boolean couldSpawn, SpawnReason reason, boolean wasLoaded, Location at, Consumer<Entity> callback) {
+ 
+         if (!couldSpawn) {
+             if (Messaging.isDebugging()) {
+diff --git a/main/src/main/java/net/citizensnpcs/npc/EntityController.java b/main/src/main/java/net/citizensnpcs/npc/EntityController.java
+index 23a373fab..1cb37b0db 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/EntityController.java
++++ b/main/src/main/java/net/citizensnpcs/npc/EntityController.java
+@@ -14,5 +14,8 @@ public interface EntityController {
+ 
+     void remove();
+ 
++    @Deprecated
+     boolean spawn(Location at);
++
++    void spawn(Location at, java.util.function.Consumer<Boolean> callback);
+ }
+diff --git a/main/src/main/java/net/citizensnpcs/trait/PacketNPC.java b/main/src/main/java/net/citizensnpcs/trait/PacketNPC.java
+index e61b42ada..2a39b610e 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/PacketNPC.java
++++ b/main/src/main/java/net/citizensnpcs/trait/PacketNPC.java
+@@ -114,5 +114,12 @@ public class PacketNPC extends Trait {
+             PlayerUpdateTask.register(getBukkitEntity());
+             return true;
+         }
++
++        @Override
++        public void spawn(Location at, java.util.function.Consumer<Boolean> callback) {
++            NMS.setLocationDirectly(base.getBukkitEntity(), at);
++            PlayerUpdateTask.register(getBukkitEntity());
++            callback.accept(true);
++        }
+     }
+ }
+\ No newline at end of file
+diff --git a/main/src/main/java/net/citizensnpcs/util/NMS.java b/main/src/main/java/net/citizensnpcs/util/NMS.java
+index bd72bebec..eb5d6fb20 100644
+--- a/main/src/main/java/net/citizensnpcs/util/NMS.java
++++ b/main/src/main/java/net/citizensnpcs/util/NMS.java
+@@ -93,6 +93,10 @@ public class NMS {
+         return BRIDGE.addEntityToWorld(entity, custom);
+     }
+ 
++    public static void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, Consumer<Boolean> isAdded) {
++        BRIDGE.addEntityToWorld(entity, custom, isAdded);
++    }
++
+     public static void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
+         BRIDGE.addOrRemoveFromPlayerList(entity, remove);
+     }
+diff --git a/main/src/main/java/net/citizensnpcs/util/NMSBridge.java b/main/src/main/java/net/citizensnpcs/util/NMSBridge.java
+index a10508a3f..60e457dea 100644
+--- a/main/src/main/java/net/citizensnpcs/util/NMSBridge.java
++++ b/main/src/main/java/net/citizensnpcs/util/NMSBridge.java
+@@ -53,8 +53,11 @@ public interface NMSBridge {
+     default void activate(Entity entity) {
+     }
+ 
++    @Deprecated
+     public boolean addEntityToWorld(Entity entity, SpawnReason custom);
+ 
++    public void addEntityToWorld(Entity entity, SpawnReason custom, java.util.function.Consumer<Boolean> isAdded);
++
+     public void addOrRemoveFromPlayerList(Entity entity, boolean remove);
+ 
+     public void attack(LivingEntity attacker, LivingEntity target);
+diff --git a/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java b/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java
+index 1d23e9619..c861b5ac1 100644
+--- a/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java
++++ b/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java
+@@ -5,7 +5,9 @@ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Set;
+ import java.util.UUID;
++import java.util.concurrent.ConcurrentHashMap;
+ 
++import net.citizensnpcs.api.CitizensAPI;
+ import org.bukkit.entity.Entity;
+ import org.bukkit.entity.Player;
+ import org.bukkit.scheduler.BukkitRunnable;
+@@ -21,7 +23,7 @@ import net.citizensnpcs.trait.PacketNPC;
+ 
+ public class PlayerUpdateTask extends net.citizensnpcs.api.util.schedulers.SchedulerRunnable {
+     private final List<PlayerTick> players = Lists.newArrayList();
+-    private final Set<UUID> uuids = Sets.newHashSet();
++    private final Set<UUID> uuids = ConcurrentHashMap.newKeySet();
+ 
+     @Override
+     public void cancel() {
+@@ -42,31 +44,33 @@ public class PlayerUpdateTask extends net.citizensnpcs.api.util.schedulers.Sched
+             PLAYERS_PENDING_REMOVE.clear();
+         }
+         for (Entity entity : PLAYERS_PENDING_ADD) {
+-            NPC next = ((NPCHolder) entity).getNPC();
+-            if (uuids.contains(entity.getUniqueId())) {
+-                // XXX: how often does this case get hit? can simplify implementation
+-                PlayerTick rm = null;
+-                for (Iterator<PlayerTick> itr = players.iterator(); itr.hasNext();) {
+-                    PlayerTick pt = itr.next();
+-                    if (pt.entity.getUniqueId().equals(entity.getUniqueId())) {
+-                        rm = pt;
+-                        itr.remove();
+-                        uuids.remove(pt.entity.getUniqueId());
+-                        break;
++            CitizensAPI.getScheduler().runEntityTask(entity, () ->  {
++                NPC next = ((NPCHolder) entity).getNPC();
++                if (uuids.contains(entity.getUniqueId())) {
++                    // XXX: how often does this case get hit? can simplify implementation
++                    PlayerTick rm = null;
++                    for (Iterator<PlayerTick> itr = players.iterator(); itr.hasNext();) {
++                        PlayerTick pt = itr.next();
++                        if (pt.entity.getUniqueId().equals(entity.getUniqueId())) {
++                            rm = pt;
++                            itr.remove();
++                            uuids.remove(pt.entity.getUniqueId());
++                            break;
++                        }
+                     }
++                    NPC old = ((NPCHolder) rm.entity).getNPC();
++                    if (old != next) {
++                        Messaging.severe("Player registered twice with different NPC instances", rm.entity.getUniqueId());
++                    }
++                    rm.entity.remove();
+                 }
+-                NPC old = ((NPCHolder) rm.entity).getNPC();
+-                if (old != next) {
+-                    Messaging.severe("Player registered twice with different NPC instances", rm.entity.getUniqueId());
++                if (next.hasTrait(PacketNPC.class)) {
++                    players.add(new PlayerTick(entity, () -> ((AbstractNPC) next).update()));
++                } else {
++                    players.add(new PlayerTick(entity, NMS.playerTicker((Player) entity)));
+                 }
+-                rm.entity.remove();
+-            }
+-            if (next.hasTrait(PacketNPC.class)) {
+-                players.add(new PlayerTick(entity, () -> ((AbstractNPC) next).update()));
+-            } else {
+-                players.add(new PlayerTick(entity, NMS.playerTicker((Player) entity)));
+-            }
+-            uuids.add(entity.getUniqueId());
++                uuids.add(entity.getUniqueId());
++            });
+         }
+         PLAYERS_PENDING_ADD.clear();
+ 
+@@ -86,7 +90,7 @@ public class PlayerUpdateTask extends net.citizensnpcs.api.util.schedulers.Sched
+ 
+         @Override
+         public void run() {
+-            tick.run();
++            CitizensAPI.getScheduler().runEntityTask(entity, tick);
+         }
+     }
+ 
+diff --git a/v1_19_R3/src/main/java/net/citizensnpcs/nms/v1_19_R3/util/NMSImpl.java b/v1_19_R3/src/main/java/net/citizensnpcs/nms/v1_19_R3/util/NMSImpl.java
+index 6d9a548ce..5dcf5a94b 100644
+--- a/v1_19_R3/src/main/java/net/citizensnpcs/nms/v1_19_R3/util/NMSImpl.java
++++ b/v1_19_R3/src/main/java/net/citizensnpcs/nms/v1_19_R3/util/NMSImpl.java
+@@ -405,6 +405,33 @@ public class NMSImpl implements NMSBridge {
+         return success;
+     }
+ 
++    public void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, java.util.function.Consumer<Boolean> isAdded) {
++        if (!net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
++            isAdded.accept(addEntityToWorld(entity, custom));
++            return;
++        }
++        int viewDistance = -1;
++        ChunkMap chunkMap = null;
++        try {
++            if (entity instanceof Player) {
++                chunkMap = ((ServerChunkCache) getHandle(entity).level.getChunkSource()).chunkMap;
++                viewDistance = (int) PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER.invoke(chunkMap);
++                PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER.invoke(chunkMap, -1);
++            }
++        } catch (Throwable e) {
++            e.printStackTrace();
++        }
++        boolean success = getHandle(entity).level.addFreshEntity(getHandle(entity), custom);
++        try {
++            if (chunkMap != null) {
++                PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER.invoke(chunkMap, viewDistance);
++            }
++        } catch (Throwable e) {
++            e.printStackTrace();
++        }
++        isAdded.accept(success);
++    }
++
+     @Override
+     public void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
+         if (entity == null)
+diff --git a/v1_20_R4/src/main/java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java b/v1_20_R4/src/main/java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java
+index 128551cac..b8ff9903a 100644
+--- a/v1_20_R4/src/main/java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java
++++ b/v1_20_R4/src/main/java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java
+@@ -410,6 +410,26 @@ public class NMSImpl implements NMSBridge {
+         return success;
+     }
+ 
++    public void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, java.util.function.Consumer<Boolean> isAdded) {
++        if (!net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
++            isAdded.accept(addEntityToWorld(entity, custom));
++            return;
++        }
++        int viewDistance = -1;
++        ChunkMap chunkMap = null;
++
++        if (entity instanceof Player) {
++            chunkMap = ((ServerChunkCache) getHandle(entity).level().getChunkSource()).chunkMap;
++            viewDistance = chunkMap.serverViewDistance;
++            chunkMap.serverViewDistance = -1;
++        }
++        boolean success = getHandle(entity).level().addFreshEntity(getHandle(entity), custom);
++        if (chunkMap != null) {
++            chunkMap.serverViewDistance = viewDistance;
++        }
++        isAdded.accept(success);
++    }
++
+     @Override
+     public void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
+         if (entity == null)
+diff --git a/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/entity/HumanController.java b/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/entity/HumanController.java
+index b70d491b8..5e0dab722 100644
+--- a/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/entity/HumanController.java
++++ b/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/entity/HumanController.java
+@@ -54,11 +54,12 @@ public class HumanController extends AbstractEntityController {
+                 e.printStackTrace();
+             }
+         }
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++        CitizensAPI.getScheduler().runTaskLater(() -> {
++            if (getBukkitEntity() == null) return;
+             if (getBukkitEntity() == null || !getBukkitEntity().isValid()
+                     || getBukkitEntity() != handle.getBukkitEntity())
+                 return;
+-            NMS.addOrRemoveFromPlayerList(getBukkitEntity(), npc.shouldRemoveFromPlayerList());
++            CitizensAPI.getScheduler().runEntityTask(getBukkitEntity(), () -> NMS.addOrRemoveFromPlayerList(getBukkitEntity(), npc.shouldRemoveFromPlayerList()));
+         }, 20);
+         handle.getBukkitEntity().setSleepingIgnored(true);
+         return handle.getBukkitEntity();
+diff --git a/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/util/CitizensEntityTracker.java b/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/util/CitizensEntityTracker.java
+index 3d16b0b17..97da5e1f1 100644
+--- a/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/util/CitizensEntityTracker.java
++++ b/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/util/CitizensEntityTracker.java
+@@ -77,34 +77,43 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
+             if (REQUIRES_SYNC == null) {
+                 REQUIRES_SYNC = !Bukkit.isPrimaryThread();
+             }
+-            boolean cancelled = Util.callPossiblySync(() -> {
+-                NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
+-                try {
+-                    Bukkit.getPluginManager().callEvent(event);
+-                } catch (IllegalStateException e) {
+-                    REQUIRES_SYNC = true;
+-                    throw e;
+-                }
+-                if (event.isCancelled())
+-                    return true;
+-
+-                Integer trackingRange = npc.data().<Integer> get(NPC.Metadata.TRACKING_RANGE);
+-                if (TRACKING_RANGE_SETTER != null && trackingRange != null
+-                        && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {
+-                    try {
+-                        TRACKING_RANGE_SETTER.invoke(CitizensEntityTracker.this, trackingRange);
+-                        npc.data().set("last-tracking-range", trackingRange);
+-                    } catch (Throwable e) {
+-                        e.printStackTrace();
+-                    }
++            cancelledUpdatePlayer(npc, entityplayer, cancelled -> {
++                if (cancelled) {
++                    return;
+                 }
+-                return false;
+-            }, REQUIRES_SYNC);
++                super.updatePlayer(entityplayer);
++            });
++        } else {
++            super.updatePlayer(entityplayer);
++        }
++    }
+ 
+-            if (cancelled)
++    private void cancelledUpdatePlayer(final NPC npc, final ServerPlayer entityplayer, java.util.function.Consumer<Boolean> callback) {
++        net.citizensnpcs.api.CitizensAPI.getScheduler().runEntityTask(entityplayer.getBukkitEntity(), () -> {
++            NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
++            try {
++                Bukkit.getPluginManager().callEvent(event);
++            } catch (IllegalStateException e) {
++                REQUIRES_SYNC = true;
++                throw e;
++            }
++            if (event.isCancelled()) {
++                callback.accept(true);
+                 return;
+-        }
+-        super.updatePlayer(entityplayer);
++            }
++
++            Integer trackingRange = npc.data().<Integer> get(NPC.Metadata.TRACKING_RANGE);
++            if (TRACKING_RANGE_SETTER != null && trackingRange != null
++                    && npc.data().get("last-tracking-range", -1) != trackingRange.intValue()) {
++                try {
++                    TRACKING_RANGE_SETTER.invoke(CitizensEntityTracker.this, trackingRange);
++                    npc.data().set("last-tracking-range", trackingRange);
++                } catch (Throwable e) {
++                    e.printStackTrace();
++                }
++            }
++            callback.accept(false);
++        });
+     }
+ 
+     public static Collection<org.bukkit.entity.Entity> getSeenBy(TrackedEntity tracker) {
+diff --git a/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/util/NMSImpl.java b/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/util/NMSImpl.java
+index 289dd88ca..7a24d2c16 100644
+--- a/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/util/NMSImpl.java
++++ b/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/util/NMSImpl.java
+@@ -408,6 +408,9 @@ public class NMSImpl implements NMSBridge {
+ 
+     @Override
+     public boolean addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom) {
++        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
++            throw new UnsupportedOperationException("NMSImpl#addEntityToWorld is not supported on Folia servers.");
++        }
+         int viewDistance = -1;
+         ChunkMap chunkMap = null;
+ 
+@@ -423,6 +426,31 @@ public class NMSImpl implements NMSBridge {
+         return success;
+     }
+ 
++    public void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, java.util.function.Consumer<Boolean> isAdded) {
++        if (!net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
++            isAdded.accept(addEntityToWorld(entity, custom));
++            return;
++        }
++        final ServerLevel serverLevel = (ServerLevel) getHandle(entity).level();
++        int viewDistance = -1;
++        ChunkMap chunkMap = null;
++        if (entity instanceof Player) {
++            chunkMap = ((ServerChunkCache) serverLevel.getChunkSource()).chunkMap;
++            viewDistance = chunkMap.serverViewDistance;
++            chunkMap.serverViewDistance = -1;
++        }
++        final ChunkMap chunkMapFinal = chunkMap;
++        final int viewDistanceFinal = viewDistance;
++        final Location location = entity.getLocation();
++        CitizensAPI.getScheduler().runRegionTask(location.getWorld(), location.getBlockX() >> 4, location.getBlockZ() >> 4, () -> {
++            boolean success = serverLevel.addFreshEntity(getHandle(entity), custom);
++            if (chunkMapFinal != null) {
++                chunkMapFinal.serverViewDistance = viewDistanceFinal;
++            }
++            isAdded.accept(success);
++        });
++    }
++
+     @Override
+     public void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
+         if (entity == null)
+@@ -1425,20 +1453,37 @@ public class NMSImpl implements NMSBridge {
+     @Override
+     public void replaceTrackerEntry(org.bukkit.entity.Entity entity) {
+         Entity handle = getHandle(entity);
++        TrackedEntity entry;
+         ChunkMap cm = ((ServerLevel) handle.level()).getChunkSource().chunkMap;
+-        TrackedEntity entry = cm.entityMap.get(entity.getEntityId());
+-        if (entry == null)
+-            return;
+-        entry.broadcastRemoved();
+-        CitizensEntityTracker newTracker = new CitizensEntityTracker(cm, entry);
+-        for (MethodHandle setter : TRACKED_ENTITY_SETTERS) {
++        CitizensEntityTracker newTracker;
++        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
++            ServerLevel server = (ServerLevel) getHandle(entity).level();
+             try {
+-                setter.invoke(handle, newTracker);
+-            } catch (Throwable e) {
+-                e.printStackTrace();
++                entry = getTrackedEntityFolia(handle);
++                if (entry == null) return;
++                entry.broadcastRemoved();
++                newTracker = new CitizensEntityTracker(server.getChunkSource().chunkMap, entry);
++                setTrackedEntityFolia(handle, newTracker);
++            } catch (Exception exception) {
++                CitizensAPI.getPlugin().getLogger().severe("Failed to replace tracker entry for " + entity.getType());
++                exception.printStackTrace(System.err);
++                return;
++            }
++        } else {
++            entry = cm.entityMap.get(entity.getEntityId());
++            if (entry == null)
++                return;
++            entry.broadcastRemoved();
++            newTracker = new CitizensEntityTracker(cm, entry);
++            for (MethodHandle setter : TRACKED_ENTITY_SETTERS) {
++                try {
++                    setter.invoke(handle, newTracker);
++                } catch (Throwable e) {
++                    e.printStackTrace();
++                }
+             }
++            cm.entityMap.put(entity.getEntityId(), newTracker);
+         }
+-        cm.entityMap.put(entity.getEntityId(), newTracker);
+     }
+ 
+     @Override
+@@ -1627,8 +1672,13 @@ public class NMSImpl implements NMSBridge {
+ 
+     @Override
+     public void setLocationDirectly(org.bukkit.entity.Entity entity, Location location) {
+-        getHandle(entity).snapTo(location.getX(), location.getY(), location.getZ(), location.getYaw(),
+-                location.getPitch());
++        // Todo - A fixer plus tard, problème avec moonrise
++        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
++            net.citizensnpcs.api.util.SpigotUtil.teleportAsync(entity, location);
++        } else {
++            getHandle(entity).snapTo(location.getX(), location.getY(), location.getZ(), location.getYaw(),
++                    location.getPitch());
++        }
+     }
+ 
+     @Override
+@@ -2312,8 +2362,13 @@ public class NMSImpl implements NMSBridge {
+         }
+         List<Packet<?>> toSend = Lists.newArrayList();
+         if (position) {
+-            TrackedEntity entry = ((ServerLevel) handle.level()).getChunkSource().chunkMap.entityMap
+-                    .get(handle.getId());
++            TrackedEntity entry = null;
++            if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
++                entry = getTrackedEntityFolia(handle);
++            } else {
++                entry = ((ServerLevel) handle.level()).getChunkSource().chunkMap.entityMap
++                        .get(handle.getId());
++            }
+             if (entry == null) {
+                 Messaging.debug("Null tracker entity for ", from);
+                 return Collections.emptyList();
+@@ -2840,4 +2895,25 @@ public class NMSImpl implements NMSBridge {
+             Messaging.logTr(Messages.ERROR_GETTING_ID_MAPPING, e.getMessage());
+         }
+     }
++
++    private static TrackedEntity getTrackedEntityFolia(Entity entity) {
++        try {
++            java.lang.reflect.Field field = Entity.class.getDeclaredField("trackedEntity");
++            field.setAccessible(true);
++            return (TrackedEntity) field.get(entity);
++        } catch (Exception exception) {
++            exception.printStackTrace(System.err);
++            return null;
++        }
++    }
++
++    private void setTrackedEntityFolia(Entity entity, TrackedEntity trackedEntity) {
++        try {
++            java.lang.reflect.Field field = Entity.class.getDeclaredField("trackedEntity");
++            field.setAccessible(true);
++            field.set(entity, trackedEntity);
++        } catch (Exception exception) {
++            exception.printStackTrace(System.err);
++        }
++    }
+ }
+-- 
+2.50.1.windows.1
+

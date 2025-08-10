@@ -1,7 +1,7 @@
 From 0be3cc70785420c19e2e7e7e9890ea02989543d4 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
 Date: Sun, 10 Aug 2025 15:30:27 +0200
-Subject: [PATCH 03/27] Patch EventListen.java
+Subject: [PATCH 03/29] Patch EventListen.java
 
 ---
  .../java/net/citizensnpcs/EventListen.java    | 23 ++++++++++---------
