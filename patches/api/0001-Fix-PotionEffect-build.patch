@@ -1,0 +1,28 @@
+From fedb324343129bcb1dda5772973c3c751f2f84f4 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 10 Aug 2025 14:26:48 +0200
+Subject: [PATCH] Fix PotionEffect build
+
+---
+ .../citizensnpcs/api/persistence/PotionEffectPersister.java  | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/main/java/net/citizensnpcs/api/persistence/PotionEffectPersister.java b/src/main/java/net/citizensnpcs/api/persistence/PotionEffectPersister.java
+index 5eea4ee7..cf07a15c 100644
+--- a/src/main/java/net/citizensnpcs/api/persistence/PotionEffectPersister.java
++++ b/src/main/java/net/citizensnpcs/api/persistence/PotionEffectPersister.java
+@@ -18,7 +18,10 @@ public class PotionEffectPersister implements Persister<PotionEffect> {
+ 
+     @Override
+     public void save(PotionEffect effect, DataKey root) {
+-        root.setString("type", effect.getType().getKeyOrNull().toString());
++        String effectTypeKey = effect.getType().getKey() == null
++                ? null
++                : effect.getType().getKey().toString();
++        root.setString("type", effectTypeKey);
+         root.setInt("amplifier", effect.getAmplifier());
+         root.setInt("duration", effect.getDuration());
+         root.setBoolean("particles", effect.hasParticles());
+-- 
+2.50.1.windows.1
+
