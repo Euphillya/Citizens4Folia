@@ -1,17 +1,17 @@
-From 54d1234c520f33227ecd56735ebe33eeed8e11ce Mon Sep 17 00:00:00 2001
+From bd7672bf0256d398fe9123bac62d747da1aeaec2 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:33:36 +0200
+Date: Tue, 12 Aug 2025 11:44:18 +0200
 Subject: [PATCH 36/39] Patch nms v1_20_R4 util NMSImpl.java
 
 ---
- .../nms/v1_20_R4/util/NMSImpl.java            | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ .../nms/v1_20_R4/util/NMSImpl.java            | 23 +++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
 diff --git a/v1_20_R4/src/main/java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java b/v1_20_R4/src/main/java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java
-index 128551cac..abd95af36 100644
+index 128551cac..954701213 100644
 --- a/v1_20_R4/src/main/java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java
 +++ b/v1_20_R4/src/main/java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java
-@@ -410,6 +410,33 @@ public class NMSImpl implements NMSBridge {
+@@ -410,6 +410,29 @@ public class NMSImpl implements NMSBridge {
          return success;
      }
  
@@ -24,20 +24,16 @@ index 128551cac..abd95af36 100644
 +        ChunkMap chunkMap = null;
 +        try {
 +            if (entity instanceof Player) {
-+                chunkMap = ((ServerChunkCache) getHandle(entity).level.getChunkSource()).chunkMap;
-+                viewDistance = (int) PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER.invoke(chunkMap);
-+                PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER.invoke(chunkMap, -1);
++                chunkMap = ((ServerChunkCache) getHandle(entity).level().getChunkSource()).chunkMap;
++                viewDistance = chunkMap.serverViewDistance;
++                chunkMap.serverViewDistance = -1;
 +            }
 +        } catch (Throwable e) {
 +            e.printStackTrace();
 +        }
-+        boolean success = getHandle(entity).level.addFreshEntity(getHandle(entity), custom);
-+        try {
-+            if (chunkMap != null) {
-+                PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER.invoke(chunkMap, viewDistance);
-+            }
-+        } catch (Throwable e) {
-+            e.printStackTrace();
++        boolean success = getHandle(entity).level().addFreshEntity(getHandle(entity), custom);
++        if (chunkMap != null) {
++            chunkMap.serverViewDistance = viewDistance;
 +        }
 +        isAdded.accept(success);
 +    }

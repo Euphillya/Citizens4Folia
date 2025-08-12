@@ -1,6 +1,6 @@
-From e5ab9c9b7a799e7c7acf951005f530b783d94d9e Mon Sep 17 00:00:00 2001
+From 660b2fd4a3a36cd442661bce5061feb66c2caa6a Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:33:32 +0200
+Date: Tue, 12 Aug 2025 11:44:15 +0200
 Subject: [PATCH 26/39] Patch util PlayerUpdateTask.java
 
 ---

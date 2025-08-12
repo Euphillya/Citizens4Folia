@@ -1,6 +1,6 @@
-From 47ee2a386115d0f8d5e72c189c0282b1dfaa08df Mon Sep 17 00:00:00 2001
+From 5084271f08d7b19cd3720264fe57c64fdc634e46 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:33:31 +0200
+Date: Tue, 12 Aug 2025 11:44:13 +0200
 Subject: [PATCH 21/39] Patch trait waypoint LinearWaypointProvider.java
 
 ---

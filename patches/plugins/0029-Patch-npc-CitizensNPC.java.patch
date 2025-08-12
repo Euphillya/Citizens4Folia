@@ -1,6 +1,6 @@
-From b623039c36bde75af621a2a399e0928d137b0448 Mon Sep 17 00:00:00 2001
+From 10b4217544df6a5e476e3e85b9cd1f8b1512181d Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:33:33 +0200
+Date: Tue, 12 Aug 2025 11:44:16 +0200
 Subject: [PATCH 29/39] Patch npc CitizensNPC.java
 
 ---

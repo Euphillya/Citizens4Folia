@@ -1,6 +1,6 @@
-From 1f3fc467f6df65f9b1acb15936f5dae476adbea3 Mon Sep 17 00:00:00 2001
+From bf90d1777d157a71f92f546237ee8ba05f8b8570 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:33:27 +0200
+Date: Tue, 12 Aug 2025 11:44:10 +0200
 Subject: [PATCH 11/39] Patch skin profile ProfileFetchThread.java
 
 ---

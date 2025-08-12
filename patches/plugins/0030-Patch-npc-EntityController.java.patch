@@ -1,6 +1,6 @@
-From 11177a531c6aac3efae7243f2bdcf5238dcf0c37 Mon Sep 17 00:00:00 2001
+From a1d0baa1587aa394633368c4cb9ac9d4508c495c Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:33:34 +0200
+Date: Tue, 12 Aug 2025 11:44:16 +0200
 Subject: [PATCH 30/39] Patch npc EntityController.java
 
 ---

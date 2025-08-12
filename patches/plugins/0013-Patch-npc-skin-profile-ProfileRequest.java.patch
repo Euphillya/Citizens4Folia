@@ -1,6 +1,6 @@
-From f7cc0da6af74a08e0eda02bd5c7e9c0ea4b2f0b3 Mon Sep 17 00:00:00 2001
+From dc1cc559767fcff2d10afa1a6f2ad1b263e77e8c Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:33:28 +0200
+Date: Tue, 12 Aug 2025 11:44:11 +0200
 Subject: [PATCH 13/39] Patch npc skin profile ProfileRequest.java
 
 ---

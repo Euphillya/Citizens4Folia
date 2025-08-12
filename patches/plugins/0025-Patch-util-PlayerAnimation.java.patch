@@ -1,6 +1,6 @@
-From 67b6bf73451539dc6fad34cc3343a6c175b645f5 Mon Sep 17 00:00:00 2001
+From 5cf142eb7717ef30935f4621448b44e7342fd291 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:33:32 +0200
+Date: Tue, 12 Aug 2025 11:44:15 +0200
 Subject: [PATCH 25/39] Patch util PlayerAnimation.java
 
 ---
