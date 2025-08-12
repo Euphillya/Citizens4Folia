@@ -1,6 +1,6 @@
-From 89dfbfe8cd4ca3fc5fb6469ce3a7b158002e6e85 Mon Sep 17 00:00:00 2001
+From f090d75a7893a51a71f0c8d32df9780e0351de82 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 10 Aug 2025 21:47:55 +0200
+Date: Tue, 12 Aug 2025 11:04:09 +0200
 Subject: [PATCH 16/28] Patch trait PausePathfindingTrait.java
 
 ---
