@@ -1,7 +1,7 @@
-From 06c7c6fcbb4c2f3c802a9cd44eaaabc70fae0f7f Mon Sep 17 00:00:00 2001
+From f0bef4d92daa9be04ee7227836d6d40fc5791791 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:04:13 +0200
-Subject: [PATCH 26/28] Patch util PlayerUpdateTask.java
+Date: Tue, 12 Aug 2025 11:26:33 +0200
+Subject: [PATCH 26/39] Patch util PlayerUpdateTask.java
 
 ---
  main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java | 2 +-

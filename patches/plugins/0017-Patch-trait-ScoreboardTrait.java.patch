@@ -1,7 +1,7 @@
-From 587e90be4bd38de43c3cbd4cf7672a8c8decaac0 Mon Sep 17 00:00:00 2001
+From 571a850dc9346522600f0ca07a0aad5bb8a118c4 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:04:09 +0200
-Subject: [PATCH 17/28] Patch trait ScoreboardTrait.java
+Date: Tue, 12 Aug 2025 11:26:30 +0200
+Subject: [PATCH 17/39] Patch trait ScoreboardTrait.java
 
 ---
  .../main/java/net/citizensnpcs/trait/ScoreboardTrait.java    | 5 ++++-

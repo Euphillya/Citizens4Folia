@@ -1,7 +1,7 @@
-From f4d64b1bd7a9df5e5b134f20afd08e9c3c523e73 Mon Sep 17 00:00:00 2001
+From 0e8bac57a801c7435648cf50ee9a44384e7d0a13 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:04:12 +0200
-Subject: [PATCH 23/28] Patch trait waypoint Waypoint.java
+Date: Tue, 12 Aug 2025 11:26:32 +0200
+Subject: [PATCH 23/39] Patch trait waypoint Waypoint.java
 
 ---
  .../src/main/java/net/citizensnpcs/trait/waypoint/Waypoint.java | 2 +-

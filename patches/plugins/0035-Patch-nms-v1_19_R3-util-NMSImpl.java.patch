@@ -1,0 +1,50 @@
+From 8da44fcbe66b28ffe4906945832d2f9ebcdf4cba Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Tue, 12 Aug 2025 11:26:36 +0200
+Subject: [PATCH 35/39] Patch nms v1_19_R3 util NMSImpl.java
+
+---
+ .../nms/v1_19_R3/util/NMSImpl.java            | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+
+diff --git a/v1_19_R3/src/main/java/net/citizensnpcs/nms/v1_19_R3/util/NMSImpl.java b/v1_19_R3/src/main/java/net/citizensnpcs/nms/v1_19_R3/util/NMSImpl.java
+index 6d9a548ce..5dcf5a94b 100644
+--- a/v1_19_R3/src/main/java/net/citizensnpcs/nms/v1_19_R3/util/NMSImpl.java
++++ b/v1_19_R3/src/main/java/net/citizensnpcs/nms/v1_19_R3/util/NMSImpl.java
+@@ -405,6 +405,33 @@ public class NMSImpl implements NMSBridge {
+         return success;
+     }
+ 
++    public void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, java.util.function.Consumer<Boolean> isAdded) {
++        if (!net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
++            isAdded.accept(addEntityToWorld(entity, custom));
++            return;
++        }
++        int viewDistance = -1;
++        ChunkMap chunkMap = null;
++        try {
++            if (entity instanceof Player) {
++                chunkMap = ((ServerChunkCache) getHandle(entity).level.getChunkSource()).chunkMap;
++                viewDistance = (int) PLAYER_CHUNK_MAP_VIEW_DISTANCE_GETTER.invoke(chunkMap);
++                PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER.invoke(chunkMap, -1);
++            }
++        } catch (Throwable e) {
++            e.printStackTrace();
++        }
++        boolean success = getHandle(entity).level.addFreshEntity(getHandle(entity), custom);
++        try {
++            if (chunkMap != null) {
++                PLAYER_CHUNK_MAP_VIEW_DISTANCE_SETTER.invoke(chunkMap, viewDistance);
++            }
++        } catch (Throwable e) {
++            e.printStackTrace();
++        }
++        isAdded.accept(success);
++    }
++
+     @Override
+     public void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
+         if (entity == null)
+-- 
+2.50.1.windows.1
+

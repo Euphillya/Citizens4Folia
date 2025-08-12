@@ -1,7 +1,7 @@
-From 96c79365311a336f5597467343b52721655a0a90 Mon Sep 17 00:00:00 2001
+From cf49721dbd3fabdb494f983e521f90d3305feb6b Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:04:10 +0200
-Subject: [PATCH 19/28] Patch trait shop OpenShopAction.java
+Date: Tue, 12 Aug 2025 11:26:31 +0200
+Subject: [PATCH 19/39] Patch trait shop OpenShopAction.java
 
 ---
  .../main/java/net/citizensnpcs/trait/shop/OpenShopAction.java   | 2 +-

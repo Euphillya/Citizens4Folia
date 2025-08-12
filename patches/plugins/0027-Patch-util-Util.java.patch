@@ -1,7 +1,7 @@
-From 66f7fdb81dc7fd296549548cf5ab2a98ccadcc5a Mon Sep 17 00:00:00 2001
+From d9e9df3d5f2055273e4c36b064dab72998a16f36 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:04:13 +0200
-Subject: [PATCH 27/28] Patch util Util.java
+Date: Tue, 12 Aug 2025 11:26:34 +0200
+Subject: [PATCH 27/39] Patch util Util.java
 
 ---
  main/src/main/java/net/citizensnpcs/util/Util.java | 3 +++

@@ -1,0 +1,25 @@
+From 865217c9698f26ea93bcf59da92e85509303e82a Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Tue, 12 Aug 2025 11:26:35 +0200
+Subject: [PATCH 33/39] Patch util NMSBridge.java
+
+---
+ main/src/main/java/net/citizensnpcs/util/NMSBridge.java | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/main/src/main/java/net/citizensnpcs/util/NMSBridge.java b/main/src/main/java/net/citizensnpcs/util/NMSBridge.java
+index a10508a3f..c771e24a0 100644
+--- a/main/src/main/java/net/citizensnpcs/util/NMSBridge.java
++++ b/main/src/main/java/net/citizensnpcs/util/NMSBridge.java
+@@ -55,6 +55,8 @@ public interface NMSBridge {
+ 
+     public boolean addEntityToWorld(Entity entity, SpawnReason custom);
+ 
++    public void addEntityToWorld(Entity entity, SpawnReason custom, java.util.function.Consumer<Boolean> isAdded);
++
+     public void addOrRemoveFromPlayerList(Entity entity, boolean remove);
+ 
+     public void attack(LivingEntity attacker, LivingEntity target);
+-- 
+2.50.1.windows.1
+

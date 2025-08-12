@@ -1,0 +1,25 @@
+From 86f100a9e9d57369937de7b9bd64479ecc06f979 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Tue, 12 Aug 2025 11:26:34 +0200
+Subject: [PATCH 30/39] Patch npc EntityController.java
+
+---
+ main/src/main/java/net/citizensnpcs/npc/EntityController.java | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/EntityController.java b/main/src/main/java/net/citizensnpcs/npc/EntityController.java
+index 23a373fab..10f18f5d8 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/EntityController.java
++++ b/main/src/main/java/net/citizensnpcs/npc/EntityController.java
+@@ -14,5 +14,7 @@ public interface EntityController {
+ 
+     void remove();
+ 
+-    boolean spawn(Location at);
++    boolean spawn(Location at); // Only work on Spigot
++
++    void spawn(Location at, java.util.function.Consumer<Boolean> callback); // Only work on Folia
+ }
+-- 
+2.50.1.windows.1
+

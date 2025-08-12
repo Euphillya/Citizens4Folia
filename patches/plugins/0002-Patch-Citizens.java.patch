@@ -1,7 +1,7 @@
-From dfd6cb36ddd00e196dd35dd01fb4d23c986e4f9e Mon Sep 17 00:00:00 2001
+From 0e2be1318d9a56067573245703083658a1112f86 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:04:04 +0200
-Subject: [PATCH 02/28] Patch Citizens.java
+Date: Tue, 12 Aug 2025 11:26:25 +0200
+Subject: [PATCH 02/39] Patch Citizens.java
 
 ---
  main/src/main/java/net/citizensnpcs/Citizens.java | 4 ++--

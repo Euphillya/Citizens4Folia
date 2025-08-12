@@ -1,7 +1,7 @@
-From dafa331108748c8c084076adb84913ccef486bcd Mon Sep 17 00:00:00 2001
+From c0728e4738e6f76eca2f9651a1924383f841102f Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:04:04 +0200
-Subject: [PATCH 01/28] Rebrand
+Date: Tue, 12 Aug 2025 11:26:25 +0200
+Subject: [PATCH 01/39] Rebrand
 
 ---
  main/src/main/resources/plugin.yml | 1 +

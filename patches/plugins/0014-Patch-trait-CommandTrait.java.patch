@@ -1,7 +1,7 @@
-From fe02149cfcf96ce375b79377e06b318b3f9da730 Mon Sep 17 00:00:00 2001
+From 0ae51e723f256e93c693c482604560ff942703ad Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:04:08 +0200
-Subject: [PATCH 14/28] Patch trait CommandTrait.java
+Date: Tue, 12 Aug 2025 11:26:29 +0200
+Subject: [PATCH 14/39] Patch trait CommandTrait.java
 
 ---
  .../main/java/net/citizensnpcs/trait/CommandTrait.java    | 8 ++++----
