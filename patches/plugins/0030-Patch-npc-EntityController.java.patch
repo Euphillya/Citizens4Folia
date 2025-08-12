@@ -1,7 +1,7 @@
-From a1d0baa1587aa394633368c4cb9ac9d4508c495c Mon Sep 17 00:00:00 2001
+From df219ac1dcfa38bd2136e31507b4feb69fb2e1e6 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:44:16 +0200
-Subject: [PATCH 30/39] Patch npc EntityController.java
+Date: Tue, 12 Aug 2025 15:14:50 +0200
+Subject: [PATCH 30/41] Patch npc EntityController.java
 
 ---
  main/src/main/java/net/citizensnpcs/npc/EntityController.java | 4 +++-

@@ -1,14 +1,14 @@
-From 6f52d6cfa444125e852be1cf39c1a9ebd4715ad5 Mon Sep 17 00:00:00 2001
+From 508233e6ef554cbbf9f250d9dab26d586c3ef263 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:44:07 +0200
-Subject: [PATCH 03/39] Patch EventListen.java
+Date: Tue, 12 Aug 2025 15:14:40 +0200
+Subject: [PATCH 03/41] Patch EventListen.java
 
 ---
- .../java/net/citizensnpcs/EventListen.java    | 23 ++++++++++---------
- 1 file changed, 12 insertions(+), 11 deletions(-)
+ .../java/net/citizensnpcs/EventListen.java    | 29 ++++++++++---------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/EventListen.java b/main/src/main/java/net/citizensnpcs/EventListen.java
-index b6074748f..3971944e2 100644
+index b6074748f..1a7b30e80 100644
 --- a/main/src/main/java/net/citizensnpcs/EventListen.java
 +++ b/main/src/main/java/net/citizensnpcs/EventListen.java
 @@ -264,7 +264,7 @@ public class EventListen implements Listener {
@@ -71,15 +71,36 @@ index b6074748f..3971944e2 100644
                              () -> PlayerAnimation.STOP_USE_ITEM.play(player));
                  } catch (UnsupportedOperationException e) {
                      SUPPORT_STOP_USE_ITEM = false;
-@@ -743,7 +743,7 @@ public class EventListen implements Listener {
+@@ -743,9 +743,9 @@ public class EventListen implements Listener {
          if (event.getCause() == TeleportCause.PLUGIN && npc != null && !npc.data().has("citizens-force-teleporting")
                  && Setting.PLAYER_TELEPORT_DELAY.asTicks() > 0) {
              event.setCancelled(true);
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
 +            CitizensAPI.getScheduler().runEntityTaskLater(event.getPlayer(), () -> {
                  npc.data().set("citizens-force-teleporting", true);
-                 event.getPlayer().teleport(event.getTo());
+-                event.getPlayer().teleport(event.getTo());
++                SpigotUtil.teleportAsync(event.getPlayer(), event.getTo());
                  npc.data().remove("citizens-force-teleporting");
+             }, Setting.PLAYER_TELEPORT_DELAY.asTicks());
+         }
+@@ -788,7 +788,7 @@ public class EventListen implements Listener {
+         if (!(event.getEntity() instanceof FishHook))
+             return;
+         NMS.removeHookIfNecessary((FishHook) event.getEntity());
+-        new BukkitRunnable() {
++        new net.citizensnpcs.api.util.schedulers.SchedulerRunnable() {
+             int n = 0;
+ 
+             @Override
+@@ -799,7 +799,7 @@ public class EventListen implements Listener {
+                 }
+                 NMS.removeHookIfNecessary((FishHook) event.getEntity());
+             }
+-        }.runTaskTimer(plugin, 0, 1);
++        }.runEntityTaskTimer(plugin, event.getEntity(), null, 0, 1);
+     }
+ 
+     @EventHandler
 @@ -931,11 +931,11 @@ public class EventListen implements Listener {
                      if (!npcMoveEvent.isCancelled()) {
                          final Location eventTo = npcMoveEvent.getTo();

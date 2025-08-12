@@ -1,7 +1,7 @@
-From 144d28be38288d8a5205c308840c2dd43849956e Mon Sep 17 00:00:00 2001
+From b9d1eca0bed532e327343fc1f4629e1cc66f763d Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:44:17 +0200
-Subject: [PATCH 33/39] Patch util NMSBridge.java
+Date: Tue, 12 Aug 2025 15:14:51 +0200
+Subject: [PATCH 33/41] Patch util NMSBridge.java
 
 ---
  main/src/main/java/net/citizensnpcs/util/NMSBridge.java | 2 ++

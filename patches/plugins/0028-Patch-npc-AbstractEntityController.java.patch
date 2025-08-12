@@ -1,7 +1,7 @@
-From a61593dbe2123abac92baaa63d1dfe43167f56d7 Mon Sep 17 00:00:00 2001
+From 065cc54cc1329b83501dece86116f86e3e8a3b2b Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:44:16 +0200
-Subject: [PATCH 28/39] Patch npc AbstractEntityController.java
+Date: Tue, 12 Aug 2025 15:14:49 +0200
+Subject: [PATCH 28/41] Patch npc AbstractEntityController.java
 
 ---
  .../java/net/citizensnpcs/npc/AbstractEntityController.java  | 5 +++++

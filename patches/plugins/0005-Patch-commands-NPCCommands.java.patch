@@ -1,14 +1,14 @@
-From 1336e76c54547def2be14afe47a3412476b9ba4b Mon Sep 17 00:00:00 2001
+From 94803b1923e3e10f99390a1538aac525c56886ce Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:44:08 +0200
-Subject: [PATCH 05/39] Patch commands NPCCommands.java
+Date: Tue, 12 Aug 2025 15:14:41 +0200
+Subject: [PATCH 05/41] Patch commands NPCCommands.java
 
 ---
- .../java/net/citizensnpcs/commands/NPCCommands.java    | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ .../java/net/citizensnpcs/commands/NPCCommands.java | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
-index 588dbb0cf..acc1fd713 100644
+index 588dbb0cf..cfd74ac8a 100644
 --- a/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
 +++ b/main/src/main/java/net/citizensnpcs/commands/NPCCommands.java
 @@ -900,7 +900,7 @@ public class NPCCommands {
@@ -55,6 +55,23 @@ index 588dbb0cf..acc1fd713 100644
                              Messages.ERROR_SETTING_SKIN_URL, url == null ? file : url));
                  }
              });
+@@ -3561,7 +3561,7 @@ public class NPCCommands {
+             to = to.clone().add(to.getDirection().setY(0));
+             to.setDirection(to.getDirection().multiply(-1)).setPitch(0);
+         }
+-        player.teleport(to, TeleportCause.COMMAND);
++        SpigotUtil.teleportAsync(player, to, TeleportCause.COMMAND);
+         Messaging.sendTr(player, Messages.TELEPORTED_TO_NPC, npc.getName());
+     }
+ 
+@@ -3663,6 +3663,7 @@ public class NPCCommands {
+         if (to == null)
+             throw new CommandException(Messages.TPTO_ENTITY_NOT_FOUND);
+         from.teleport(to);
++        SpigotUtil.teleportAsync(from, to.getLocation());
+         Messaging.sendTr(sender, Messages.TPTO_SUCCESS);
+     }
+ 
 -- 
 2.50.1.windows.1
 

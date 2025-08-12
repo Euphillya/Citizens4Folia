@@ -1,7 +1,7 @@
-From c141bbe03811a1c9097a2118ee41545a3bd252ab Mon Sep 17 00:00:00 2001
+From cc27aa5b2921dfc4531edc4a7f144a4d85aa55bc Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:44:12 +0200
-Subject: [PATCH 18/39] Patch trait ShopTrait.java
+Date: Tue, 12 Aug 2025 15:14:45 +0200
+Subject: [PATCH 18/41] Patch trait ShopTrait.java
 
 ---
  main/src/main/java/net/citizensnpcs/trait/ShopTrait.java | 2 +-

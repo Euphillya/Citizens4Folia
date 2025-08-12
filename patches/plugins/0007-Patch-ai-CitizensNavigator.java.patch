@@ -1,7 +1,7 @@
-From 8d19d0dce606cfe38360a9e5188ec8b725482ff1 Mon Sep 17 00:00:00 2001
+From 0480b690ad5a1e697f47b97d6172d72c66cfff2e Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:44:09 +0200
-Subject: [PATCH 07/39] Patch ai CitizensNavigator.java
+Date: Tue, 12 Aug 2025 15:14:42 +0200
+Subject: [PATCH 07/41] Patch ai CitizensNavigator.java
 
 ---
  .../main/java/net/citizensnpcs/npc/ai/CitizensNavigator.java    | 2 +-

@@ -1,7 +1,7 @@
-From b78f1046fc96552d23f0488deac00105963e6da9 Mon Sep 17 00:00:00 2001
+From fbf5fc58e947b90f63eb06acf8885b0216b10e30 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:44:08 +0200
-Subject: [PATCH 04/39] Patch Metrics.java
+Date: Tue, 12 Aug 2025 15:14:41 +0200
+Subject: [PATCH 04/41] Patch Metrics.java
 
 ---
  main/src/main/java/net/citizensnpcs/Metrics.java | 2 +-

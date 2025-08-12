@@ -1,0 +1,25 @@
+From d79cd4107a7cc5cbb7af61c4bc709ac167f7aac4 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Tue, 12 Aug 2025 15:14:53 +0200
+Subject: [PATCH 40/41] Patch trait SitTrait.java
+
+---
+ main/src/main/java/net/citizensnpcs/trait/SitTrait.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/trait/SitTrait.java b/main/src/main/java/net/citizensnpcs/trait/SitTrait.java
+index abcf4ab3b..45cfba55a 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/SitTrait.java
++++ b/main/src/main/java/net/citizensnpcs/trait/SitTrait.java
+@@ -42,7 +42,7 @@ public class SitTrait extends Trait {
+                 if (requiresPassengerOffsetCorrection()) {
+                     npcLoc = npcLoc.add(0, 0.3, 0);
+                 }
+-                npc.getEntity().teleport(npcLoc);
++                SpigotUtil.teleportAsync(npc.getEntity(), npcLoc);
+             }
+             chair.destroy();
+             chair = null;
+-- 
+2.50.1.windows.1
+

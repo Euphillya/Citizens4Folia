@@ -1,7 +1,7 @@
-From 50dbd41f46231ad92c964dd015001c994de1dd53 Mon Sep 17 00:00:00 2001
+From 9bbac33769a7e617dd04c3c9172a51bedf244502 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:44:10 +0200
-Subject: [PATCH 12/39] Patch skin profile ProfileFetcher.java
+Date: Tue, 12 Aug 2025 15:14:43 +0200
+Subject: [PATCH 12/41] Patch skin profile ProfileFetcher.java
 
 ---
  .../net/citizensnpcs/npc/skin/profile/ProfileFetcher.java     | 4 ++--
