@@ -1,6 +1,6 @@
-From 586e88b6410fc6651c45da4b857767d214bb7efb Mon Sep 17 00:00:00 2001
+From b6584c88fafbdfe4cd9ed920e2c2351efe9ddbf2 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:26:35 +0200
+Date: Tue, 12 Aug 2025 11:33:34 +0200
 Subject: [PATCH 31/39] Patch trait PacketNPC.java
 
 ---

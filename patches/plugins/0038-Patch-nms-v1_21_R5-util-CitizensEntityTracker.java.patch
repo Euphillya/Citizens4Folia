@@ -1,6 +1,6 @@
-From f4f9d0c1bd8348ab80f08456fb4830de42320aeb Mon Sep 17 00:00:00 2001
+From f339e0834fa39e52b319c3a6c38802bee9bd2f2e Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:26:37 +0200
+Date: Tue, 12 Aug 2025 11:33:37 +0200
 Subject: [PATCH 38/39] Patch nms v1_21_R5 util CitizensEntityTracker.java
 
 ---

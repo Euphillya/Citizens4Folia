@@ -1,6 +1,6 @@
-From 10f49dacca8465d00804921eb633a704fa84f675 Mon Sep 17 00:00:00 2001
+From 54d1234c520f33227ecd56735ebe33eeed8e11ce Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:26:36 +0200
+Date: Tue, 12 Aug 2025 11:33:36 +0200
 Subject: [PATCH 36/39] Patch nms v1_20_R4 util NMSImpl.java
 
 ---

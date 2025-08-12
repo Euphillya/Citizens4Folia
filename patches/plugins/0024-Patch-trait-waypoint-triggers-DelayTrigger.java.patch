@@ -1,6 +1,6 @@
-From d64bbd0691a4fcc2588f9bb9bc3d575025378fcf Mon Sep 17 00:00:00 2001
+From f8dc5abdced1fab4472f594cec46b4b77428a70b Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:26:33 +0200
+Date: Tue, 12 Aug 2025 11:33:32 +0200
 Subject: [PATCH 24/39] Patch trait waypoint triggers DelayTrigger.java
 
 ---

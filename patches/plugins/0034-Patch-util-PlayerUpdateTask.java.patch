@@ -1,6 +1,6 @@
-From d36168ad5aed346077bb1be7bc4f5161b7e3211f Mon Sep 17 00:00:00 2001
+From 977ce5194d9234183d4671da9486c32eb28418d5 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 11:26:36 +0200
+Date: Tue, 12 Aug 2025 11:33:35 +0200
 Subject: [PATCH 34/39] Patch util PlayerUpdateTask.java
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 34/39] Patch util PlayerUpdateTask.java
  1 file changed, 4 insertions(+), 3 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java b/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java
-index 1d23e9619..038c8f5cb 100644
+index 1d23e9619..5f86195ae 100644
 --- a/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java
 +++ b/main/src/main/java/net/citizensnpcs/util/PlayerUpdateTask.java
 @@ -21,7 +21,7 @@ import net.citizensnpcs.trait.PacketNPC;
@@ -33,7 +33,7 @@ index 1d23e9619..038c8f5cb 100644
              }
              uuids.add(entity.getUniqueId());
 -        }
-+        })};
++        });}
          PLAYERS_PENDING_ADD.clear();
  
          for (PlayerTick player : players) {
