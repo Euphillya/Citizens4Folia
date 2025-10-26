@@ -1,6 +1,6 @@
-From fb9edd54527e34183c3114fad9806879104dbc1a Mon Sep 17 00:00:00 2001
+From f279bf906a266e91699b9704d4533b2ff6676fbf Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 26 Oct 2025 04:32:52 +0100
+Date: Sun, 26 Oct 2025 17:04:27 +0100
 Subject: [PATCH 32/43] Patch util NMSBridge.java
 
 ---

@@ -1,6 +1,6 @@
-From 49214d36713c704d9b13b7fa814165b9dd69980f Mon Sep 17 00:00:00 2001
+From 6426e84a942449c72ab47ac07bc016ed86b9f937 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 26 Oct 2025 04:18:55 +0100
+Date: Sun, 26 Oct 2025 17:04:23 +0100
 Subject: [PATCH 19/43] Patch trait waypoint GuidedWaypointProvider.java
 
 ---

@@ -1,6 +1,6 @@
-From 42af2b5e541cea67a16322d2cd7ce67a3d7982b8 Mon Sep 17 00:00:00 2001
+From 3a53b35b847d328c00493736d563b49e2bef7701 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 26 Oct 2025 04:36:08 +0100
+Date: Sun, 26 Oct 2025 17:04:28 +0100
 Subject: [PATCH 34/43] Patch nms v1_21_R5 entity HumanController.java
 
 ---

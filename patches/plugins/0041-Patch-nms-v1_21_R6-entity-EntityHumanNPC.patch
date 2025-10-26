@@ -1,6 +1,6 @@
-From e81372af0e5958ee3fd72abcab86204b1ae8ac45 Mon Sep 17 00:00:00 2001
+From 0cfc083c57ada5e351aca5cb883a6a1ac56ae0b8 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 26 Oct 2025 04:59:38 +0100
+Date: Sun, 26 Oct 2025 17:04:29 +0100
 Subject: [PATCH 41/43] Patch nms v1_21_R6 entity EntityHumanNPC
 
 ---

@@ -1,6 +1,6 @@
-From 44a29f50b3c0caa2efb5e17f96642ee6e13f40aa Mon Sep 17 00:00:00 2001
+From 548cf2ea6793d8e8794f309821015da7e862074f Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 26 Oct 2025 03:45:30 +0100
+Date: Sun, 26 Oct 2025 17:04:21 +0100
 Subject: [PATCH 09/43] Patch npc skin SkinUpdateTracker.java
 
 ---

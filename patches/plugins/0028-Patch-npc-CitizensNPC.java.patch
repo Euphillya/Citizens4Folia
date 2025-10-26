@@ -1,6 +1,6 @@
-From 93364bf4c1a39eb6bbcd08c81e53b5238c53aa47 Mon Sep 17 00:00:00 2001
+From 429ffec6bd6278c89f31d1e4335dbd1020ce4f5b Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 26 Oct 2025 04:28:16 +0100
+Date: Sun, 26 Oct 2025 17:04:26 +0100
 Subject: [PATCH 28/43] Patch npc CitizensNPC.java
 
 ---
@@ -8,7 +8,7 @@ Subject: [PATCH 28/43] Patch npc CitizensNPC.java
  1 file changed, 7 insertions(+), 2 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java b/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
-index 31888b00a..d03547eb2 100644
+index d695470b3..b431d8f4f 100644
 --- a/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
 +++ b/main/src/main/java/net/citizensnpcs/npc/CitizensNPC.java
 @@ -328,8 +328,13 @@ public class CitizensNPC extends AbstractNPC {

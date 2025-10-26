@@ -1,24 +1,20 @@
-From a1bbbae1fd05fc2d727868334eb8a7e48ea0e91f Mon Sep 17 00:00:00 2001
+From 16221d9072a03ed8256ae6cde61a862dcbcddf9d Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 26 Oct 2025 04:43:15 +0100
+Date: Sun, 26 Oct 2025 17:04:28 +0100
 Subject: [PATCH 35/43] Patch nms v1_21_R5 util CitizensEntityTracker.java
 
 ---
- .../v1_21_R5/util/CitizensEntityTracker.java  | 109 +++++++++++++-----
- 1 file changed, 77 insertions(+), 32 deletions(-)
+ .../v1_21_R5/util/CitizensEntityTracker.java  | 110 +++++++++++++-----
+ 1 file changed, 80 insertions(+), 30 deletions(-)
 
 diff --git a/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/util/CitizensEntityTracker.java b/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/util/CitizensEntityTracker.java
-index 3d16b0b17..463fe222a 100644
+index 3d16b0b17..7cfa7817c 100644
 --- a/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/util/CitizensEntityTracker.java
 +++ b/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/util/CitizensEntityTracker.java
-@@ -67,46 +67,91 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
+@@ -67,46 +67,96 @@ public class CitizensEntityTracker extends ChunkMap.TrackedEntity {
          this(map, getTracker(entry), getTrackingDistance(entry), getUpdateInterval(entry), getTrackDelta(entry));
      }
  
--    @Override
--    public void updatePlayer(final ServerPlayer entityplayer) {
--        if (entityplayer instanceof EntityHumanNPC)
--            return;
 +//    @Override
 +//    public void updatePlayer(final ServerPlayer entityplayer) {
 +//        if (entityplayer instanceof EntityHumanNPC)
@@ -58,15 +54,18 @@ index 3d16b0b17..463fe222a 100644
 +//        }
 +//        super.updatePlayer(entityplayer);
 +//    }
- 
--        if (!tracker.isRemoved() && !seenBy.contains(entityplayer.connection) && tracker instanceof NPCHolder) {
--            NPC npc = ((NPCHolder) tracker).getNPC();
-+    @Override
++
+     @Override
+-    public void updatePlayer(final ServerPlayer entityplayer) {
 +    public void updatePlayer(ServerPlayer entityplayer) {
-+        if (npc != null) {
-             if (REQUIRES_SYNC == null) {
-                 REQUIRES_SYNC = !Bukkit.isPrimaryThread();
-             }
+         if (entityplayer instanceof EntityHumanNPC)
+             return;
+-
+         if (!tracker.isRemoved() && !seenBy.contains(entityplayer.connection) && tracker instanceof NPCHolder) {
+             NPC npc = ((NPCHolder) tracker).getNPC();
+-            if (REQUIRES_SYNC == null) {
+-                REQUIRES_SYNC = !Bukkit.isPrimaryThread();
+-            }
 -            boolean cancelled = Util.callPossiblySync(() -> {
 -                NPCSeenByPlayerEvent event = new NPCSeenByPlayerEvent(npc, entityplayer.getBukkitEntity());
 -                try {
@@ -74,7 +73,10 @@ index 3d16b0b17..463fe222a 100644
 -                } catch (IllegalStateException e) {
 -                    REQUIRES_SYNC = true;
 -                    throw e;
--                }
++            if (npc != null) {
++                if (REQUIRES_SYNC == null) {
++                    REQUIRES_SYNC = !Bukkit.isPrimaryThread();
+                 }
 -                if (event.isCancelled())
 -                    return true;
 -
@@ -86,20 +88,21 @@ index 3d16b0b17..463fe222a 100644
 -                        npc.data().set("last-tracking-range", trackingRange);
 -                    } catch (Throwable e) {
 -                        e.printStackTrace();
--                    }
-+            cancelledUpdatePlayer(npc, entityplayer, cancelled -> {
-+                if (cancelled) {
-+                    return;
-                 }
++                cancelledUpdatePlayer(npc, entityplayer, cancelled -> {
++                    if (cancelled) {
++                        return;
+                     }
+-                }
 -                return false;
 -            }, REQUIRES_SYNC);
 -
 -            if (cancelled)
 -                return;
++                    super.updatePlayer(entityplayer);
++                });
++            } else {
 +                super.updatePlayer(entityplayer);
-+            });
-+        } else {
-+            super.updatePlayer(entityplayer);
++            }
          }
 -        super.updatePlayer(entityplayer);
      }
