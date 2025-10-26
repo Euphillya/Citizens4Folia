@@ -1,17 +1,27 @@
-From 2f89878acf22b47d89df979322c81578c61602d0 Mon Sep 17 00:00:00 2001
+From bab5bc5292ab2d76860bd2c16e96ae9b97331e4e Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 26 Oct 2025 17:04:19 +0100
-Subject: [PATCH 02/43] Patch Citizens.java
+Date: Sun, 26 Oct 2025 17:58:08 +0100
+Subject: [PATCH 2/3] Patch Citizens.java
 
 ---
- main/src/main/java/net/citizensnpcs/Citizens.java | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ main/src/main/java/net/citizensnpcs/Citizens.java | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/Citizens.java b/main/src/main/java/net/citizensnpcs/Citizens.java
-index ac2d2139c..12201e70f 100644
+index ac2d2139c..b6ab11d52 100644
 --- a/main/src/main/java/net/citizensnpcs/Citizens.java
 +++ b/main/src/main/java/net/citizensnpcs/Citizens.java
-@@ -444,7 +444,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
+@@ -185,6 +185,9 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
+                     registry.saveToStore();
+                 }
+             }
++            if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
++                if (!this.isEnabled()) return; // Folia ne permet pas de despawn lors du disable
++            }
+             registry.despawnNPCs(DespawnReason.RELOAD);
+         }
+     }
+@@ -444,7 +447,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
  
          // Setup NPCs after all plugins have been enabled (allows for multiworld
          // support and for NPCs to properly register external settings)
@@ -20,7 +30,7 @@ index ac2d2139c..12201e70f 100644
              Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
              Bukkit.getPluginManager().disablePlugin(this);
          }
-@@ -512,7 +512,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
+@@ -512,7 +515,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
      }
  
      private void scheduleSaveTask(int delay) {

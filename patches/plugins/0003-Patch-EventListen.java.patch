@@ -1,17 +1,27 @@
-From 6ad47e5547e282c1c551c64267ecd826ddbfe288 Mon Sep 17 00:00:00 2001
+From 15c550af9a2012b66ed1eaf89ec39b3ea1ad389f Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Sun, 26 Oct 2025 17:04:19 +0100
-Subject: [PATCH 03/43] Patch EventListen.java
+Date: Sun, 26 Oct 2025 18:01:25 +0100
+Subject: [PATCH 3/3] Patch EventListen.java
 
 ---
- .../java/net/citizensnpcs/EventListen.java    | 26 +++++++++----------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ .../java/net/citizensnpcs/EventListen.java    | 29 ++++++++++---------
+ 1 file changed, 15 insertions(+), 14 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/EventListen.java b/main/src/main/java/net/citizensnpcs/EventListen.java
-index 73fc083b5..d219d031f 100644
+index 73fc083b5..f2605519c 100644
 --- a/main/src/main/java/net/citizensnpcs/EventListen.java
 +++ b/main/src/main/java/net/citizensnpcs/EventListen.java
-@@ -420,7 +420,7 @@ public class EventListen implements Listener {
+@@ -265,7 +265,8 @@ public class EventListen implements Listener {
+         if (event instanceof Cancellable) {
+             runnable.run();
+         } else {
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, runnable);
++            final org.bukkit.Chunk chunk = event.getChunk();
++            CitizensAPI.getScheduler().runRegionTask(chunk.getWorld(), chunk.getX(), chunk.getZ(), runnable);
+         }
+     }
+ 
+@@ -420,7 +421,7 @@ public class EventListen implements Listener {
              return;
  
          int deathAnimationTicks = event.getEntity() instanceof LivingEntity ? 20 : 2;
@@ -20,7 +30,7 @@ index 73fc083b5..d219d031f 100644
              if (!npc.isSpawned() && npc.getOwningRegistry().getByUniqueId(npc.getUniqueId()) == npc) {
                  npc.spawn(location, SpawnReason.TIMED_RESPAWN);
              }
-@@ -536,7 +536,7 @@ public class EventListen implements Listener {
+@@ -536,7 +537,7 @@ public class EventListen implements Listener {
          }
          if (npc.data().has(NPC.Metadata.HOLOGRAM_RENDERER)) {
              HologramRenderer hr = npc.data().get(NPC.Metadata.HOLOGRAM_RENDERER);
@@ -29,7 +39,7 @@ index 73fc083b5..d219d031f 100644
          }
      }
  
-@@ -558,12 +558,12 @@ public class EventListen implements Listener {
+@@ -558,12 +559,12 @@ public class EventListen implements Listener {
          if (!sendTabRemove || !event.getNPC().shouldRemoveFromTabList()) {
              NMS.sendRotationPacket(tracker, ImmutableList.of(event.getPlayer()), null, null, NMS.getHeadYaw(tracker));
              if (resetYaw) {
@@ -44,7 +54,7 @@ index 73fc083b5..d219d031f 100644
              if (!tracker.isValid() || !event.getPlayer().isValid())
                  return;
  
-@@ -612,7 +612,7 @@ public class EventListen implements Listener {
+@@ -612,7 +613,7 @@ public class EventListen implements Listener {
          if (plugin.getNPCRegistry().getNPC(event.getPlayer()) == null)
              return;
  
@@ -53,7 +63,7 @@ index 73fc083b5..d219d031f 100644
              NMS.replaceTracker(event.getPlayer());
              NMS.removeFromServerPlayerList(event.getPlayer());
          }, 1);
-@@ -675,7 +675,7 @@ public class EventListen implements Listener {
+@@ -675,7 +676,7 @@ public class EventListen implements Listener {
              if (SUPPORT_STOP_USE_ITEM) {
                  try {
                      PlayerAnimation.STOP_USE_ITEM.play(player);
@@ -62,7 +72,7 @@ index 73fc083b5..d219d031f 100644
                              () -> PlayerAnimation.STOP_USE_ITEM.play(player));
                  } catch (UnsupportedOperationException e) {
                      SUPPORT_STOP_USE_ITEM = false;
-@@ -744,9 +744,9 @@ public class EventListen implements Listener {
+@@ -744,9 +745,9 @@ public class EventListen implements Listener {
          if (event.getCause() == TeleportCause.PLUGIN && npc != null && !npc.data().has("citizens-force-teleporting")
                  && Setting.PLAYER_TELEPORT_DELAY.asTicks() > 0) {
              event.setCancelled(true);
@@ -74,7 +84,7 @@ index 73fc083b5..d219d031f 100644
                  npc.data().remove("citizens-force-teleporting");
              }, Setting.PLAYER_TELEPORT_DELAY.asTicks());
          }
-@@ -789,7 +789,7 @@ public class EventListen implements Listener {
+@@ -789,7 +790,7 @@ public class EventListen implements Listener {
          if (!(event.getEntity() instanceof FishHook))
              return;
          NMS.removeHookIfNecessary((FishHook) event.getEntity());
@@ -83,7 +93,7 @@ index 73fc083b5..d219d031f 100644
              int n = 0;
  
              @Override
-@@ -800,7 +800,7 @@ public class EventListen implements Listener {
+@@ -800,7 +801,7 @@ public class EventListen implements Listener {
                  }
                  NMS.removeHookIfNecessary((FishHook) event.getEntity());
              }
@@ -92,7 +102,7 @@ index 73fc083b5..d219d031f 100644
      }
  
      @EventHandler
-@@ -932,11 +932,11 @@ public class EventListen implements Listener {
+@@ -932,11 +933,11 @@ public class EventListen implements Listener {
                      if (!npcMoveEvent.isCancelled()) {
                          final Location eventTo = npcMoveEvent.getTo();
                          if (!to.equals(eventTo)) {
@@ -106,12 +116,12 @@ index 73fc083b5..d219d031f 100644
                      }
                  } catch (Throwable ex) {
                      ex.printStackTrace();
-@@ -1044,7 +1044,7 @@ public class EventListen implements Listener {
+@@ -1044,7 +1045,7 @@ public class EventListen implements Listener {
          }
          if (loadChunk) {
              Messaging.idebug(() -> Joiner.on(' ').join("Loading chunk in 10 ticks due to forced chunk load at", coord));
 -            Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-+            final org.bukkit.Chunk chunk = event.getChunk();  CitizensAPI.getScheduler().runRegionTaskLater(chunk.getWorld(), chunk.getX(), chunk.getZ(), () -> {
++            final org.bukkit.Chunk chunk = event.getChunk(); CitizensAPI.getScheduler().runRegionTaskLater(chunk.getWorld(), chunk.getX(), chunk.getZ(), () -> {
                  if (!event.getChunk().isLoaded()) {
                      event.getChunk().load();
                  }
