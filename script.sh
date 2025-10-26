@@ -127,9 +127,11 @@ case "$1" in
             case "$name" in
                 Citizens2)
                     dest="$REPO_DIR"
+                    patch_dest="$REPO_DIR_PATCH"
                     ;;
                 CitizensAPI)
                     dest="$API_REPO_DIR"
+                    patch_dest="$API_REPO_DIR_PATCH"
                     ;;
                 *)
                     echo "Dépôt inconnu : $name"
@@ -137,9 +139,17 @@ case "$1" in
                     ;;
             esac
 
+            # Clone au commit ciblé
             clone_specific_commit "$name" "$url" "$commit" "$dest"
+
+            # Préparer la copie patchable
+            echo "Préparation de la copie patchable : $patch_dest"
+            rm -rf "$patch_dest"
+            cp -r "$dest" "$patch_dest"
+            echo "Copie réalisée : $dest -> $patch_dest"
         done < "$SCRIPT_DIR/submodules.conf"
         ;;
+
     updateUpstream)
         case "$2" in
             repo)

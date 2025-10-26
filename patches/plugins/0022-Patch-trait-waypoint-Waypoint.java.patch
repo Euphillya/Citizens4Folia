@@ -1,0 +1,25 @@
+From f72fed75d5a33982e369fc5a35afc9faeedb715a Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 04:21:59 +0100
+Subject: [PATCH 22/43] Patch trait waypoint Waypoint.java
+
+---
+ .../src/main/java/net/citizensnpcs/trait/waypoint/Waypoint.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/trait/waypoint/Waypoint.java b/main/src/main/java/net/citizensnpcs/trait/waypoint/Waypoint.java
+index a50f33e14..4ae14ad41 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/waypoint/Waypoint.java
++++ b/main/src/main/java/net/citizensnpcs/trait/waypoint/Waypoint.java
+@@ -114,7 +114,7 @@ public class Waypoint {
+                 continue;
+             }
+             int newStart = i + 1;
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> runTriggers(npc, newStart),
++            CitizensAPI.getScheduler().runEntityTaskLater(npc.getEntity(), () -> runTriggers(npc, newStart),
+                     delay);
+             break;
+         }
+-- 
+2.50.1.windows.1
+

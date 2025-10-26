@@ -1,0 +1,25 @@
+From ca8a07264b99c95bb2c3c64e4ea34a9e8149b360 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 03:44:40 +0100
+Subject: [PATCH 08/43] Patch npc skin SkinPacketTracker.java
+
+---
+ .../main/java/net/citizensnpcs/npc/skin/SkinPacketTracker.java  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/SkinPacketTracker.java b/main/src/main/java/net/citizensnpcs/npc/skin/SkinPacketTracker.java
+index 5ad1508b6..b10b9538d 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/SkinPacketTracker.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/SkinPacketTracker.java
+@@ -64,7 +64,7 @@ public class SkinPacketTracker {
+         skin.apply(entity);
+         if (entity.getBukkitEntity() instanceof Player && NMS.sendTabListAdd(player, (Player) entity.getBukkitEntity())
+                 && entity.getNPC().shouldRemoveFromTabList()) {
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
++            CitizensAPI.getScheduler().runEntityTaskLater(player,
+                     () -> NMS.sendTabListRemove(player, (Player) entity.getBukkitEntity()),
+                     Setting.TABLIST_REMOVE_PACKET_DELAY.asTicks());
+         }
+-- 
+2.50.1.windows.1
+

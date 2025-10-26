@@ -1,0 +1,30 @@
+From eec13b042a57d5f648e4bfa8182565784d32f58d Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 04:54:23 +0100
+Subject: [PATCH 38/43] Patch nms v1_21_R6 entity HumanController.java
+
+---
+ .../net/citizensnpcs/nms/v1_21_R6/entity/HumanController.java | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/v1_21_R6/src/main/java/net/citizensnpcs/nms/v1_21_R6/entity/HumanController.java b/v1_21_R6/src/main/java/net/citizensnpcs/nms/v1_21_R6/entity/HumanController.java
+index fb2c65868..a7fd6b6a3 100644
+--- a/v1_21_R6/src/main/java/net/citizensnpcs/nms/v1_21_R6/entity/HumanController.java
++++ b/v1_21_R6/src/main/java/net/citizensnpcs/nms/v1_21_R6/entity/HumanController.java
+@@ -54,11 +54,11 @@ public class HumanController extends AbstractEntityController {
+                 e.printStackTrace();
+             }
+         }
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++        CitizensAPI.getScheduler().runTaskLater(() -> { if (getBukkitEntity() == null) return;
+             if (getBukkitEntity() == null || !getBukkitEntity().isValid()
+                     || getBukkitEntity() != handle.getBukkitEntity())
+                 return;
+-            NMS.addOrRemoveFromPlayerList(getBukkitEntity(), npc.shouldRemoveFromPlayerList());
++            CitizensAPI.getScheduler().runEntityTask(getBukkitEntity(), () -> NMS.addOrRemoveFromPlayerList(getBukkitEntity(), npc.shouldRemoveFromPlayerList()));
+         }, 20);
+         handle.getBukkitEntity().setSleepingIgnored(true);
+         return handle.getBukkitEntity();
+-- 
+2.50.1.windows.1
+

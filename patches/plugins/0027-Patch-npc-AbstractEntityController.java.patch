@@ -1,0 +1,27 @@
+From a2431fd49031e01f215969e76164d255ad62017d Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 04:26:57 +0100
+Subject: [PATCH 27/43] Patch npc AbstractEntityController.java
+
+---
+ .../java/net/citizensnpcs/npc/AbstractEntityController.java  | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/AbstractEntityController.java b/main/src/main/java/net/citizensnpcs/npc/AbstractEntityController.java
+index c86dbcead..075bd1009 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/AbstractEntityController.java
++++ b/main/src/main/java/net/citizensnpcs/npc/AbstractEntityController.java
+@@ -61,4 +61,9 @@ public abstract class AbstractEntityController implements EntityController {
+     public boolean spawn(Location at) {
+         return !Util.isLoaded(at) ? false : NMS.addEntityToWorld(bukkitEntity, CreatureSpawnEvent.SpawnReason.CUSTOM);
+     }
++
++    @Override
++    public void spawn(Location at, java.util.function.Consumer<Boolean> isSpawned) {
++        NMS.addEntityToWorld(bukkitEntity, CreatureSpawnEvent.SpawnReason.CUSTOM, isSpawned);
++    }
+ }
+\ No newline at end of file
+-- 
+2.50.1.windows.1
+

@@ -1,17 +1,17 @@
-From 9bc259a3cb857391b7f2554616c557ab05748e93 Mon Sep 17 00:00:00 2001
+From 9a9fa4e26b256a7a89fa3ea5143c580ed471b956 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 15:14:40 +0200
-Subject: [PATCH 02/41] Patch Citizens.java
+Date: Sun, 26 Oct 2025 03:35:45 +0100
+Subject: [PATCH 02/43] Patch Citizens.java
 
 ---
  main/src/main/java/net/citizensnpcs/Citizens.java | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/main/src/main/java/net/citizensnpcs/Citizens.java b/main/src/main/java/net/citizensnpcs/Citizens.java
-index 4c943cc09..665b730a1 100644
+index ac2d2139c..12201e70f 100644
 --- a/main/src/main/java/net/citizensnpcs/Citizens.java
 +++ b/main/src/main/java/net/citizensnpcs/Citizens.java
-@@ -424,7 +424,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
+@@ -444,7 +444,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
  
          // Setup NPCs after all plugins have been enabled (allows for multiworld
          // support and for NPCs to properly register external settings)
@@ -20,7 +20,7 @@ index 4c943cc09..665b730a1 100644
              Messaging.severeTr(Messages.LOAD_TASK_NOT_SCHEDULED);
              Bukkit.getPluginManager().disablePlugin(this);
          }
-@@ -482,7 +482,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
+@@ -512,7 +512,7 @@ public class Citizens extends JavaPlugin implements CitizensPlugin {
      }
  
      private void scheduleSaveTask(int delay) {

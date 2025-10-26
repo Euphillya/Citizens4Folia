@@ -1,0 +1,41 @@
+From 6ba5dd9d56195428bffa84272651313b690bd14e Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 04:17:02 +0100
+Subject: [PATCH 16/43] Patch trait ScoreboardTrait.java
+
+---
+ .../src/main/java/net/citizensnpcs/trait/ScoreboardTrait.java | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/trait/ScoreboardTrait.java b/main/src/main/java/net/citizensnpcs/trait/ScoreboardTrait.java
+index cf895da87..acc31b783 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/ScoreboardTrait.java
++++ b/main/src/main/java/net/citizensnpcs/trait/ScoreboardTrait.java
+@@ -66,6 +66,7 @@ public class ScoreboardTrait extends Trait {
+     }
+ 
+     public void createTeam(String entityName) {
++        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) return; // Not Supported on Folia
+         String teamName = Util.getTeamName(npc.getUniqueId());
+         npc.data().set(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, teamName);
+         Scoreboard scoreboard = Util.getDummyScoreboard();
+@@ -99,6 +100,7 @@ public class ScoreboardTrait extends Trait {
+ 
+     @Override
+     public void onDespawn(DespawnReason reason) {
++        if (net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) return; // Not Supported on Folia
+         previousGlowingColor = null;
+         String name = lastName;
+         String teamName = npc.data().get(NPC.Metadata.SCOREBOARD_FAKE_TEAM_NAME, "");
+@@ -134,7 +136,7 @@ public class ScoreboardTrait extends Trait {
+         if (reason == DespawnReason.REMOVAL || reason == DespawnReason.RELOAD) {
+             cleanup.run();
+         } else {
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), cleanup,
++            CitizensAPI.getScheduler().runEntityTaskLater(npc.getEntity(), cleanup,
+                     reason == DespawnReason.DEATH && npc.getEntity() instanceof LivingEntity ? 20 : 2);
+         }
+     }
+-- 
+2.50.1.windows.1
+

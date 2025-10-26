@@ -1,0 +1,25 @@
+From d58652d64c6830a1b9e28604a09343efbb47933f Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 04:17:26 +0100
+Subject: [PATCH 17/43] Patch trait ShopTrait.java
+
+---
+ main/src/main/java/net/citizensnpcs/trait/ShopTrait.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/trait/ShopTrait.java b/main/src/main/java/net/citizensnpcs/trait/ShopTrait.java
+index e5a3cae40..b81636777 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/ShopTrait.java
++++ b/main/src/main/java/net/citizensnpcs/trait/ShopTrait.java
+@@ -1221,7 +1221,7 @@ public class ShopTrait extends Trait {
+             currentPage = newPage;
+             NPCShopPage page = shop.pages.get(currentPage);
+             if (page.title != null && !page.title.isEmpty()) {
+-                Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(),
++                CitizensAPI.getScheduler().runEntityTaskLater(player,
+                         () -> ctx.setTitle(Placeholders.replace(page.title, player)), 1);
+             }
+             for (int i = 0; i < ctx.getInventory().getSize(); i++) {
+-- 
+2.50.1.windows.1
+

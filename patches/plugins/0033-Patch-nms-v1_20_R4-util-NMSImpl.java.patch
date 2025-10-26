@@ -1,0 +1,31 @@
+From 27dc2a21181f5e0b66ed283ac9ed096c8f595629 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 04:34:01 +0100
+Subject: [PATCH 33/43] Patch nms v1_20_R4 util NMSImpl.java
+
+---
+ .../java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java  | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/v1_20_R4/src/main/java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java b/v1_20_R4/src/main/java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java
+index 87b6065d6..4f3f68e3c 100644
+--- a/v1_20_R4/src/main/java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java
++++ b/v1_20_R4/src/main/java/net/citizensnpcs/nms/v1_20_R4/util/NMSImpl.java
+@@ -409,6 +409,14 @@ public class NMSImpl implements NMSBridge {
+         return success;
+     }
+ 
++    public void addEntityToWorld(org.bukkit.entity.Entity entity, SpawnReason custom, java.util.function.Consumer<Boolean> isAdded) {
++        if (!net.citizensnpcs.api.util.SpigotUtil.isFoliaServer()) {
++            isAdded.accept(addEntityToWorld(entity, custom));
++            return;
++        }
++        throw new UnsupportedOperationException("Not supported yet. Please update to 1.21.5+");
++    }
++
+     @Override
+     public void addOrRemoveFromPlayerList(org.bukkit.entity.Entity entity, boolean remove) {
+         if (entity == null)
+-- 
+2.50.1.windows.1
+

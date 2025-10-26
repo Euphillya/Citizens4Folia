@@ -1,0 +1,25 @@
+From 88ce289ad4a23824e2e57f28701c1f1de2fba811 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 03:47:17 +0100
+Subject: [PATCH 12/43] Patch npc skin profile ProfileRequest.java
+
+---
+ .../java/net/citizensnpcs/npc/skin/profile/ProfileRequest.java  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileRequest.java b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileRequest.java
+index 39b45f707..2d6873976 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileRequest.java
++++ b/main/src/main/java/net/citizensnpcs/npc/skin/profile/ProfileRequest.java
+@@ -132,7 +132,7 @@ public class ProfileRequest {
+     void setResult(@Nullable GameProfile profile, ProfileFetchResult result) {
+         if (!CitizensAPI.hasImplementation())
+             return;
+-        Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> {
++        CitizensAPI.getScheduler().runTask(() -> {
+             ProfileRequest.this.profile = profile;
+             ProfileRequest.this.result = result;
+ 
+-- 
+2.50.1.windows.1
+

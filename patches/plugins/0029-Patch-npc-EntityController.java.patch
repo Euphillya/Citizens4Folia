@@ -1,0 +1,23 @@
+From e6bdda1da95f48ed52e3c71a30a41571e3e1afbb Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 04:28:45 +0100
+Subject: [PATCH 29/43] Patch npc EntityController.java
+
+---
+ main/src/main/java/net/citizensnpcs/npc/EntityController.java | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/main/src/main/java/net/citizensnpcs/npc/EntityController.java b/main/src/main/java/net/citizensnpcs/npc/EntityController.java
+index 23a373fab..fae9f03ab 100644
+--- a/main/src/main/java/net/citizensnpcs/npc/EntityController.java
++++ b/main/src/main/java/net/citizensnpcs/npc/EntityController.java
+@@ -15,4 +15,6 @@ public interface EntityController {
+     void remove();
+ 
+     boolean spawn(Location at);
++
++    void spawn(Location at, java.util.function.Consumer<Boolean> callback);
+ }
+-- 
+2.50.1.windows.1
+

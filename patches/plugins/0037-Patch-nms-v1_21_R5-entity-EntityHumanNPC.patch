@@ -1,0 +1,34 @@
+From 2dfdb9c7da3aea6a6032c112491eb036b5427e35 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 04:52:51 +0100
+Subject: [PATCH 37/43] Patch nms v1_21_R5 entity EntityHumanNPC
+
+---
+ .../net/citizensnpcs/nms/v1_21_R5/entity/EntityHumanNPC.java  | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/entity/EntityHumanNPC.java b/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/entity/EntityHumanNPC.java
+index 862319d3d..2042dcc83 100644
+--- a/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/entity/EntityHumanNPC.java
++++ b/v1_21_R5/src/main/java/net/citizensnpcs/nms/v1_21_R5/entity/EntityHumanNPC.java
+@@ -123,7 +123,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
+             return;
+ 
+         super.die(damagesource);
+-        Bukkit.getScheduler().runTaskLater(CitizensAPI.getPlugin(), () -> {
++        CitizensAPI.getScheduler().runEntityTaskLater(EntityHumanNPC.this.getBukkitEntity(), () -> {
+             level().removePlayerImmediately(EntityHumanNPC.this, RemovalReason.KILLED);
+             level().getChunkSource().removeEntity(EntityHumanNPC.this);
+         }, 15); // give enough time for death and smoke animation
+@@ -270,7 +270,7 @@ public class EntityHumanNPC extends ServerPlayer implements NPCHolder, Skinnable
+         boolean damaged = super.hurtServer(level, damagesource, f);
+         if (damaged && hurtMarked) {
+             hurtMarked = false;
+-            Bukkit.getScheduler().runTask(CitizensAPI.getPlugin(), () -> EntityHumanNPC.this.hurtMarked = true);
++            CitizensAPI.getScheduler().runEntityTask(EntityHumanNPC.this.getBukkitEntity(), () -> EntityHumanNPC.this.hurtMarked = true);
+         }
+         return damaged;
+     }
+-- 
+2.50.1.windows.1
+

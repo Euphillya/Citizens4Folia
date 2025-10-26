@@ -1,0 +1,43 @@
+From 41b86754f277605d25e07352c9ae362cf7ad70d5 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 04:14:06 +0100
+Subject: [PATCH 13/43] Patch trait CommandTrait.java
+
+---
+ .../main/java/net/citizensnpcs/trait/CommandTrait.java    | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/trait/CommandTrait.java b/main/src/main/java/net/citizensnpcs/trait/CommandTrait.java
+index f56a85d7b..9ccd7d6d1 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/CommandTrait.java
++++ b/main/src/main/java/net/citizensnpcs/trait/CommandTrait.java
+@@ -373,7 +373,7 @@ public class CommandTrait extends Trait {
+                             if (temporaryPermissionsDuration <= 0) {
+                                 attachment.remove();
+                             } else {
+-                                Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(),
++                                CitizensAPI.getScheduler().runEntityTask(player,
+                                         () -> attachment.remove());
+                             }
+                             return;
+@@ -384,14 +384,14 @@ public class CommandTrait extends Trait {
+                 if (command.delay <= 0) {
+                     runnable.run();
+                 } else {
+-                    Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), runnable, command.delay);
++                    CitizensAPI.getScheduler().runEntityTaskLater(player, runnable, command.delay);
+                 }
+             }
+         };
+-        if (Bukkit.isPrimaryThread()) {
++        if (CitizensAPI.getScheduler().isOnOwnerThread(player)) {
+             task.run();
+         } else {
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), task);
++            CitizensAPI.getScheduler().runEntityTask(player, task);
+         }
+     }
+ 
+-- 
+2.50.1.windows.1
+

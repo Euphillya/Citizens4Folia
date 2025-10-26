@@ -1,0 +1,26 @@
+From d5dbc9e35a44d05f7a4e17a2b6eb936a1d105142 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 04:26:10 +0100
+Subject: [PATCH 26/43] Patch util Util.java
+
+---
+ main/src/main/java/net/citizensnpcs/util/Util.java | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/main/src/main/java/net/citizensnpcs/util/Util.java b/main/src/main/java/net/citizensnpcs/util/Util.java
+index f4cc9d1c1..9f33c6e5a 100644
+--- a/main/src/main/java/net/citizensnpcs/util/Util.java
++++ b/main/src/main/java/net/citizensnpcs/util/Util.java
+@@ -82,6 +82,9 @@ public class Util {
+     }
+ 
+     public static <T> T callPossiblySync(Callable<T> callable, boolean sync) {
++        if (SpigotUtil.isFoliaServer()) {
++            throw new UnsupportedOperationException("Folia does not have a main thread, so it is not supported.");
++        }
+         if (!sync) {
+             try {
+                 return callable.call();
+-- 
+2.50.1.windows.1
+

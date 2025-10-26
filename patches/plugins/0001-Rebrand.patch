@@ -1,21 +1,21 @@
-From 900f5aee6de6638d834eaddd031279299045470d Mon Sep 17 00:00:00 2001
+From 7462bf81d3b40826de870bbff95a5441ad697c83 Mon Sep 17 00:00:00 2001
 From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
-Date: Tue, 12 Aug 2025 15:14:40 +0200
-Subject: [PATCH 01/41] Rebrand
+Date: Sun, 26 Oct 2025 03:34:10 +0100
+Subject: [PATCH 01/43] Rebrand
 
 ---
  main/src/main/resources/plugin.yml | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/main/src/main/resources/plugin.yml b/main/src/main/resources/plugin.yml
-index d91638d43..47819fe27 100644
+index 4dfec5114..60315dc0c 100644
 --- a/main/src/main/resources/plugin.yml
 +++ b/main/src/main/resources/plugin.yml
 @@ -1,4 +1,5 @@
  name: Citizens
 +folia-supported: true
  authors: [fullwall]
- softdepend: [Vault, PlaceholderAPI, WorldGuard, ProtocolLib]
+ softdepend: [Vault, PlaceholderAPI, WorldGuard, packetevents]
  version: ${project.version} (build ${BUILD_NUMBER})
 -- 
 2.50.1.windows.1

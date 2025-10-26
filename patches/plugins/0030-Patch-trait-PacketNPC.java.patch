@@ -1,0 +1,28 @@
+From ccc59cdb90d1d012cd26e57dc9144be3d6bbc592 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 04:29:26 +0100
+Subject: [PATCH 30/43] Patch trait PacketNPC.java
+
+---
+ main/src/main/java/net/citizensnpcs/trait/PacketNPC.java | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/main/src/main/java/net/citizensnpcs/trait/PacketNPC.java b/main/src/main/java/net/citizensnpcs/trait/PacketNPC.java
+index e61b42ada..6a7cb9ca2 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/PacketNPC.java
++++ b/main/src/main/java/net/citizensnpcs/trait/PacketNPC.java
+@@ -114,5 +114,10 @@ public class PacketNPC extends Trait {
+             PlayerUpdateTask.register(getBukkitEntity());
+             return true;
+         }
++
++        @Override
++        public void spawn(Location at, java.util.function.Consumer<Boolean> callback) {
++            callback.accept(spawn(at));
++        }
+     }
+ }
+\ No newline at end of file
+-- 
+2.50.1.windows.1
+

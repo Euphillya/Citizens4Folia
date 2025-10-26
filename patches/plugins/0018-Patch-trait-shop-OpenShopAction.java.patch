@@ -1,0 +1,25 @@
+From 0042e9c550193606ce9d210bdb9a041a3deb6308 Mon Sep 17 00:00:00 2001
+From: Euphyllia Bierque <bierque.euphyllia@gmail.com>
+Date: Sun, 26 Oct 2025 04:17:59 +0100
+Subject: [PATCH 18/43] Patch trait shop OpenShopAction.java
+
+---
+ .../main/java/net/citizensnpcs/trait/shop/OpenShopAction.java   | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/main/src/main/java/net/citizensnpcs/trait/shop/OpenShopAction.java b/main/src/main/java/net/citizensnpcs/trait/shop/OpenShopAction.java
+index 025cb9bc0..3f064b183 100644
+--- a/main/src/main/java/net/citizensnpcs/trait/shop/OpenShopAction.java
++++ b/main/src/main/java/net/citizensnpcs/trait/shop/OpenShopAction.java
+@@ -56,7 +56,7 @@ public class OpenShopAction extends NPCShopAction {
+         // TODO: support hierarchical shops? would need to call InventoryMenu#transition somehow
+         return Transaction.create(() -> shop.canView(player), () -> {
+             player.closeInventory();
+-            Bukkit.getScheduler().scheduleSyncDelayedTask(CitizensAPI.getPlugin(), () -> shop.display(player));
++            CitizensAPI.getScheduler().runEntityTask(player, () -> shop.display(player));
+         }, () -> {
+             // TODO: closeInventory()? transitionBack()?
+         });
+-- 
+2.50.1.windows.1
+
